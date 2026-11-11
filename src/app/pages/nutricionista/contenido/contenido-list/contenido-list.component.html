@@ -46,7 +46,7 @@
                     <div class="card">
                         <div>
                             <mat-card-content>
-                                <img [src]="contenido.coverPath | apiImg" alt="Cover">
+                                <img *ngIf="contenido.coverPath" [src]="contenido.coverPath | apiImg" alt="Cover">
                                 <p><strong>Titulo: </strong> {{contenido.titulo}}</p>
                                 <p><strong>Descripcion: </strong> {{contenido.descripcion}}</p>
                                 <p><strong>Tipo Contenido: </strong> {{contenido.tipoContenido}}</p>

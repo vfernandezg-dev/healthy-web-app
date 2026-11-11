@@ -24,7 +24,7 @@
         <mat-card>
           <mat-card-title>{{ item.titulo }}</mat-card-title>
           <mat-card-content>
-            <img [src]="item.coverPath | apiImg" alt="Cover">
+            <img *ngIf="item.coverPath" [src]="item.coverPath | apiImg" alt="Cover">
             <p><strong>Descripcion: </strong> {{ item.descripcion }}</p>
             <p><strong>Tipo Contenido: </strong> {{ item.tipoContenido }}</p>
             <p><strong>Categoria Contenido: </strong> {{ item.categoriaContenido }}</p>
