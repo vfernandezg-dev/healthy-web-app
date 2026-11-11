@@ -1,7 +1,7 @@
+// Entorno de desarrollo local (ng serve): backend en :8090, frontend en :4210.
+// El build de produccion reemplaza este archivo por environment.prod.ts (ver angular.json).
 export const environment = {
-    production: true,
-    //baseUrl: 'http://localhost:8080/api/v1',
-    //paypalReturnUrl: 'http://localhost:4200/cliente/perfil',
-    baseUrl: 'https://healthybites-api-latest.onrender.com/api/v1',
-    paypalReturnUrl: 'https://healthy-bites-v1.netlify.app/cliente/perfil'
+    production: false,
+    baseUrl: 'http://localhost:8090/api/v1',
+    paypalReturnUrl: 'http://localhost:4210/cliente/perfil'
 };
