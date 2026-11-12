@@ -18,6 +18,8 @@ export default defineConfig({
     baseURL: BASE_URL,
     locale: 'es-ES',
     timezoneId: 'America/Lima',
+    // Sin animaciones: axe no analiza capas a medio cerrar y se prueba el modo de movimiento reducido.
+    reducedMotion: 'reduce',
     trace: 'on-first-retry',
   },
   projects: [

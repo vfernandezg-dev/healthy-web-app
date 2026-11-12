@@ -222,6 +222,7 @@ test.describe('planes del nutricionista', () => {
     await browser.getByRole('option', { name: 'Cena' }).click();
     await dialog.getByLabel('Plato').fill('Crema de calabaza');
     await dialog.getByLabel('Calorías').fill('450');
+    await expect(browser.getByRole('listbox')).toBeHidden();
     await expectNoA11yViolations(browser);
     await dialog.getByRole('button', { name: 'Añadir' }).click();
 
