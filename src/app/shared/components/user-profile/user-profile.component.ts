@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { SuscripcionListComponent } from "../../../pages/cliente/suscripcion/sus
 
 @Component({
     selector: 'app-user-profile',
-    imports: [CommonModule, SuscripcionListComponent],
+    imports: [SuscripcionListComponent],
     templateUrl: './user-profile.component.html',
     styleUrl: './user-profile.component.css'
 })

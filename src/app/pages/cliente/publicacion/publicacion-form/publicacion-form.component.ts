@@ -9,7 +9,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ApiImgPipe } from '../../../../core/pipes/api-img.pipe';
+
 import { AuthService } from '../../../../core/services/auth.service';
 import { MediaService } from '../../../../core/services/media.service';
 import { PublicacionService } from '../../../../core/services/publicacion.service';
@@ -21,7 +21,6 @@ import { GrupoService } from '../../../../core/services/grupo.service';
     selector: 'app-publicacion-form',
     imports: [
         ReactiveFormsModule,
-        ApiImgPipe,
         RouterModule,
         MatFormFieldModule,
         MatInputModule,

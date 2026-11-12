@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -14,17 +14,16 @@ import { MatSelectModule } from '@angular/material/select';
 @Component({
     selector: 'app-comida-form',
     imports: [
-        CommonModule,
-        MatInputModule,
-        MatCardModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatSnackBarModule,
-        MatOptionModule,
-        MatRadioModule,
-        MatSelectModule,
-        ReactiveFormsModule,
-    ],
+    MatInputModule,
+    MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSnackBarModule,
+    MatOptionModule,
+    MatRadioModule,
+    MatSelectModule,
+    ReactiveFormsModule
+],
     templateUrl: './comida-form.component.html',
     styleUrls: ['./comida-form.component.css']
 })

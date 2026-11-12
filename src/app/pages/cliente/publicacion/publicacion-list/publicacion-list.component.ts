@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PublicacionService } from '../../../../core/services/publicacion.service';
 import { PublicacionResponse } from '../../../../shared/models/publicacion-response.model';
-import { CommonModule } from '@angular/common';
+
 import { ApiImgPipe } from '../../../../core/pipes/api-img.pipe';
 import { ComentarioResponse } from '../../../../shared/models/comentario-response.model';
 import { ComentarioService } from '../../../../core/services/comentario.service';
@@ -20,14 +20,13 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
     selector: 'app-publicacion-list',
     imports: [
-        CommonModule,
-        MatCardModule,
-        MatButtonModule,
-        ApiImgPipe,
-        FormsModule,
-        MatMenuModule,
-        MatIconModule,
-    ],
+    MatCardModule,
+    MatButtonModule,
+    ApiImgPipe,
+    FormsModule,
+    MatMenuModule,
+    MatIconModule
+],
     templateUrl: './publicacion-list.component.html',
     styleUrl: './publicacion-list.component.css'
 })

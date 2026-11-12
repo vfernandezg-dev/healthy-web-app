@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,14 +15,13 @@ import { RecompensaService } from '../../../../core/services/recompensa.service'
 @Component({
     selector: 'app-recompensas-list',
     imports: [
-        CommonModule,
-        MatTableModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatInputModule,
-        FormsModule,
-        FormatPlanObjetivoPipe,
-    ],
+    MatTableModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    FormsModule,
+    FormatPlanObjetivoPipe
+],
     templateUrl: './recompensas-list.component.html',
     styleUrl: './recompensas-list.component.css'
 })

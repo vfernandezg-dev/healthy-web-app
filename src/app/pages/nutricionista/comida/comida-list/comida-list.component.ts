@@ -5,7 +5,7 @@ import { ComidaResponse } from '../../../../shared/models/comida-response.model'
 import { ComidaService } from '../../../../core/services/comida.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { PlanAlimenticioService } from '../../../../core/services/plan-alimenticio.service';
 import { PlanAlimenticioResponse } from '../../../../shared/models/plan-alimenticio-response.model';
 import { FormatPlanObjetivoPipe } from '../../../../core/pipes/format-plan-objetivo.pipe';
@@ -18,15 +18,14 @@ import { FormsModule } from '@angular/forms';
 @Component({
     selector: 'app-comida-list',
     imports: [
-        CommonModule,
-        MatTableModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatInputModule,
-        FormsModule,
-        FormatPlanObjetivoPipe,
-        FormatCategoriaComida,
-    ],
+    MatTableModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    FormsModule,
+    FormatPlanObjetivoPipe,
+    FormatCategoriaComida
+],
     templateUrl: './comida-list.component.html',
     styleUrls: ['./comida-list.component.css']
 })

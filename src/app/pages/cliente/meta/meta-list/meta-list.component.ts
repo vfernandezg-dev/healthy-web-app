@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -34,13 +34,12 @@ export type ChartOptions = {
 @Component({
     selector: 'app-meta-list',
     imports: [
-        CommonModule,
-        MatTableModule,
-        MatFormFieldModule,
-        FormatTimePipe,
-        MatPaginatorModule,
-        NgApexchartsModule
-    ],
+    MatTableModule,
+    MatFormFieldModule,
+    FormatTimePipe,
+    MatPaginatorModule,
+    NgApexchartsModule
+],
     templateUrl: './meta-list.component.html',
     styleUrls: ['./meta-list.component.css']
 })

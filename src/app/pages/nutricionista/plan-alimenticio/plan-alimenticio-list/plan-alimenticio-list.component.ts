@@ -3,7 +3,7 @@ import { PlanAlimenticioResponse } from '../../../../shared/models/plan-alimenti
 import { PlanAlimenticioService } from '../../../../core/services/plan-alimenticio.service';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { CommonModule } from '@angular/common';
+
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,15 +17,14 @@ import { ComidaService } from '../../../../core/services/comida.service';
 @Component({
     selector: 'app-plan-alimenticio-list',
     imports: [
-        CommonModule,
-        MatTableModule,
-        MatCardModule,
-        MatSnackBarModule,
-        MatFormFieldModule,
-        MatInputModule,
-        FormsModule,
-        FormatPlanObjetivoPipe
-    ],
+    MatTableModule,
+    MatCardModule,
+    MatSnackBarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    FormatPlanObjetivoPipe
+],
     templateUrl: './plan-alimenticio-list.component.html',
     styleUrl: './plan-alimenticio-list.component.css'
 })

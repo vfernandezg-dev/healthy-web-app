@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
-import { ApiImgPipe } from '../../../../core/pipes/api-img.pipe';
+
 import { ContenidoService } from '../../../../core/services/contenido.service';
 import { MediaService } from '../../../../core/services/media.service';
 import { ContenidoResponse } from '../../../../shared/models/contenido-response.model';
@@ -26,7 +26,6 @@ import { MatRadioModule } from '@angular/material/radio';
     selector: 'app-contenido-form',
     imports: [
         ReactiveFormsModule,
-        ApiImgPipe,
         RouterModule,
         MatFormFieldModule,
         MatInputModule,

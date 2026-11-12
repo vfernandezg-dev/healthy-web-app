@@ -1,15 +1,17 @@
 <div class="plan">
-    <div class="container">
-        <div class="card" *ngFor="let publicacion of filteredPublicaciones">
-            <div class="mat-mdc-card-header">
-                <div class="mat-mdc-card-title">
-                    <strong> {{ publicacion.titulo }} </strong>
-                </div>
-            </div>
-            <div class="mat-mdc-card-content">
-                <p> {{publicacion.descripcion}} </p>
-                <img [src]="publicacion.publicacionPath | apiImg" alt="Cover">
-            </div>
+  <div class="container">
+    @for (publicacion of filteredPublicaciones; track publicacion) {
+      <div class="card">
+        <div class="mat-mdc-card-header">
+          <div class="mat-mdc-card-title">
+            <strong> {{ publicacion.titulo }} </strong>
+          </div>
         </div>
-    </div>
+        <div class="mat-mdc-card-content">
+          <p> {{publicacion.descripcion}} </p>
+          <img [src]="publicacion.publicacionPath | apiImg" alt="Cover">
+        </div>
+      </div>
+    }
+  </div>
 </div>

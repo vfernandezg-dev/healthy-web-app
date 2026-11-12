@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -17,15 +17,14 @@ import { ContenidoService } from '../../../../core/services/contenido.service';
 @Component({
     selector: 'app-recompensas-form',
     imports: [
-        CommonModule,
-        MatInputModule,
-        MatCardModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatSnackBarModule,
-        MatOptionModule,
-        MatSelectModule,
-    ],
+    MatInputModule,
+    MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSnackBarModule,
+    MatOptionModule,
+    MatSelectModule
+],
     templateUrl: './recompensas-form.component.html',
     styleUrl: './recompensas-form.component.css'
 })

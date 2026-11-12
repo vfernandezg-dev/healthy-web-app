@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -14,13 +14,12 @@ import { GrupoListComponent } from "./grupo-list/grupo-list.component";
 @Component({
     selector: 'app-grupo',
     imports: [
-        RouterLink,
-        MatListModule,
-        MatMenuModule,
-        MatIconModule,
-        CommonModule,
-        GrupoListComponent
-    ],
+    RouterLink,
+    MatListModule,
+    MatMenuModule,
+    MatIconModule,
+    GrupoListComponent
+],
     templateUrl: './grupo.component.html',
     styleUrl: './grupo.component.css'
 })

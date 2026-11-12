@@ -11,23 +11,22 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ApiImgPipe } from '../../../../core/pipes/api-img.pipe';
 import { MatCardModule } from '@angular/material/card';
-import { CommonModule } from '@angular/common';
+
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
     selector: 'app-contenido-list',
     imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        ApiImgPipe,
-        RouterModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatSelectModule,
-        MatSnackBarModule,
-        MatCardModule
-    ],
+    ReactiveFormsModule,
+    ApiImgPipe,
+    RouterModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatSnackBarModule,
+    MatCardModule
+],
     templateUrl: './contenido-list.component.html',
     styleUrl: './contenido-list.component.css'
 })

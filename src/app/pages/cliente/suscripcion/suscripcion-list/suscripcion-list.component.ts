@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { Router, ActivatedRoute } from '@angular/router';
 import { SuscripcionService } from '../../../../core/services/suscripcion.service';
 import { CheckoutService } from '../../../../core/services/checkout.service';
@@ -10,7 +10,7 @@ import { SuscripcionResponse } from '../../../../shared/models/suscripcion-respo
 
 @Component({
     selector: 'app-suscripcion-list',
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [ReactiveFormsModule],
     templateUrl: './suscripcion-list.component.html',
     styleUrls: ['./suscripcion-list.component.css']
 })

@@ -3,7 +3,7 @@ import { FooterComponent } from "../../../shared/components/footer/footer.compon
 import { NavbarComponent } from "../../../shared/components/navbar/navbar.component";
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
     selector: 'app-cliente-layout',

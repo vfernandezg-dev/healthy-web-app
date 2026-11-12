@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,14 +15,13 @@ import { RachaService } from '../../../core/services/racha.service';
 @Component({
     selector: 'app-seguimiento',
     imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        RouterModule,
-        RouterLink,
-        MatFormFieldModule,
-        MatInputModule,
-        MatCardModule,
-    ],
+    ReactiveFormsModule,
+    RouterModule,
+    RouterLink,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCardModule
+],
     templateUrl: './seguimiento.component.html',
     styleUrls: ['./seguimiento.component.css']
 })

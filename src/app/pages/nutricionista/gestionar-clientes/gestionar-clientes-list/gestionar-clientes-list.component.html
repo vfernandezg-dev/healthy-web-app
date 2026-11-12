@@ -1,32 +1,34 @@
 <section>
-    @if(clientes) {
-        <div class="plan">
-            <div class="plan-titulo">
-                <h2>
-                    <strong>CLIENTES</strong>
-                </h2>
+  @if(clientes) {
+    <div class="plan">
+      <div class="plan-titulo">
+        <h2>
+          <strong>CLIENTES</strong>
+        </h2>
+      </div>
+    </div>
+    <div class="container">
+      @for (cliente of filteredClientes; track cliente) {
+        <mat-card>
+          <div class="row">
+            <div class="card">
+              <div>
+                <mat-card-header>
+                  <mat-card-content>
+                    <p><strong>Nombre: </strong> {{ cliente.nombre }} {{ cliente.apellido }} </p>
+                    <p><strong>Sexo: </strong> {{cliente.sexo}}</p>
+                    <p><strong>Edad: </strong> {{cliente.edad}} </p>
+                    <p><strong>Altura: </strong> {{cliente.altura}} cm</p>
+                    <p><strong>Peso: </strong> {{cliente.peso}} kg</p>
+                  </mat-card-content>
+                </mat-card-header>
+              </div>
             </div>
-        </div>
-        <div class="container">
-            <mat-card *ngFor="let cliente of filteredClientes">
-                <div class="row">
-                    <div class="card">
-                        <div>
-                            <mat-card-header>
-                                <mat-card-content>
-                                    <p><strong>Nombre: </strong> {{ cliente.nombre }} {{ cliente.apellido }} </p>
-                                    <p><strong>Sexo: </strong> {{cliente.sexo}}</p>
-                                    <p><strong>Edad: </strong> {{cliente.edad}} </p>
-                                    <p><strong>Altura: </strong> {{cliente.altura}} cm</p>
-                                    <p><strong>Peso: </strong> {{cliente.peso}} kg</p>
-                                </mat-card-content>
-                            </mat-card-header>
-                        </div>
-                    </div>
-                </div>
-            </mat-card>
-        </div>
-    } @else {
-        <p>No hay clientes</p>
-    }
+          </div>
+        </mat-card>
+      }
+    </div>
+  } @else {
+    <p>No hay clientes</p>
+  }
 </section>

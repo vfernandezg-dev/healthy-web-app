@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
@@ -12,14 +12,13 @@ import { SeguimientoService } from '../../../../core/services/seguimiento.servic
 @Component({
     selector: 'app-meta-seguimiento-form',
     imports: [
-        CommonModule,
-        MatInputModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatSnackBarModule,
-        MatOptionModule,
-        MatSelectModule,
-    ],
+    MatInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSnackBarModule,
+    MatOptionModule,
+    MatSelectModule
+],
     templateUrl: './meta-seguimiento-form.component.html',
     styleUrl: './meta-seguimiento-form.component.css'
 })

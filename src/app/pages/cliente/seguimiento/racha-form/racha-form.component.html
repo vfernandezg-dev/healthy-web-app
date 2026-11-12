@@ -1,17 +1,18 @@
 <main class="p-3">
-    <div class="container-fluid">
-      <h4><strong>Unirse a una Recompensa</strong></h4>
-      <form [formGroup]="rachaForm" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="fill">
-          <mat-label>ID de la Recompensa</mat-label>
-          <input matInput formControlName="recompensaId" required>
-        </mat-form-field>
-        <button mat-raised-button color="primary" type="submit">Unirse</button>
-      </form>
-  
-      <h5 class="mt-4"><strong>Recompensas Disponibles:</strong></h5>
-      <div class="container">
-        <mat-card *ngFor="let recompensa of recompensas">
+  <div class="container-fluid">
+    <h4><strong>Unirse a una Recompensa</strong></h4>
+    <form [formGroup]="rachaForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="fill">
+        <mat-label>ID de la Recompensa</mat-label>
+        <input matInput formControlName="recompensaId" required>
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">Unirse</button>
+    </form>
+
+    <h5 class="mt-4"><strong>Recompensas Disponibles:</strong></h5>
+    <div class="container">
+      @for (recompensa of recompensas; track recompensa) {
+        <mat-card>
           <div class="card">
             <p><strong>ID: </strong> {{recompensa.id}}</p>
             <p><strong>Nombre: </strong> {{recompensa.nombre}}</p>
@@ -19,6 +20,7 @@
             <p><strong>Descripción: </strong> {{recompensa.descripcion}}</p>
           </div>
         </mat-card>
-      </div>
+      }
     </div>
-  </main>
+  </div>
+</main>

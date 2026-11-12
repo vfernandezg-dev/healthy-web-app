@@ -1,67 +1,75 @@
 <section>
-    @if (contenido) {
-        <div class="plan">
-            <div class="plan-titulo">
-                <h2><strong>CONTENIDO</strong></h2>
-            </div>
-            <div>
-                <button class="btn btn-primary" (click)="createContenido()">
-                    <i class="fa-solid fa-plus"></i>
-                    Nuevo Contenido
-                </button>
-            </div>
-        </div>
-        
-        <div class="d-flex filtros">
-            <div>
-                <h4><i class="fa-solid fa-filter"></i> Tipo de Contenido</h4>
-                <mat-form-field>
-                    <mat-label>Filtro Tipo de Contenido</mat-label>
-                    <mat-select [(value)]="selectTipoContenido" (selectionChange)="filterContenido()">
-                      <mat-option [value]="null">Todos los contenidos</mat-option>
-                      <mat-option *ngFor="let contenido of uniqueContenido" [value]="contenido.tipoContenido">
-                        {{ contenido.tipoContenido }}
-                      </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div class="ms-3">
-                <h4><i class="fa-solid fa-tag"></i> Categoria de Contenido</h4>
-                <mat-form-field>
-                    <mat-label>Filtro Categoria de Contenido</mat-label>
-                    <mat-select [(value)]="selectCategoriaContenido" (selectionChange)="filterContenido()">
-                        <mat-option [value]="null">Todas las categorias</mat-option>
-                        <mat-option *ngFor="let categoria of uniqueCategoriaContenido" [value]="categoria.categoriaContenido">
-                            {{ categoria.categoriaContenido }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            
-        </div>
+  @if (contenido) {
+    <div class="plan">
+      <div class="plan-titulo">
+        <h2><strong>CONTENIDO</strong></h2>
+      </div>
+      <div>
+        <button class="btn btn-primary" (click)="createContenido()">
+          <i class="fa-solid fa-plus"></i>
+          Nuevo Contenido
+        </button>
+      </div>
+    </div>
 
-        <div class="container">
-            <mat-card *ngFor="let contenido of filteredContenido">
-                <div class="row">
-                    <div class="card">
-                        <div>
-                            <mat-card-content>
-                                <img *ngIf="contenido.coverPath" [src]="contenido.coverPath | apiImg" alt="Cover">
-                                <p><strong>Titulo: </strong> {{contenido.titulo}}</p>
-                                <p><strong>Descripcion: </strong> {{contenido.descripcion}}</p>
-                                <p><strong>Tipo Contenido: </strong> {{contenido.tipoContenido}}</p>
-                                <p><strong>Categoria Contenido: </strong> {{contenido.categoriaContenido}}</p>
-                                <p><strong>Es gratis: </strong> {{contenido.esGratis}} </p>
-                                <p><strong></strong></p>
-                                <div class="d-flex">
-                                    <button class="btn btn-primary" (click)="editContenido(contenido.id)">Editar</button>
-                                    <button class="ms-3 btn btn-danger" (click)="deleteContenido(contenido.id)">Eliminar</button>
-                                </div>
-                            </mat-card-content>
-                        </div>
-                    </div>
-                </div>
-            </mat-card>
-        </div>
-    }
+    <div class="d-flex filtros">
+      <div>
+        <h4><i class="fa-solid fa-filter"></i> Tipo de Contenido</h4>
+        <mat-form-field>
+          <mat-label>Filtro Tipo de Contenido</mat-label>
+          <mat-select [(value)]="selectTipoContenido" (selectionChange)="filterContenido()">
+            <mat-option [value]="null">Todos los contenidos</mat-option>
+            @for (contenido of uniqueContenido; track contenido) {
+              <mat-option [value]="contenido.tipoContenido">
+                {{ contenido.tipoContenido }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="ms-3">
+        <h4><i class="fa-solid fa-tag"></i> Categoria de Contenido</h4>
+        <mat-form-field>
+          <mat-label>Filtro Categoria de Contenido</mat-label>
+          <mat-select [(value)]="selectCategoriaContenido" (selectionChange)="filterContenido()">
+            <mat-option [value]="null">Todas las categorias</mat-option>
+            @for (categoria of uniqueCategoriaContenido; track categoria) {
+              <mat-option [value]="categoria.categoriaContenido">
+                {{ categoria.categoriaContenido }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+    <div class="container">
+      @for (contenido of filteredContenido; track contenido) {
+        <mat-card>
+          <div class="row">
+            <div class="card">
+              <div>
+                <mat-card-content>
+                  @if (contenido.coverPath) {
+                    <img [src]="contenido.coverPath | apiImg" alt="Cover">
+                  }
+                  <p><strong>Titulo: </strong> {{contenido.titulo}}</p>
+                  <p><strong>Descripcion: </strong> {{contenido.descripcion}}</p>
+                  <p><strong>Tipo Contenido: </strong> {{contenido.tipoContenido}}</p>
+                  <p><strong>Categoria Contenido: </strong> {{contenido.categoriaContenido}}</p>
+                  <p><strong>Es gratis: </strong> {{contenido.esGratis}} </p>
+                  <p><strong></strong></p>
+                  <div class="d-flex">
+                    <button class="btn btn-primary" (click)="editContenido(contenido.id)">Editar</button>
+                    <button class="ms-3 btn btn-danger" (click)="deleteContenido(contenido.id)">Eliminar</button>
+                  </div>
+                </mat-card-content>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      }
+    </div>
+  }
 </section>

@@ -4,7 +4,7 @@ import { PlanAlimenticioResponse } from '../../../shared/models/plan-alimenticio
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ContenidoService } from '../../../core/services/contenido.service';
 import { PlanAlimenticioService } from '../../../core/services/plan-alimenticio.service';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
@@ -18,13 +18,12 @@ import { AccesoPlanService } from '../../../core/services/acceso-plan.service';
 @Component({
     selector: 'app-contenido',
     imports: [
-        CommonModule,
-        MatCardModule,
-        MatButtonModule,
-        MatSelectModule,
-        ApiImgPipe,
-        FormatPlanObjetivoPipe
-    ],
+    MatCardModule,
+    MatButtonModule,
+    MatSelectModule,
+    ApiImgPipe,
+    FormatPlanObjetivoPipe
+],
     templateUrl: './contenido.component.html',
     styleUrl: './contenido.component.css'
 })

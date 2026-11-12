@@ -1,38 +1,39 @@
-<div class="container mt-5" *ngIf="profile">
+@if (profile) {
+  <div class="container mt-5">
     <!-- Datos Personales -->
     <div class="profile-container">
-        <div class="d-flex justify-content-between">
-            <h5 class="card-title mb-0"><strong>Datos Personales:</strong> </h5>
-            <h5 class="mb-0" >{{profile.nombre}} {{profile.apellido}}</h5>
-            <button class="btn btn-secondary" (click)="navigateToUpdateProfile()">
-                <i class="fa-solid fa-pen"></i>
-                Editar
-            </button>    
+      <div class="d-flex justify-content-between">
+        <h5 class="card-title mb-0"><strong>Datos Personales:</strong> </h5>
+        <h5 class="mb-0" >{{profile.nombre}} {{profile.apellido}}</h5>
+        <button class="btn btn-secondary" (click)="navigateToUpdateProfile()">
+          <i class="fa-solid fa-pen"></i>
+          Editar
+        </button>
+      </div>
+      <div class="datos-user row">
+        <div class="col-8">
+          <p class="mb-0"><strong>Correo:</strong> {{profile.correo}}</p>
+          <p class="mb-0"><strong>Sexo:</strong> {{profile.sexo}}</p>
+          <p class="mb-0"><strong>Peso:</strong> {{profile.peso}} kg</p>
         </div>
-        <div class="datos-user row">
-            <div class="col-8">
-                <p class="mb-0"><strong>Correo:</strong> {{profile.correo}}</p>
-                <p class="mb-0"><strong>Sexo:</strong> {{profile.sexo}}</p>
-                <p class="mb-0"><strong>Peso:</strong> {{profile.peso}} kg</p>
-            </div>
-            <div class="col-4">
-                <p class="mb-0"><strong>Edad:</strong> {{profile.edad}}</p>
-                <p class="mb-0"><strong>Altura:</strong> {{profile.altura}} cm</p>
-            </div>
+        <div class="col-4">
+          <p class="mb-0"><strong>Edad:</strong> {{profile.edad}}</p>
+          <p class="mb-0"><strong>Altura:</strong> {{profile.altura}} cm</p>
         </div>
-        <hr>    
-    </div>
-
-    <!-- Suscripcion -->
-    <div class="profile-container">
+      </div>
+      <hr>
+      </div>
+      <!-- Suscripcion -->
+      <div class="profile-container">
         <div class="d-flex justify-content-between">
-            <h5 class="card-title mb-0"><strong>Suscripcion</strong></h5>
+          <h5 class="card-title mb-0"><strong>Suscripcion</strong></h5>
         </div>
         <div class="datos-user">
-            <div class="row justify-content-center">
-                <app-suscripcion-list></app-suscripcion-list>
-            </div>
+          <div class="row justify-content-center">
+            <app-suscripcion-list></app-suscripcion-list>
+          </div>
         </div>
         <hr>
-    </div>
-</div>
+        </div>
+      </div>
+    }

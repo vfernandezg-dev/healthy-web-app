@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -11,13 +11,12 @@ import { AuthService } from '../../../../core/services/auth.service';
 @Component({
     selector: 'app-meta-form',
     imports: [
-        CommonModule,
-        MatInputModule,
-        MatCardModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatSnackBarModule,
-    ],
+    MatInputModule,
+    MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSnackBarModule
+],
     templateUrl: './meta-form.component.html',
     styleUrl: './meta-form.component.css'
 })

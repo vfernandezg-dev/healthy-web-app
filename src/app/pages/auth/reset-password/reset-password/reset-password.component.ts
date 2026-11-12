@@ -6,19 +6,18 @@ import { PasswordResetService } from '../../../../core/services/password-reset.s
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
-import { NgIf } from '@angular/common';
+
 
 @Component({
     selector: 'app-reset-password',
     imports: [
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        MatError,
-        MatButton,
-        NgIf
-    ],
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    MatButton
+],
     templateUrl: './reset-password.component.html',
     styleUrl: './reset-password.component.css'
 })

@@ -1,6 +1,6 @@
 import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NgApexchartsModule } from 'ng-apexcharts';
 
 import {
@@ -24,8 +24,6 @@ export type ChartOptions = {
 @Component({
     selector: 'app-grafico-peso',
     imports: [
-        RouterOutlet,
-        RouterLink,
         FormsModule,
         ReactiveFormsModule,
         NgApexchartsModule

@@ -7,33 +7,41 @@
           <mat-label>Tipo de Contenido</mat-label>
           <mat-select [(value)]="selectedTipoContenido" (selectionChange)="filterContenido()">
             <mat-option [value]="null">Todos</mat-option>
-            <mat-option *ngFor="let tipo of uniqueTiposContenido" [value]="tipo">{{ tipo }}</mat-option>
+            @for (tipo of uniqueTiposContenido; track tipo) {
+              <mat-option [value]="tipo">{{ tipo }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="fill">
           <mat-label>Categoría de Contenido</mat-label>
           <mat-select [(value)]="selectedCategoriaContenido" (selectionChange)="filterContenido()">
             <mat-option [value]="null">Todos</mat-option>
-            <mat-option *ngFor="let categoria of uniqueCategoriasContenido" [value]="categoria">{{ categoria }}</mat-option>
+            @for (categoria of uniqueCategoriasContenido; track categoria) {
+              <mat-option [value]="categoria">{{ categoria }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-4" *ngFor="let item of filteredContenido">
-        <mat-card>
-          <mat-card-title>{{ item.titulo }}</mat-card-title>
-          <mat-card-content>
-            <img *ngIf="item.coverPath" [src]="item.coverPath | apiImg" alt="Cover">
-            <p><strong>Descripcion: </strong> {{ item.descripcion }}</p>
-            <p><strong>Tipo Contenido: </strong> {{ item.tipoContenido }}</p>
-            <p><strong>Categoria Contenido: </strong> {{ item.categoriaContenido }}</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-button (click)="verDetalles(item)">Ver Detalles</button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
+      @for (item of filteredContenido; track item) {
+        <div class="col-md-4">
+          <mat-card>
+            <mat-card-title>{{ item.titulo }}</mat-card-title>
+            <mat-card-content>
+              @if (item.coverPath) {
+                <img [src]="item.coverPath | apiImg" alt="Cover">
+              }
+              <p><strong>Descripcion: </strong> {{ item.descripcion }}</p>
+              <p><strong>Tipo Contenido: </strong> {{ item.tipoContenido }}</p>
+              <p><strong>Categoria Contenido: </strong> {{ item.categoriaContenido }}</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button (click)="verDetalles(item)">Ver Detalles</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      }
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
@@ -42,24 +50,28 @@
         <mat-label>Plan Objetivo</mat-label>
         <mat-select [(value)]="selectedPlanObjetivo" (selectionChange)="filterPlanAlimenticio()">
           <mat-option [value]="null">Todos</mat-option>
-          <mat-option *ngFor="let objetivo of uniquePlanObjetivos" [value]="objetivo">{{ objetivo | formatPlanObjetivo }}</mat-option>
+          @for (objetivo of uniquePlanObjetivos; track objetivo) {
+            <mat-option [value]="objetivo">{{ objetivo | formatPlanObjetivo }}</mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </div>
     <div class="row">
-      <div class="col-md-4" *ngFor="let plan of filteredPlanAlimenticio">
-        <mat-card>
-          <mat-card-title>{{ plan.planObjetivo | formatPlanObjetivo }}</mat-card-title>
-          <mat-card-content>
-            <p><strong>Descripcion: </strong> {{ plan.descripcion }}</p>
-            <p><strong>Duracion: </strong> {{ plan.duracionDias }} dias</p>
-            <p><strong>Calorias Totales: </strong> {{ plan.caloriasTotales }} kcal</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-button (click)="verPlanDetalles(plan)">Ver Detalles</button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
+      @for (plan of filteredPlanAlimenticio; track plan) {
+        <div class="col-md-4">
+          <mat-card>
+            <mat-card-title>{{ plan.planObjetivo | formatPlanObjetivo }}</mat-card-title>
+            <mat-card-content>
+              <p><strong>Descripcion: </strong> {{ plan.descripcion }}</p>
+              <p><strong>Duracion: </strong> {{ plan.duracionDias }} dias</p>
+              <p><strong>Calorias Totales: </strong> {{ plan.caloriasTotales }} kcal</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button (click)="verPlanDetalles(plan)">Ver Detalles</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      }
     </div>
   </div>
 </main>

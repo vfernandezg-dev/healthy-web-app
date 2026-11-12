@@ -3,7 +3,7 @@ import { GestionarPerfilService } from '../../../../core/services/gestionar-perf
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { ClienteResponse } from '../../../../shared/models/cliente-response.model';
@@ -13,14 +13,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 @Component({
     selector: 'app-gestionar-clientes-list',
     imports: [
-        CommonModule,
-        MatTableModule,
-        MatCardModule,
-        MatFormFieldModule,
-        MatSnackBarModule,
-        MatInputModule,
-        FormsModule
-    ],
+    MatTableModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatSnackBarModule,
+    MatInputModule,
+    FormsModule
+],
     templateUrl: './gestionar-clientes-list.component.html',
     styleUrl: './gestionar-clientes-list.component.css'
 })

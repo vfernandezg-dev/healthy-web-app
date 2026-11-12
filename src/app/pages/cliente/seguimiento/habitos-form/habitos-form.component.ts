@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
@@ -13,14 +13,13 @@ import { FormatTimePipe } from '../../../../core/pipes/format-time.pipe';
 @Component({
     selector: 'app-habitos-form',
     imports: [
-        CommonModule,
-        MatInputModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatSnackBarModule,
-        MatOptionModule,
-        MatSelectModule,
-    ],
+    MatInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSnackBarModule,
+    MatOptionModule,
+    MatSelectModule
+],
     templateUrl: './habitos-form.component.html',
     styleUrl: './habitos-form.component.css'
 })

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,14 +17,13 @@ import { PublicacionService } from '../../../../core/services/publicacion.servic
 @Component({
     selector: 'app-grupo-list',
     imports: [
-        CommonModule,
-        MatCardModule,
-        MatButtonModule,
-        ApiImgPipe,
-        FormsModule,
-        MatMenuModule,
-        MatIconModule,
-    ],
+    MatCardModule,
+    MatButtonModule,
+    ApiImgPipe,
+    FormsModule,
+    MatMenuModule,
+    MatIconModule
+],
     templateUrl: './grupo-list.component.html',
     styleUrl: './grupo-list.component.css'
 })

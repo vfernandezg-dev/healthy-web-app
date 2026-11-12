@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { ContenidoService } from '../../../../core/services/contenido.service';
@@ -14,7 +14,7 @@ import { FormatPlanObjetivoPipe } from '../../../../core/pipes/format-plan-objet
 
 @Component({
     selector: 'app-contenido-detalle',
-    imports: [CommonModule, MatCardModule, MatTableModule, ApiImgPipe, FormatPlanObjetivoPipe],
+    imports: [MatCardModule, MatTableModule, ApiImgPipe, FormatPlanObjetivoPipe],
     templateUrl: './contenido-detalle.component.html',
     styleUrls: ['./contenido-detalle.component.css']
 })
