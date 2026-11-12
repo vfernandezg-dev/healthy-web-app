@@ -160,7 +160,7 @@ export function readsFor(role: Role): Record<string, unknown> {
     } satisfies S['RecommendationResponse'],
     '/me/habit-logs': [],
     '/me/streaks': [],
-    '/rewards': [REWARD],
+    '/rewards': paged([REWARD], 12),
     '/me/subscription': SUBSCRIPTION,
     '/me/subscription/checkout/capture': {
       ...SUBSCRIPTION,
@@ -209,7 +209,7 @@ export function readsFor(role: Role): Record<string, unknown> {
       coverMediaId: null,
       fileMediaId: null,
     } satisfies S['EditableContentResponse'],
-    '/nutritionist/rewards': paged([REWARD]),
+    '/nutritionist/rewards': paged([REWARD], 12),
     '/nutritionist/clients': paged([]),
     // Administración
     '/admin/users/summary': {

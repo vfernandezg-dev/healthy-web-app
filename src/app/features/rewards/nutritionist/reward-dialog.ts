@@ -24,6 +24,11 @@ interface RewardModel {
   prizeId: string | null;
 }
 
+/** Un contenido o un plan como opción del desplegable del premio. */
+function optionsFor(prizes: readonly { id: string; title: string }[]) {
+  return prizes.map((prize) => ({ label: prize.title, value: prize.id }));
+}
+
 /** Crear o editar una recompensa. El premio es un contenido o un plan propio y publicado. */
 @Component({
   selector: 'app-reward-dialog',
@@ -177,21 +182,16 @@ export class RewardDialog {
   });
 
   /**
-   * Opciones del premio. Si una recarga trae lo mismo, conserva el array anterior: así el desplegable no se vuelve a
-   * pintar (ni pierde la opción que se está pulsando) cuando llega la respuesta con la lista abierta.
+   * Opciones del premio (la API ya manda solo lo publicado). Si una recarga trae lo mismo, conserva el array
+   * anterior: así el desplegable no se vuelve a pintar (ni pierde la opción que se está pulsando) cuando llega la
+   * respuesta con la lista abierta.
    */
   protected readonly prizeOptions = computed(
     () => {
       if (this.model().prizeType === 'CONTENT') {
-        const items = this.content.hasValue() ? this.content.value().content : [];
-        return items
-          .filter((item) => item.status === 'PUBLISHED')
-          .map((item) => ({ label: item.title, value: item.id }));
+        return optionsFor(this.content.hasValue() ? this.content.value().content : []);
       }
-      const plans = this.plans.hasValue() ? this.plans.value().content : [];
-      return plans
-        .filter((plan) => plan.status === 'PUBLISHED')
-        .map((plan) => ({ label: plan.title, value: plan.id }));
+      return optionsFor(this.plans.hasValue() ? this.plans.value().content : []);
     },
     {
       equal: (a, b) =>
