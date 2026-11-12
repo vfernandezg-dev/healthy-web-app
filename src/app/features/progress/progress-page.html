@@ -2,7 +2,7 @@
   title="Tu progreso"
   description="Tu meta de peso, tus pesajes y cómo vas. Registra tu peso una vez por semana para ver la tendencia."
 >
-  @if (goals.hasValue() && !activeGoal()) {
+  @if (store.goals.hasValue() && !store.activeGoal()) {
     <button pButton type="button" (click)="goalDialog.open(null)">
       <svg lucidePlus></svg>
       Nueva meta
@@ -10,344 +10,94 @@
   }
 </app-page-header>
 
-@if (goals.error()) {
-  <app-load-error [error]="goals.error()" (retry)="goals.reload()" />
-} @else if (!goals.hasValue()) {
+@if (store.goals.error(); as error) {
+  <app-load-error [error]="error" (retry)="store.goals.reload()" />
+} @else if (!store.goals.hasValue()) {
   <div class="grid gap-6 xl:grid-cols-3" aria-busy="true">
     <p-skeleton height="14rem" borderRadius="1.5rem" styleClass="xl:col-span-2" />
     <p-skeleton height="14rem" borderRadius="1.5rem" />
   </div>
-} @else {
-  @if (activeGoal(); as goal) {
-    <div class="grid gap-6 xl:grid-cols-3 xl:items-start">
-      <div class="space-y-6 xl:col-span-2">
-        <section class="card p-6 sm:p-8" aria-labelledby="goal-title">
-          <div class="flex flex-wrap items-start justify-between gap-4">
-            <div class="min-w-0">
-              <p-tag [value]="statusLabels[goal.status]" [severity]="statusSeverity[goal.status]" />
-              <h2 id="goal-title" class="mt-2 text-2xl font-bold text-balance">{{ goal.title }}</h2>
-              <p class="text-sm text-muted">Desde el {{ goal.startedOn | date: 'longDate' }}</p>
-              @if (goal.description) {
-                <p class="mt-2 text-muted">{{ goal.description }}</p>
-              }
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <button
-                pButton
-                type="button"
-                size="small"
-                severity="secondary"
-                variant="text"
-                (click)="goalDialog.open(goal)"
-              >
-                <svg lucidePencil></svg>
-                Editar
-              </button>
-              <button
-                pButton
-                type="button"
-                size="small"
-                severity="secondary"
-                variant="outlined"
-                [disabled]="busy()"
-                (click)="abandon(goal)"
-              >
-                Abandonar
-              </button>
-              <button
-                pButton
-                type="button"
-                size="small"
-                [disabled]="busy()"
-                (click)="complete(goal)"
-              >
-                <svg lucideFlag></svg>
-                Dar por cumplida
-              </button>
-            </div>
-          </div>
+} @else if (store.activeGoal(); as goal) {
+  <div class="grid gap-6 xl:grid-cols-3 xl:items-start">
+    <div class="space-y-6 xl:col-span-2">
+      <app-goal-summary
+        [goal]="goal"
+        [progress]="store.progress()"
+        [pending]="store.complete.pending() || store.abandon.pending()"
+        (edit)="goalDialog.open(goal)"
+        (abandon)="store.abandon.run(goal)"
+        (complete)="store.complete.run(goal)"
+      />
 
-          @if (progress(); as status) {
-            <dl class="mt-6 grid gap-4 sm:grid-cols-3">
-              <div class="rounded-2xl bg-brand-50 p-4">
-                <dt class="text-sm text-muted">Objetivo</dt>
-                <dd class="text-2xl font-bold">{{ goal.targetWeightKg | number: '1.0-1' }} kg</dd>
-              </div>
-              <div class="rounded-2xl bg-brand-50 p-4">
-                <dt class="text-sm text-muted">Último pesaje</dt>
-                <dd class="text-2xl font-bold">
-                  @if (status.currentKg !== null) {
-                    {{ status.currentKg | number: '1.0-1' }} kg
-                  } @else {
-                    —
-                  }
-                </dd>
-              </div>
-              <div class="rounded-2xl bg-brand-50 p-4">
-                <dt class="text-sm text-muted">
-                  {{
-                    status.reached
-                      ? 'Estado'
-                      : status.losing
-                        ? 'Te quedan por bajar'
-                        : 'Te quedan por subir'
-                  }}
-                </dt>
-                <dd class="text-2xl font-bold">
-                  @if (status.reached) {
-                    ¡Objetivo alcanzado!
-                  } @else if (status.currentKg === null) {
-                    —
-                  } @else {
-                    {{ status.remainingKg | number: '1.0-1' }} kg
-                  }
-                </dd>
-              </div>
-            </dl>
-            @if (status.currentKg !== null) {
-              <div class="mt-5">
-                <p id="goal-progress-label" class="mb-1.5 text-sm font-medium text-muted">
-                  Avance desde tu primer pesaje: {{ status.percent }} %
-                </p>
-                <app-progress-bar [value]="status.percent" labelledBy="goal-progress-label" />
-              </div>
-            }
+      <section class="card p-6 sm:p-8" aria-labelledby="chart-title">
+        <h2 id="chart-title" class="text-xl font-bold">Evolución del peso</h2>
+        @if (store.entryList().length === 0) {
+          <p class="mt-3 text-muted">
+            Añade tu primer pesaje para empezar a ver tu evolución en el gráfico.
+          </p>
+        } @else {
+          @defer (on viewport; prefetch on idle) {
+            <app-weight-chart
+              class="mt-4"
+              [points]="store.chartPoints()"
+              [targetKg]="goal.targetWeightKg"
+            />
+          } @placeholder {
+            <div class="mt-4 h-72 rounded-2xl bg-brand-50"></div>
+          } @loading {
+            <p-skeleton height="18rem" borderRadius="1rem" styleClass="mt-4" />
           }
-        </section>
-
-        <section class="card p-6 sm:p-8" aria-labelledby="chart-title">
-          <h2 id="chart-title" class="text-xl font-bold">Evolución del peso</h2>
-          @if (entryList().length === 0) {
-            <p class="mt-3 text-muted">
-              Añade tu primer pesaje para empezar a ver tu evolución en el gráfico.
-            </p>
-          } @else {
-            @defer (on viewport; prefetch on idle) {
-              <app-weight-chart
-                class="mt-4"
-                [points]="chartPoints()"
-                [targetKg]="goal.targetWeightKg"
-              />
-            } @placeholder {
-              <div class="mt-4 h-72 rounded-2xl bg-brand-50"></div>
-            } @loading {
-              <p-skeleton height="18rem" borderRadius="1rem" styleClass="mt-4" />
-            }
-          }
-        </section>
-
-        <section class="card p-6 sm:p-8" aria-labelledby="entries-title">
-          <h2 id="entries-title" class="text-xl font-bold">Pesajes</h2>
-
-          <form
-            class="mt-5 grid gap-4 rounded-2xl bg-surface p-4 sm:grid-cols-[auto_minmax(0,10rem)_minmax(0,1fr)_auto] sm:items-start"
-            novalidate
-            (submit)="saveEntry($event, goal.id)"
-          >
-            <app-field label="Día" inputId="entry-date" [field]="entryForm.measuredOn">
-              <input
-                pInputText
-                id="entry-date"
-                type="date"
-                class="w-full"
-                [max]="today"
-                [formField]="entryForm.measuredOn"
-                [attr.aria-describedby]="describe('entry-date', entryForm.measuredOn)"
-              />
-            </app-field>
-            <app-field label="Peso" inputId="entry-weight" [field]="entryForm.weightKg">
-              <p-inputnumber
-                inputId="entry-weight"
-                suffix=" kg"
-                [minFractionDigits]="0"
-                [maxFractionDigits]="1"
-                [fluid]="true"
-                [formField]="entryForm.weightKg"
-                [ariaDescribedBy]="describe('entry-weight', entryForm.weightKg) ?? undefined"
-              />
-            </app-field>
-            <app-field
-              label="Nota"
-              inputId="entry-notes"
-              [field]="entryForm.notes"
-              [optional]="true"
-            >
-              <input
-                pInputText
-                id="entry-notes"
-                class="w-full"
-                [formField]="entryForm.notes"
-                [attr.aria-describedby]="describe('entry-notes', entryForm.notes)"
-              />
-            </app-field>
-            <div class="flex gap-2 sm:pt-7">
-              @if (editingEntry()) {
-                <button
-                  pButton
-                  type="button"
-                  severity="secondary"
-                  variant="text"
-                  (click)="cancelEdit()"
-                >
-                  Cancelar
-                </button>
-              }
-              <button pButton type="submit" [loading]="entryForm().submitting()">
-                {{ editingEntry() ? 'Guardar' : 'Añadir' }}
-              </button>
-            </div>
-          </form>
-
-          @if (entries.hasValue() && entriesNewestFirst().length > 0) {
-            <div class="mt-5 overflow-x-auto">
-              <table class="w-full text-left">
-                <caption class="sr-only">
-                  Tus pesajes, del más reciente al más antiguo
-                </caption>
-                <thead class="border-b border-brand-100 text-sm text-muted">
-                  <tr>
-                    <th scope="col" class="py-2 pr-4 font-semibold">Día</th>
-                    <th scope="col" class="py-2 pr-4 font-semibold">Peso</th>
-                    <th scope="col" class="py-2 pr-4 font-semibold">Nota</th>
-                    <th scope="col" class="py-2"><span class="sr-only">Acciones</span></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (entry of entriesNewestFirst(); track entry.id) {
-                    <tr class="border-b border-brand-50 last:border-0">
-                      <td class="py-2.5 pr-4">{{ entry.measuredOn | date: 'mediumDate' }}</td>
-                      <td class="py-2.5 pr-4 font-semibold">
-                        {{ entry.weightKg | number: '1.0-1' }} kg
-                      </td>
-                      <td class="py-2.5 pr-4 text-muted">{{ entry.notes }}</td>
-                      <td class="py-2.5 text-right whitespace-nowrap">
-                        <button
-                          pButton
-                          type="button"
-                          size="small"
-                          severity="secondary"
-                          variant="text"
-                          [iconOnly]="true"
-                          [attr.aria-label]="`Editar el pesaje del ${(entry.measuredOn | date: 'longDate')}`"
-                          (click)="editEntry(entry)"
-                        >
-                          <svg lucidePencil></svg>
-                        </button>
-                        <button
-                          pButton
-                          type="button"
-                          size="small"
-                          severity="danger"
-                          variant="text"
-                          [iconOnly]="true"
-                          [attr.aria-label]="`Borrar el pesaje del ${(entry.measuredOn | date: 'longDate')}`"
-                          (click)="deleteEntry(goal.id, entry)"
-                        >
-                          <svg lucideTrash></svg>
-                        </button>
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          }
-        </section>
-      </div>
-
-      <div class="space-y-6">
-        <section class="card p-6" aria-labelledby="recommendation-title">
-          <h2 id="recommendation-title" class="text-lg font-bold">Peso saludable</h2>
-          @if (recommendationProblem(); as problem) {
-            <p class="mt-2 text-muted">{{ problem.detail }}</p>
-            @if (problem.code === 'profile-incomplete') {
-              <a
-                routerLink="/client/profile"
-                class="mt-3 inline-block font-semibold text-brand-700 hover:underline"
-                >Completar mi perfil</a
-              >
-            }
-          } @else if (recommendation.hasValue()) {
-            @let advice = recommendation.value();
-            <p class="mt-2 text-muted">
-              Para tu altura ({{ advice.heightCm | number: '1.0-1' }} cm), un peso saludable está
-              entre
-              <strong class="text-ink"
-                >{{ advice.healthyMinKg | number: '1.0-1' }} y
-                {{ advice.healthyMaxKg | number: '1.0-1' }} kg</strong
-              >.
-            </p>
-            <p
-              class="mt-3 rounded-2xl p-3 text-sm font-medium"
-              [class]="
-                advice.targetInHealthyRange
-                  ? 'bg-brand-50 text-brand-900'
-                  : 'bg-amber-50 text-amber-900'
-              "
-            >
-              {{ advice.message }}
-            </p>
-            @if (advice.estimatedWeeks) {
-              <p class="mt-3 text-sm text-muted">
-                A unos {{ advice.weeklyChangeKg | number: '1.0-1' }} kg por semana, llegarías en
-                unas {{ advice.estimatedWeeks }} semanas.
-              </p>
-            }
-          } @else {
-            <p-skeleton height="6rem" styleClass="mt-3" />
-          }
-        </section>
-
-        @if (pastGoals().length > 0) {
-          <section class="card p-6" aria-labelledby="past-title">
-            <h2 id="past-title" class="text-lg font-bold">Metas anteriores</h2>
-            <ul class="mt-3 divide-y divide-brand-50" role="list">
-              @for (past of pastGoals(); track past.id) {
-                <li class="flex items-center justify-between gap-3 py-2.5">
-                  <span class="min-w-0">
-                    <span class="block truncate font-medium">{{ past.title }}</span>
-                    <span class="text-sm text-muted"
-                      >{{ past.targetWeightKg | number: '1.0-1' }} kg ·
-                      {{ past.completedAt ?? past.createdAt | date: 'mediumDate' }}</span
-                    >
-                  </span>
-                  <p-tag
-                    [value]="statusLabels[past.status]"
-                    [severity]="statusSeverity[past.status]"
-                  />
-                </li>
-              }
-            </ul>
-          </section>
         }
-      </div>
-    </div>
-  } @else {
-    <app-empty-state
-      [icon]="goalIcon"
-      title="Aún no tienes una meta activa"
-      description="Marca tu peso objetivo y registra tus pesajes: verás tu evolución y una recomendación de peso saludable."
-    >
-      <button pButton type="button" (click)="goalDialog.open(null)">Crear una meta</button>
-    </app-empty-state>
-    @if (pastGoals().length > 0) {
-      <section class="card mt-8 p-6" aria-labelledby="past-only-title">
-        <h2 id="past-only-title" class="text-lg font-bold">Metas anteriores</h2>
-        <ul class="mt-3 divide-y divide-brand-50" role="list">
-          @for (past of pastGoals(); track past.id) {
-            <li class="flex items-center justify-between gap-3 py-2.5">
-              <span class="font-medium">{{ past.title }}</span>
-              <p-tag [value]="statusLabels[past.status]" [severity]="statusSeverity[past.status]" />
-            </li>
-          }
-        </ul>
       </section>
-    }
+
+      <section class="card p-6 sm:p-8" aria-labelledby="entries-title">
+        <h2 id="entries-title" class="text-xl font-bold">Pesajes</h2>
+        <app-weight-entry-form
+          class="mt-5"
+          [goalId]="goal.id"
+          [(editing)]="editingEntry"
+          (saved)="entrySaved($event)"
+        />
+        @if (store.entriesNewestFirst().length > 0) {
+          <app-weight-entries-table
+            class="mt-5"
+            [entries]="store.entriesNewestFirst()"
+            (edit)="editingEntry.set($event)"
+            (remove)="store.deleteEntry.run(goal.id, $event)"
+          />
+        }
+      </section>
+    </div>
+
+    <div class="space-y-6">
+      <app-recommendation-card
+        [advice]="store.recommendation.hasValue() ? store.recommendation.value() : undefined"
+        [problem]="store.recommendationProblem()"
+      />
+      @if (store.pastGoals().length > 0) {
+        <app-past-goals [goals]="store.pastGoals()" />
+      }
+    </div>
+  </div>
+} @else {
+  <app-empty-state
+    [icon]="goalIcon"
+    title="Aún no tienes una meta activa"
+    description="Marca tu peso objetivo y registra tus pesajes: verás tu evolución y una recomendación de peso saludable."
+  >
+    <button pButton type="button" (click)="goalDialog.open(null)">Crear una meta</button>
+  </app-empty-state>
+  @if (store.pastGoals().length > 0) {
+    <app-past-goals class="mt-8" [goals]="store.pastGoals()" />
   }
 }
 
 @defer (when goalDialog.isOpen(); prefetch on idle) {
   @if (goalDialog.data(); as dialog) {
-    <app-goal-dialog [goal]="dialog.value" (saved)="goalSaved()" (closed)="goalDialog.close()" />
+    <app-goal-dialog
+      [goal]="dialog.value"
+      (saved)="store.goalSaved()"
+      (closed)="goalDialog.close()"
+    />
   }
 }

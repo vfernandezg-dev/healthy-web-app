@@ -1,0 +1,86 @@
+@let current = goal();
+<div class="flex flex-wrap items-start justify-between gap-4">
+  <div class="min-w-0">
+    <p-tag [value]="statusLabels[current.status]" [severity]="statusSeverity[current.status]" />
+    <h2 id="goal-title" class="mt-2 text-2xl font-bold text-balance">{{ current.title }}</h2>
+    <p class="text-sm text-muted">Desde el {{ current.startedOn | date: 'longDate' }}</p>
+    @if (current.description) {
+      <p class="mt-2 text-muted">{{ current.description }}</p>
+    }
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <button
+      pButton
+      type="button"
+      size="small"
+      severity="secondary"
+      variant="text"
+      (click)="edit.emit()"
+    >
+      <svg lucidePencil></svg>
+      Editar
+    </button>
+    <button
+      pButton
+      type="button"
+      size="small"
+      severity="secondary"
+      variant="outlined"
+      [disabled]="pending()"
+      (click)="abandon.emit()"
+    >
+      Abandonar
+    </button>
+    <button pButton type="button" size="small" [disabled]="pending()" (click)="complete.emit()">
+      <svg lucideFlag></svg>
+      Dar por cumplida
+    </button>
+  </div>
+</div>
+
+@if (progress(); as status) {
+  <dl class="mt-6 grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl bg-brand-50 p-4">
+      <dt class="text-sm text-muted">Objetivo</dt>
+      <dd class="text-2xl font-bold">{{ current.targetWeightKg | number: '1.0-1' }} kg</dd>
+    </div>
+    <div class="rounded-2xl bg-brand-50 p-4">
+      <dt class="text-sm text-muted">Último pesaje</dt>
+      <dd class="text-2xl font-bold">
+        @if (status.currentKg !== null) {
+          {{ status.currentKg | number: '1.0-1' }} kg
+        } @else {
+          —
+        }
+      </dd>
+    </div>
+    <div class="rounded-2xl bg-brand-50 p-4">
+      <dt class="text-sm text-muted">
+        @if (status.reached) {
+          Estado
+        } @else if (status.losing) {
+          Te quedan por bajar
+        } @else {
+          Te quedan por subir
+        }
+      </dt>
+      <dd class="text-2xl font-bold">
+        @if (status.reached) {
+          ¡Objetivo alcanzado!
+        } @else if (status.currentKg === null) {
+          —
+        } @else {
+          {{ status.remainingKg | number: '1.0-1' }} kg
+        }
+      </dd>
+    </div>
+  </dl>
+  @if (status.currentKg !== null) {
+    <div class="mt-5">
+      <p id="goal-progress-label" class="mb-1.5 text-sm font-medium text-muted">
+        Avance desde tu primer pesaje: {{ status.percent }} %
+      </p>
+      <app-progress-bar [value]="status.percent" labelledBy="goal-progress-label" />
+    </div>
+  }
+}

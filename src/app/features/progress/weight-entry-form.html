@@ -1,0 +1,47 @@
+<form
+  class="grid gap-4 rounded-2xl bg-surface p-4 sm:grid-cols-[auto_minmax(0,10rem)_minmax(0,1fr)_auto] sm:items-start"
+  novalidate
+  (submit)="save($event)"
+>
+  <app-field label="Día" inputId="entry-date" [field]="entryForm.measuredOn">
+    <input
+      pInputText
+      id="entry-date"
+      type="date"
+      class="w-full"
+      [max]="today"
+      [formField]="entryForm.measuredOn"
+      [attr.aria-describedby]="describe('entry-date', entryForm.measuredOn)"
+    />
+  </app-field>
+  <app-field label="Peso" inputId="entry-weight" [field]="entryForm.weightKg">
+    <p-inputnumber
+      inputId="entry-weight"
+      suffix=" kg"
+      [minFractionDigits]="0"
+      [maxFractionDigits]="1"
+      [fluid]="true"
+      [formField]="entryForm.weightKg"
+      [ariaDescribedBy]="describe('entry-weight', entryForm.weightKg) ?? undefined"
+    />
+  </app-field>
+  <app-field label="Nota" inputId="entry-notes" [field]="entryForm.notes" [optional]="true">
+    <input
+      pInputText
+      id="entry-notes"
+      class="w-full"
+      [formField]="entryForm.notes"
+      [attr.aria-describedby]="describe('entry-notes', entryForm.notes)"
+    />
+  </app-field>
+  <div class="flex gap-2 sm:pt-7">
+    @if (editing()) {
+      <button pButton type="button" severity="secondary" variant="text" (click)="cancel()">
+        Cancelar
+      </button>
+    }
+    <button pButton type="submit" [loading]="entryForm().submitting()">
+      {{ editing() ? 'Guardar' : 'Añadir' }}
+    </button>
+  </div>
+</form>

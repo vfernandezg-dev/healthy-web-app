@@ -1,0 +1,49 @@
+<table class="w-full text-left">
+  <caption class="sr-only">
+    Tus pesajes, del más reciente al más antiguo
+  </caption>
+  <thead class="border-b border-brand-100 text-sm text-muted">
+    <tr>
+      <th scope="col" class="py-2 pr-4 font-semibold">Día</th>
+      <th scope="col" class="py-2 pr-4 font-semibold">Peso</th>
+      <th scope="col" class="py-2 pr-4 font-semibold">Nota</th>
+      <th scope="col" class="py-2"><span class="sr-only">Acciones</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (entry of entries(); track entry.id) {
+      @let day = entry.measuredOn | date: 'longDate';
+      <tr class="border-b border-brand-50 last:border-0">
+        <td class="py-2.5 pr-4">{{ entry.measuredOn | date: 'mediumDate' }}</td>
+        <td class="py-2.5 pr-4 font-semibold">{{ entry.weightKg | number: '1.0-1' }} kg</td>
+        <td class="py-2.5 pr-4 text-muted">{{ entry.notes }}</td>
+        <td class="py-2.5 text-right whitespace-nowrap">
+          <button
+            pButton
+            type="button"
+            size="small"
+            severity="secondary"
+            variant="text"
+            [iconOnly]="true"
+            [attr.aria-label]="`Editar el pesaje del ${day}`"
+            (click)="edit.emit(entry)"
+          >
+            <svg lucidePencil></svg>
+          </button>
+          <button
+            pButton
+            type="button"
+            size="small"
+            severity="danger"
+            variant="text"
+            [iconOnly]="true"
+            [attr.aria-label]="`Borrar el pesaje del ${day}`"
+            (click)="remove.emit(entry)"
+          >
+            <svg lucideTrash></svg>
+          </button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
