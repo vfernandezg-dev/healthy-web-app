@@ -3,12 +3,12 @@ import { form, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { LucideArrowLeft } from '@lucide/angular';
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
-import { toProblem } from '../../../core/api/problem';
-import { Toaster } from '../../../core/ui/toaster';
-import { focusFirstInvalid, serverFieldErrors } from '../../../shared/forms/server-errors';
-import { PageHeader } from '../../../shared/ui/page-header';
+import { toProblem } from '@core/api/problem';
+import { Toaster } from '@core/ui/toaster';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
+import { PageHeader } from '@shared/ui/page-header';
 import { MealPlansApi } from '../data/meal-plans-api';
-import { PlanFields, emptyPlan, planSchema, toPlanRequest } from './plan-fields';
+import { PlanFields, emptyPlan, planSchema, toPlanRequest } from '../ui/plan-fields';
 
 /** Nuevo plan: se crea como borrador y se pasa a su editor para añadir las comidas. */
 @Component({

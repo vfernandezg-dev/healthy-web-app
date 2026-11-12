@@ -10,14 +10,14 @@ import { InputText } from 'primeng/inputtext';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { Skeleton } from 'primeng/skeleton';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import type { GroupResponse } from '../../core/api/schema';
-import { Toaster } from '../../core/ui/toaster';
-import { EmptyState } from '../../shared/ui/empty-state';
-import { LoadError } from '../../shared/ui/load-error';
-import { PageHeader } from '../../shared/ui/page-header';
+import type { GroupResponse } from '@core/api/schema';
+import { Toaster } from '@core/ui/toaster';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
 import { CommunityApi, GROUP_PAGE_SIZE } from './data/community-api';
 import { GroupDialog } from './group-dialog';
-import { GroupCard } from './shared/group-card';
+import { GroupCard } from './ui/group-card';
 
 /** Directorio de grupos de la comunidad, con búsqueda; desde aquí se crea un grupo nuevo. */
 @Component({

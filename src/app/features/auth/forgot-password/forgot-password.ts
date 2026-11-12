@@ -5,11 +5,11 @@ import { LucideMailCheck } from '@lucide/angular';
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
-import { toProblem } from '../../../core/api/problem';
-import { AuthApi } from '../../../core/auth/auth-api';
-import { LabeledField, fieldDescription } from '../../../shared/forms/labeled-field';
-import { focusFirstInvalid } from '../../../shared/forms/server-errors';
-import { MESSAGES } from '../../../shared/forms/validation';
+import { toProblem } from '@core/api/problem';
+import { AuthApi } from '@core/auth/auth-api';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { focusFirstInvalid } from '@shared/forms/server-errors';
+import { MESSAGES } from '@shared/forms/validation';
 
 /** Pide el enlace para restablecer la contraseña. La respuesta es la misma exista o no la cuenta. */
 @Component({

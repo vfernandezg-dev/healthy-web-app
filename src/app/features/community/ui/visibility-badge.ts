@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { LucideGlobe, LucideLock } from '@lucide/angular';
-import { GROUP_VISIBILITY_LABELS, type GroupVisibility } from '../../../shared/i18n/labels';
+import { GROUP_VISIBILITY_LABELS, type GroupVisibility } from '@shared/i18n/labels';
 
 /** Grupo público (cualquiera entra y lee) o privado (el creador aprueba cada entrada). */
 @Component({

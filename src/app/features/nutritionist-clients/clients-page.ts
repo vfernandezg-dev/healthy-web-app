@@ -11,15 +11,15 @@ import { InputText } from 'primeng/inputtext';
 import { Skeleton } from 'primeng/skeleton';
 import { Table, type TableLazyLoadEvent } from 'primeng/table';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import type { NutritionistClientResponse } from '../../core/api/schema';
-import { pageOf } from '../../shared/table/page-query';
-import { RowTemplate } from '../../shared/table/row-template';
-import { EmptyState } from '../../shared/ui/empty-state';
-import { LoadError } from '../../shared/ui/load-error';
-import { PageHeader } from '../../shared/ui/page-header';
-import { PersonAvatar } from '../../shared/ui/person-avatar';
-import { lastValue, sameValues } from '../../shared/utils/last-value';
-import { bmiCategory, bmiOf } from './bmi';
+import type { NutritionistClientResponse } from '@core/api/schema';
+import { pageOf } from '@shared/table/page-query';
+import { RowTemplate } from '@shared/table/row-template';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
+import { PersonAvatar } from '@shared/ui/person-avatar';
+import { lastValue, sameValues } from '@shared/utils/last-value';
+import { bmiCategory, bmiOf } from './data/bmi';
 import { CLIENTS_PAGE_SIZE, ClientsApi } from './data/clients-api';
 
 /** Fila de la tabla: los datos de la API más el IMC y su categoría. */

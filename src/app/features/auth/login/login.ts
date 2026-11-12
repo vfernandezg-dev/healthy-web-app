@@ -4,13 +4,13 @@ import { Router, RouterLink } from '@angular/router';
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
-import { toProblem } from '../../../core/api/problem';
-import { AuthStore } from '../../../core/auth/auth-store';
-import { safeReturnUrl } from '../../../core/auth/roles';
-import { LabeledField, fieldDescription } from '../../../shared/forms/labeled-field';
-import { PasswordField, PasswordInput } from '../../../shared/forms/password-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../../shared/forms/server-errors';
-import { MESSAGES } from '../../../shared/forms/validation';
+import { toProblem } from '@core/api/problem';
+import { AuthStore } from '@core/auth/auth-store';
+import { safeReturnUrl } from '@core/auth/roles';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { PasswordField, PasswordInput } from '@shared/forms/password-field';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
+import { MESSAGES } from '@shared/forms/validation';
 
 @Component({
   selector: 'app-login',

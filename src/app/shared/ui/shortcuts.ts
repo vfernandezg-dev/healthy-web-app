@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideArrowRight, LucideDynamicIcon } from '@lucide/angular';
-import type { NavItem } from '../../layout/app-shell/nav-config';
+import type { NavItem } from '@core/routing/navigation';
 
 /** Accesos directos a las secciones de un rol (las del menú que tienen descripción). */
 @Component({

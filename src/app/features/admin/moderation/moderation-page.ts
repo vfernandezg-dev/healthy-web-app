@@ -6,16 +6,16 @@ import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { SelectButton } from 'primeng/selectbutton';
 import { Skeleton } from 'primeng/skeleton';
-import { Toaster } from '../../../core/ui/toaster';
+import { Toaster } from '@core/ui/toaster';
 import {
   REPORT_STATUS_LABELS,
   REPORT_TARGET_LABELS,
   type ReportStatus,
   optionsOf,
-} from '../../../shared/i18n/labels';
-import { EmptyState } from '../../../shared/ui/empty-state';
-import { LoadError } from '../../../shared/ui/load-error';
-import { PageHeader } from '../../../shared/ui/page-header';
+} from '@shared/i18n/labels';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
 import { ADMIN_PAGE_SIZE, AdminApi } from '../data/admin-api';
 import { ResolveDialog } from './resolve-dialog';
 

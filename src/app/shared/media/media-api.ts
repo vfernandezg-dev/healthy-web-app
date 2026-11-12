@@ -1,9 +1,9 @@
 import { HttpClient, type HttpEvent, HttpEventType } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { type Observable, filter, map } from 'rxjs';
-import { APP_CONFIG } from '../../core/api/api-config';
-import { silentErrors } from '../../core/api/http-context';
-import type { UploadResponse } from '../../core/api/schema';
+import { APP_CONFIG } from '@core/api/api-config';
+import { silentErrors } from '@core/api/http-context';
+import type { UploadResponse } from '@core/api/schema';
 
 export type MediaPurpose = 'POST_IMAGE' | 'CONTENT_COVER' | 'CONTENT_FILE';
 

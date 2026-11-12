@@ -10,19 +10,19 @@ import {
 } from '@lucide/angular';
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
-import { AuthStore } from '../../core/auth/auth-store';
-import { NAVIGATION } from '../../layout/app-shell/nav-config';
-import { HabitsApi } from '../habits/data/habits-api';
-import { ProgressApi } from '../progress/data/progress-api';
-import { goalProgress } from '../progress/progress-math';
-import { RewardsApi } from '../rewards/data/rewards-api';
-import { BillingApi } from '../subscription/data/billing-api';
-import { EmptyState } from '../../shared/ui/empty-state';
-import { PageHeader } from '../../shared/ui/page-header';
-import { ProgressBar } from '../../shared/ui/progress-bar';
-import { TierBadge } from '../../shared/ui/tier-badge';
-import { todayIso } from '../../shared/utils/date';
-import { Shortcuts } from './shortcuts';
+import { AuthStore } from '@core/auth/auth-store';
+import { NAVIGATION } from '@core/routing/navigation';
+import { HabitsApi } from '@features/habits/data/habits-api';
+import { ProgressApi } from '@features/progress/data/progress-api';
+import { goalProgress } from '@features/progress/data/progress-math';
+import { RewardsApi } from '@features/rewards/data/rewards-api';
+import { BillingApi } from '@features/subscription/data/billing-api';
+import { EmptyState } from '@shared/ui/empty-state';
+import { PageHeader } from '@shared/ui/page-header';
+import { ProgressBar } from '@shared/ui/progress-bar';
+import { TierBadge } from '@shared/ui/tier-badge';
+import { todayIso } from '@shared/utils/date';
+import { Shortcuts } from '@shared/ui/shortcuts';
 
 /** Inicio del cliente: su meta, los hábitos de hoy, su plan de suscripción y las rachas en curso. */
 @Component({

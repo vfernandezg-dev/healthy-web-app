@@ -4,20 +4,20 @@ import { LucideReceipt } from '@lucide/angular';
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
-import type { PlanResponse } from '../../core/api/schema';
-import { ExternalNavigation, isPayPalUrl } from '../../core/routing/external-navigation';
-import { Confirmer } from '../../core/ui/confirmer';
-import { Toaster } from '../../core/ui/toaster';
+import type { PlanResponse } from '@core/api/schema';
+import { ExternalNavigation, isPayPalUrl } from '@core/routing/external-navigation';
+import { Confirmer } from '@core/ui/confirmer';
+import { Toaster } from '@core/ui/toaster';
 import {
   PAYMENT_STATUS_LABELS,
   PAYMENT_STATUS_SEVERITY,
   TIER_LABELS,
   type Tier,
-} from '../../shared/i18n/labels';
-import { MoneyPipe } from '../../shared/pipes/money.pipe';
-import { EmptyState } from '../../shared/ui/empty-state';
-import { LoadError } from '../../shared/ui/load-error';
-import { PageHeader } from '../../shared/ui/page-header';
+} from '@shared/i18n/labels';
+import { MoneyPipe } from '@shared/pipes/money.pipe';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
 import { BillingApi } from './data/billing-api';
 
 const TIER_ORDER: readonly Tier[] = ['BASIC', 'PREMIUM', 'VIP'];

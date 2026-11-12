@@ -1,8 +1,8 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, type Signal, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import { silentErrors } from '../../../core/api/http-context';
+import { APP_CONFIG } from '@core/api/api-config';
+import { silentErrors } from '@core/api/http-context';
 import type {
   EnrollmentResponse,
   MealPlanDetailResponse,
@@ -10,8 +10,8 @@ import type {
   MealRequest,
   MealResponse,
   PagedModelMealPlanSummaryResponse,
-} from '../../../core/api/schema';
-import type { MealPlanGoal } from '../../../shared/i18n/labels';
+} from '@core/api/schema';
+import type { MealPlanGoal } from '@shared/i18n/labels';
 
 export const CATALOG_PAGE_SIZE = 12;
 

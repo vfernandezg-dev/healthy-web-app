@@ -1,7 +1,7 @@
 import { httpResource } from '@angular/common/http';
 import { Injectable, type Signal, inject } from '@angular/core';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import type { PagedModelNutritionistClientResponse } from '../../../core/api/schema';
+import { APP_CONFIG } from '@core/api/api-config';
+import type { PagedModelNutritionistClientResponse } from '@core/api/schema';
 
 export const CLIENTS_PAGE_SIZE = 20;
 

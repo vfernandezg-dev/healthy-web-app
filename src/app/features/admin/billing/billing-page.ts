@@ -7,12 +7,12 @@ import {
 } from '@lucide/angular';
 import { Skeleton } from 'primeng/skeleton';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { MoneyPipe } from '../../../shared/pipes/money.pipe';
-import { LoadError } from '../../../shared/ui/load-error';
-import { PageHeader } from '../../../shared/ui/page-header';
-import { StatCard } from '../../../shared/ui/stat-card';
+import { MoneyPipe } from '@shared/pipes/money.pipe';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
+import { StatCard } from '@shared/ui/stat-card';
 import { AdminApi } from '../data/admin-api';
-import { activeSubscriptions, formatAmounts } from './billing-summary';
+import { activeSubscriptions, formatAmounts } from '../data/billing-summary';
 import { PaymentsTable } from './payments-table';
 import { SubscriptionsTable } from './subscriptions-table';
 

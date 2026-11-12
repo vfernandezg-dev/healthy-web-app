@@ -1,5 +1,5 @@
 import { type Signal, computed, linkedSignal, signal } from '@angular/core';
-import type { PageMetadata } from '../../core/api/schema';
+import type { PageMetadata } from '@core/api/schema';
 
 /** Una página de un listado de la API (`PagedModel`). */
 export interface Paged<T> {

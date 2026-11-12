@@ -15,14 +15,14 @@ import {
   SUBSCRIPTION_STATUS_SEVERITY,
   TIER_LABELS,
   optionsOf,
-} from '../../../shared/i18n/labels';
-import { type PageQuery, pageQueryOf, samePageQuery } from '../../../shared/table/page-query';
-import { LoadError } from '../../../shared/ui/load-error';
-import { SortIcon } from '../../../shared/ui/sort-icon';
-import { TierBadge } from '../../../shared/ui/tier-badge';
+} from '@shared/i18n/labels';
+import { type PageQuery, pageQueryOf, samePageQuery } from '@shared/table/page-query';
+import { LoadError } from '@shared/ui/load-error';
+import { SortIcon } from '@shared/ui/sort-icon';
+import { TierBadge } from '@shared/ui/tier-badge';
 import { ADMIN_PAGE_SIZE, AdminApi } from '../data/admin-api';
-import { RowTemplate } from '../../../shared/table/row-template';
-import { lastValue, sameValues } from '../../../shared/utils/last-value';
+import { RowTemplate } from '@shared/table/row-template';
+import { lastValue, sameValues } from '@shared/utils/last-value';
 
 const DEFAULT_SORT = 'createdAt,desc';
 

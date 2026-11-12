@@ -4,9 +4,9 @@ import { ButtonDirective, ButtonLabel } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
-import { toProblem } from '../../core/api/problem';
-import { LabeledField, fieldDescription } from '../../shared/forms/labeled-field';
-import { focusFirstInvalid } from '../../shared/forms/server-errors';
+import { toProblem } from '@core/api/problem';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { focusFirstInvalid } from '@shared/forms/server-errors';
 import { CommunityApi } from './data/community-api';
 
 /** Denunciar una publicación o un comentario (lo revisa un ADMIN). Se abre con {@link ReportDialog.open}. */

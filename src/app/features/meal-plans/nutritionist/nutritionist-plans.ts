@@ -5,15 +5,12 @@ import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
-import {
-  PUBLICATION_STATUS_LABELS,
-  PUBLICATION_STATUS_SEVERITY,
-} from '../../../shared/i18n/labels';
-import { EmptyState } from '../../../shared/ui/empty-state';
-import { LoadError } from '../../../shared/ui/load-error';
-import { PageHeader } from '../../../shared/ui/page-header';
+import { PUBLICATION_STATUS_LABELS, PUBLICATION_STATUS_SEVERITY } from '@shared/i18n/labels';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
 import { MealPlansApi } from '../data/meal-plans-api';
-import { PlanCard } from '../shared/plan-card';
+import { PlanCard } from '../ui/plan-card';
 
 /** Los planes del nutricionista, en cualquier estado. */
 @Component({

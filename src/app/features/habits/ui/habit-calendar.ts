@@ -1,7 +1,7 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
-import type { HabitLogResponse } from '../../core/api/schema';
-import { addDays } from '../../shared/utils/date';
+import type { HabitLogResponse } from '@core/api/schema';
+import { addDays } from '@shared/utils/date';
 
 interface Day {
   readonly date: string;

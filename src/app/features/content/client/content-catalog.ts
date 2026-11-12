@@ -16,12 +16,12 @@ import {
   type ContentCategory,
   type ContentType,
   optionsOf,
-} from '../../../shared/i18n/labels';
-import { EmptyState } from '../../../shared/ui/empty-state';
-import { LoadError } from '../../../shared/ui/load-error';
-import { PageHeader } from '../../../shared/ui/page-header';
+} from '@shared/i18n/labels';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
 import { CONTENT_PAGE_SIZE, ContentApi } from '../data/content-api';
-import { ContentCard } from '../shared/content-card';
+import { ContentCard } from '../ui/content-card';
 
 /** Catálogo de artículos, vídeos y guías, con búsqueda y filtros; lo desbloqueado con recompensas, arriba. */
 @Component({

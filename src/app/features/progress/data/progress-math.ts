@@ -1,4 +1,4 @@
-import type { WeightEntryResponse } from '../../core/api/schema';
+import type { WeightEntryResponse } from '@core/api/schema';
 
 export interface GoalProgress {
   /** Último pesaje (null si aún no hay). */

@@ -1,15 +1,15 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, type Signal, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import { silentErrors } from '../../../core/api/http-context';
+import { APP_CONFIG } from '@core/api/api-config';
+import { silentErrors } from '@core/api/http-context';
 import type {
   PagedModelContentSummaryResponse,
   PagedModelMealPlanSummaryResponse,
   PagedModelRewardResponse,
   RewardRequest,
   RewardResponse,
-} from '../../../core/api/schema';
+} from '@core/api/schema';
 
 export const REWARD_PAGE_SIZE = 12;
 

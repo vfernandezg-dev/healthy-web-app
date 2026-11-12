@@ -6,6 +6,44 @@ import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+/**
+ * Fronteras entre capas (docs/frontend-guidelines.md): core ← shared ← features, y layout aparte. De otra feature
+ * solo se importa su `data/` (API y modelos); sus páginas y componentes son internos. Fuera de la propia carpeta se
+ * importa con alias, nunca con `../../`.
+ */
+const LAYERS = {
+  'src/app/core/**': ['@shared', '@features', '@layout'],
+  'src/app/shared/**': ['@features', '@layout'],
+  'src/app/layout/**': ['@features'],
+  'src/app/features/**': ['@layout'],
+};
+
+const COMMON_RESTRICTIONS = [
+  {
+    regex: String.raw`^\.\./\.\./`,
+    message:
+      'Fuera de la propia carpeta, importa con el alias (@core, @shared, @layout, @features).',
+  },
+];
+
+function boundaries(files, forbidden) {
+  const patterns = [
+    ...COMMON_RESTRICTIONS,
+    ...forbidden.map((alias) => ({
+      regex: `^${alias}/`,
+      message: `Esta capa no puede depender de ${alias} (ver docs/frontend-guidelines.md).`,
+    })),
+  ];
+  if (files === 'src/app/features/**') {
+    patterns.push({
+      regex: '^@features/[^/]+/(?!data/)',
+      message:
+        'De otra feature solo se importa su data/ (API y modelos); dentro de la misma, con rutas relativas.',
+    });
+  }
+  return { files: [files], rules: { 'no-restricted-imports': ['error', { patterns }] } };
+}
+
 export default defineConfig(
   {
     ignores: [
@@ -14,6 +52,7 @@ export default defineConfig(
       'node_modules/',
       'coverage/',
       'playwright-report/',
+      'playwright-report-fullstack/',
       'test-results/',
       // Generado desde el contrato OpenAPI (pnpm api:gen).
       'src/app/core/api/schema.d.ts',
@@ -50,6 +89,7 @@ export default defineConfig(
       'no-console': ['error', { allow: ['warn', 'error'] }],
     },
   },
+  ...Object.entries(LAYERS).map(([files, forbidden]) => boundaries(files, forbidden)),
   {
     files: ['**/*.html'],
     extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],

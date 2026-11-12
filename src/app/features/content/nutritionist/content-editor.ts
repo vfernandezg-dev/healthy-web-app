@@ -5,15 +5,12 @@ import { LucideArchive, LucideArrowLeft, LucideSend, LucideTrash2 } from '@lucid
 import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
-import { toProblem } from '../../../core/api/problem';
-import { Confirmer } from '../../../core/ui/confirmer';
-import { Toaster } from '../../../core/ui/toaster';
-import { focusFirstInvalid, serverFieldErrors } from '../../../shared/forms/server-errors';
-import {
-  PUBLICATION_STATUS_LABELS,
-  PUBLICATION_STATUS_SEVERITY,
-} from '../../../shared/i18n/labels';
-import { LoadError } from '../../../shared/ui/load-error';
+import { toProblem } from '@core/api/problem';
+import { Confirmer } from '@core/ui/confirmer';
+import { Toaster } from '@core/ui/toaster';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
+import { PUBLICATION_STATUS_LABELS, PUBLICATION_STATUS_SEVERITY } from '@shared/i18n/labels';
+import { LoadError } from '@shared/ui/load-error';
 import { ContentApi } from '../data/content-api';
 import {
   ContentFields,
@@ -21,7 +18,7 @@ import {
   contentSchema,
   emptyContent,
   toContentRequest,
-} from './content-fields';
+} from '../ui/content-fields';
 
 /** Editor de un contenido del nutricionista: texto, portada, fichero y publicación. */
 @Component({

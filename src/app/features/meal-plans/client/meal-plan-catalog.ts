@@ -4,12 +4,12 @@ import { LucideUtensils } from '@lucide/angular';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { SelectButton } from 'primeng/selectbutton';
 import { Skeleton } from 'primeng/skeleton';
-import { GOAL_LABELS, type MealPlanGoal, optionsOf } from '../../../shared/i18n/labels';
-import { EmptyState } from '../../../shared/ui/empty-state';
-import { LoadError } from '../../../shared/ui/load-error';
-import { PageHeader } from '../../../shared/ui/page-header';
+import { GOAL_LABELS, type MealPlanGoal, optionsOf } from '@shared/i18n/labels';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
 import { CATALOG_PAGE_SIZE, MealPlansApi } from '../data/meal-plans-api';
-import { PlanCard } from '../shared/plan-card';
+import { PlanCard } from '../ui/plan-card';
 
 /** Catálogo de planes publicados, con los que sigue el cliente arriba. */
 @Component({

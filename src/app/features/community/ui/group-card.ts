@@ -2,8 +2,8 @@ import { I18nPluralPipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideUsers } from '@lucide/angular';
-import type { GroupResponse } from '../../../core/api/schema';
-import { MEMBERS_PLURAL, membershipLabel } from './membership';
+import type { GroupResponse } from '@core/api/schema';
+import { MEMBERS_PLURAL, membershipLabel } from '../data/membership';
 import { VisibilityBadge } from './visibility-badge';
 
 /** Tarjeta de un grupo del directorio. */

@@ -1,4 +1,4 @@
-import type { WeightEntryResponse } from '../../core/api/schema';
+import type { WeightEntryResponse } from '@core/api/schema';
 import { goalProgress } from './progress-math';
 
 const entry = (weightKg: number, day: number): WeightEntryResponse => ({

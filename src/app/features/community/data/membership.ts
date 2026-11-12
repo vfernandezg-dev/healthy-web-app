@@ -1,4 +1,4 @@
-import type { GroupResponse } from '../../../core/api/schema';
+import type { GroupResponse } from '@core/api/schema';
 
 export type Membership = NonNullable<GroupResponse['membership']>;
 

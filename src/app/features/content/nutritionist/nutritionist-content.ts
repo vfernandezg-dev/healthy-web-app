@@ -5,15 +5,12 @@ import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
-import {
-  PUBLICATION_STATUS_LABELS,
-  PUBLICATION_STATUS_SEVERITY,
-} from '../../../shared/i18n/labels';
-import { EmptyState } from '../../../shared/ui/empty-state';
-import { LoadError } from '../../../shared/ui/load-error';
-import { PageHeader } from '../../../shared/ui/page-header';
+import { PUBLICATION_STATUS_LABELS, PUBLICATION_STATUS_SEVERITY } from '@shared/i18n/labels';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
 import { ContentApi } from '../data/content-api';
-import { ContentCard } from '../shared/content-card';
+import { ContentCard } from '../ui/content-card';
 
 /** El contenido del nutricionista, en cualquier estado. */
 @Component({

@@ -1,5 +1,5 @@
 import { LOCALE_ID, Pipe, type PipeTransform, inject } from '@angular/core';
-import type { Money } from '../../core/api/schema';
+import type { Money } from '@core/api/schema';
 
 /** Importe de la API (`{amount: "5.99", currency: "USD"}`) con el formato de la app: `5,99 US$`. */
 @Pipe({ name: 'money' })

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideHouse } from '@lucide/angular';
 import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
-import { BrandLogo } from '../../shared/ui/brand-logo';
+import { BrandLogo } from '@shared/ui/brand-logo';
 
 @Component({
   selector: 'app-not-found',

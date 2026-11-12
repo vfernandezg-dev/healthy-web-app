@@ -1,5 +1,5 @@
 import type { FieldTree, TreeValidationResult, ValidationError } from '@angular/forms/signals';
-import type { Problem } from '../../core/api/problem';
+import type { Problem } from '@core/api/problem';
 
 /**
  * Convierte los errores de campo de un 422 de la API (`errors[{field, message}]`) en errores de Signal Forms,

@@ -4,8 +4,8 @@ import { RouterLink } from '@angular/router';
 import { LucideCircleCheck, LucideCircleX } from '@lucide/angular';
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { toProblem } from '../../core/api/problem';
-import { TIER_LABELS } from '../../shared/i18n/labels';
+import { toProblem } from '@core/api/problem';
+import { TIER_LABELS } from '@shared/i18n/labels';
 import { BillingApi } from './data/billing-api';
 
 /**

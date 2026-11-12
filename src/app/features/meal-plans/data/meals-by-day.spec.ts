@@ -1,4 +1,4 @@
-import type { MealResponse } from '../../../core/api/schema';
+import type { MealResponse } from '@core/api/schema';
 import { mealsByDay } from './meals-by-day';
 
 function meal(id: string, dayNumber: number, position: number, calories: number): MealResponse {

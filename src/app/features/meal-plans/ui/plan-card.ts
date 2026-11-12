@@ -2,9 +2,9 @@ import { DecimalPipe } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideCalendarDays, LucideFlame } from '@lucide/angular';
-import type { MealPlanSummaryResponse } from '../../../core/api/schema';
-import { GOAL_LABELS } from '../../../shared/i18n/labels';
-import { TierBadge } from '../../../shared/ui/tier-badge';
+import type { MealPlanSummaryResponse } from '@core/api/schema';
+import { GOAL_LABELS } from '@shared/i18n/labels';
+import { TierBadge } from '@shared/ui/tier-badge';
 
 /** Tarjeta de un plan en un listado; toda la tarjeta enlaza al detalle. */
 @Component({

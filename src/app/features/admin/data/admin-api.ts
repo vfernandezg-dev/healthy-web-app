@@ -1,8 +1,8 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, type Signal, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import { silentErrors } from '../../../core/api/http-context';
+import { APP_CONFIG } from '@core/api/api-config';
+import { silentErrors } from '@core/api/http-context';
 import type {
   AdminUserResponse,
   BillingSummaryResponse,
@@ -16,9 +16,10 @@ import type {
   ReportResponse,
   ResolveRequest,
   UserSummaryResponse,
-} from '../../../core/api/schema';
-import { type PageQuery, pageParams } from '../../../shared/table/page-query';
-import type { ReportStatus, Role, UserStatus } from '../../../shared/i18n/labels';
+} from '@core/api/schema';
+import { type PageQuery, pageParams } from '@shared/table/page-query';
+import type { Role } from '@core/auth/roles';
+import type { ReportStatus, UserStatus } from '@shared/i18n/labels';
 
 export const ADMIN_PAGE_SIZE = 20;
 

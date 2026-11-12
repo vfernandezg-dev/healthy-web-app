@@ -4,20 +4,20 @@ import { RouterLink } from '@angular/router';
 import { LucideArrowLeft, LucideDownload, LucideLock, LucidePlay } from '@lucide/angular';
 import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import { toProblem } from '../../../core/api/problem';
-import { ExternalNavigation } from '../../../core/routing/external-navigation';
+import { APP_CONFIG } from '@core/api/api-config';
+import { toProblem } from '@core/api/problem';
+import { ExternalNavigation } from '@core/routing/external-navigation';
 import {
   CONTENT_CATEGORY_LABELS,
   CONTENT_TYPE_LABELS,
   TIER_LABELS,
   type Tier,
-} from '../../../shared/i18n/labels';
-import { MediaUrlPipe } from '../../../shared/pipes/media-url.pipe';
-import { LoadError } from '../../../shared/ui/load-error';
-import { TierBadge } from '../../../shared/ui/tier-badge';
+} from '@shared/i18n/labels';
+import { MediaUrlPipe } from '@shared/pipes/media-url.pipe';
+import { LoadError } from '@shared/ui/load-error';
+import { TierBadge } from '@shared/ui/tier-badge';
 import { ContentApi } from '../data/content-api';
-import { titleFrom } from '../../../core/routing/title-strategy';
+import { titleFrom } from '@core/routing/title-strategy';
 
 /** Un contenido: portada, texto y su fichero (vídeo o descarga) con enlace firmado. */
 @Component({

@@ -6,11 +6,11 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { SelectButton } from 'primeng/selectbutton';
 import { Textarea } from 'primeng/textarea';
-import { toProblem } from '../../core/api/problem';
-import type { GroupResponse } from '../../core/api/schema';
-import { LabeledField, fieldDescription } from '../../shared/forms/labeled-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../shared/forms/server-errors';
-import { GROUP_VISIBILITY_LABELS, type GroupVisibility, optionsOf } from '../../shared/i18n/labels';
+import { toProblem } from '@core/api/problem';
+import type { GroupResponse } from '@core/api/schema';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
+import { GROUP_VISIBILITY_LABELS, type GroupVisibility, optionsOf } from '@shared/i18n/labels';
 import { CommunityApi } from './data/community-api';
 
 interface GroupModel {

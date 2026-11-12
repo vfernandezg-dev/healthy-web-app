@@ -13,12 +13,12 @@ import {
 } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { routes } from './app.routes';
-import { APP_CONFIG, readAppConfig } from './core/api/api-config';
-import { errorInterceptor } from './core/api/error-interceptor';
-import { authInterceptor } from './core/auth/auth-interceptor';
-import { AuthStore } from './core/auth/auth-store';
-import { AppTitleStrategy } from './core/routing/title-strategy';
-import { provideUi } from './core/theme/ui.config';
+import { APP_CONFIG, readAppConfig } from '@core/api/api-config';
+import { errorInterceptor } from '@core/api/error-interceptor';
+import { authInterceptor } from '@core/auth/auth-interceptor';
+import { AuthStore } from '@core/auth/auth-store';
+import { AppTitleStrategy } from '@core/routing/title-strategy';
+import { provideUi } from '@core/theme/ui.config';
 
 const config = readAppConfig();
 

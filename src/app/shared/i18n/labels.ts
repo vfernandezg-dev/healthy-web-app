@@ -1,4 +1,5 @@
-import type { components } from '../../core/api/schema';
+import type { components } from '@core/api/schema';
+import type { Role } from '@core/auth/roles';
 
 type Schemas = components['schemas'];
 
@@ -103,8 +104,6 @@ export const GROUP_VISIBILITY_LABELS: Readonly<Record<GroupVisibility, string>> 
   PUBLIC: 'Público',
   PRIVATE: 'Privado',
 };
-
-export type Role = Schemas['AdminUserResponse']['role'];
 
 export const ROLE_LABELS: Readonly<Record<Role, string>> = {
   CLIENT: 'Cliente',

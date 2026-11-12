@@ -5,16 +5,16 @@ import { LucideFlag, LucideMessageCircle, LucidePencil, LucideTrash2 } from '@lu
 import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Textarea } from 'primeng/textarea';
-import type { CommentResponse, PostResponse } from '../../core/api/schema';
-import { Confirmer } from '../../core/ui/confirmer';
-import { Toaster } from '../../core/ui/toaster';
-import { LabeledField, fieldDescription } from '../../shared/forms/labeled-field';
-import { focusFirstInvalid } from '../../shared/forms/server-errors';
-import { MediaUrlPipe } from '../../shared/pipes/media-url.pipe';
-import { PersonAvatar } from '../../shared/ui/person-avatar';
-import { loadMore } from '../../shared/utils/load-more';
+import type { CommentResponse, PostResponse } from '@core/api/schema';
+import { Confirmer } from '@core/ui/confirmer';
+import { Toaster } from '@core/ui/toaster';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { focusFirstInvalid } from '@shared/forms/server-errors';
+import { MediaUrlPipe } from '@shared/pipes/media-url.pipe';
+import { PersonAvatar } from '@shared/ui/person-avatar';
+import { loadMore } from '@shared/utils/load-more';
 import { CommunityApi } from './data/community-api';
-import type { Viewer } from './shared/membership';
+import type { Viewer } from './data/membership';
 
 /** Publicación o comentario que se quiere denunciar. */
 export interface ReportTarget {

@@ -3,12 +3,12 @@ import { form, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { LucideArrowLeft } from '@lucide/angular';
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
-import { toProblem } from '../../../core/api/problem';
-import { Toaster } from '../../../core/ui/toaster';
-import { focusFirstInvalid, serverFieldErrors } from '../../../shared/forms/server-errors';
-import { PageHeader } from '../../../shared/ui/page-header';
+import { toProblem } from '@core/api/problem';
+import { Toaster } from '@core/ui/toaster';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
+import { PageHeader } from '@shared/ui/page-header';
 import { ContentApi } from '../data/content-api';
-import { ContentFields, contentSchema, emptyContent, toContentRequest } from './content-fields';
+import { ContentFields, contentSchema, emptyContent, toContentRequest } from '../ui/content-fields';
 
 /** Nuevo contenido: se guarda como borrador y se pasa a su editor. */
 @Component({

@@ -5,7 +5,7 @@ import { type RouterStateSnapshot, TitleStrategy } from '@angular/router';
 const APP_NAME = 'Healthy Bites';
 
 /** «{página} · Healthy Bites», o solo el nombre de la app. */
-export function documentTitle(page: string | null | undefined): string {
+function documentTitle(page: string | null | undefined): string {
   return page ? `${page} · ${APP_NAME}` : APP_NAME;
 }
 

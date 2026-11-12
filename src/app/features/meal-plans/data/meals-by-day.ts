@@ -1,4 +1,4 @@
-import type { MealResponse } from '../../../core/api/schema';
+import type { MealResponse } from '@core/api/schema';
 
 export interface MealDay {
   readonly day: number;

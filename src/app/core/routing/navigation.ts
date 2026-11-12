@@ -12,7 +12,7 @@ import {
   LucideUsers,
   LucideUtensils,
 } from '@lucide/angular';
-import type { Role } from '../../core/auth/roles';
+import type { Role } from '../auth/roles';
 
 export interface NavItem {
   readonly label: string;

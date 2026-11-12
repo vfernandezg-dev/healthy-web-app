@@ -10,8 +10,8 @@ import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { SelectButton } from 'primeng/selectbutton';
 import { Textarea } from 'primeng/textarea';
-import type { ContentRequest, EditableContentResponse } from '../../../core/api/schema';
-import { LabeledField, fieldDescription } from '../../../shared/forms/labeled-field';
+import type { ContentRequest, EditableContentResponse } from '@core/api/schema';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
 import {
   CONTENT_CATEGORY_LABELS,
   CONTENT_TYPE_LABELS,
@@ -20,8 +20,8 @@ import {
   TIER_LABELS,
   type Tier,
   optionsOf,
-} from '../../../shared/i18n/labels';
-import { MediaUpload } from '../../../shared/media/media-upload';
+} from '@shared/i18n/labels';
+import { MediaUpload } from '@shared/media/media-upload';
 
 export interface ContentModel {
   title: string;

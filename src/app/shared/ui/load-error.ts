@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { LucideRefreshCw, LucideTriangleAlert } from '@lucide/angular';
 import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
-import { toProblem } from '../../core/api/problem';
+import { toProblem } from '@core/api/problem';
 
 /** Estado de error de una lectura (un httpResource que falló), con el mensaje de la API y un botón para reintentar. */
 @Component({

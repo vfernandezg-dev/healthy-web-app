@@ -12,15 +12,15 @@ import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
-import type { MealPlanDetailResponse, MealPlanRequest } from '../../../core/api/schema';
-import { LabeledField, fieldDescription } from '../../../shared/forms/labeled-field';
+import type { MealPlanDetailResponse, MealPlanRequest } from '@core/api/schema';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
 import {
   GOAL_LABELS,
   type MealPlanGoal,
   TIER_LABELS,
   type Tier,
   optionsOf,
-} from '../../../shared/i18n/labels';
+} from '@shared/i18n/labels';
 
 export interface PlanModel {
   title: string;

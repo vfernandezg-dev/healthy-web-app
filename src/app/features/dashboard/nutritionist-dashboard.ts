@@ -10,14 +10,14 @@ import {
   LucideUtensils,
 } from '@lucide/angular';
 import { Skeleton } from 'primeng/skeleton';
-import { AuthStore } from '../../core/auth/auth-store';
-import type { PublicationSummaryResponse } from '../../core/api/schema';
-import { NAVIGATION } from '../../layout/app-shell/nav-config';
-import { PageHeader } from '../../shared/ui/page-header';
-import { PersonAvatar } from '../../shared/ui/person-avatar';
-import { StatCard } from '../../shared/ui/stat-card';
+import { AuthStore } from '@core/auth/auth-store';
+import type { PublicationSummaryResponse } from '@core/api/schema';
+import { NAVIGATION } from '@core/routing/navigation';
+import { PageHeader } from '@shared/ui/page-header';
+import { PersonAvatar } from '@shared/ui/person-avatar';
+import { StatCard } from '@shared/ui/stat-card';
 import { DashboardApi } from './data/dashboard-api';
-import { Shortcuts } from './shortcuts';
+import { Shortcuts } from '@shared/ui/shortcuts';
 
 /** Todos sus planes o contenidos, en cualquier estado. */
 function totalOf(summary: PublicationSummaryResponse): number {

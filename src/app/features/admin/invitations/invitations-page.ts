@@ -10,19 +10,19 @@ import {
   type TableLazyLoadEvent,
 } from 'primeng/table';
 import { Tag } from 'primeng/tag';
-import type { InvitationResponse } from '../../../core/api/schema';
-import { Confirmer } from '../../../core/ui/confirmer';
-import { Toaster } from '../../../core/ui/toaster';
-import { INVITATION_STATUS_LABELS, INVITATION_STATUS_SEVERITY } from '../../../shared/i18n/labels';
-import { type PageQuery, pageQueryOf, samePageQuery } from '../../../shared/table/page-query';
-import { EmptyState } from '../../../shared/ui/empty-state';
-import { LoadError } from '../../../shared/ui/load-error';
-import { PageHeader } from '../../../shared/ui/page-header';
-import { SortIcon } from '../../../shared/ui/sort-icon';
+import type { InvitationResponse } from '@core/api/schema';
+import { Confirmer } from '@core/ui/confirmer';
+import { Toaster } from '@core/ui/toaster';
+import { INVITATION_STATUS_LABELS, INVITATION_STATUS_SEVERITY } from '@shared/i18n/labels';
+import { type PageQuery, pageQueryOf, samePageQuery } from '@shared/table/page-query';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
+import { SortIcon } from '@shared/ui/sort-icon';
 import { ADMIN_PAGE_SIZE, AdminApi } from '../data/admin-api';
 import { InviteDialog } from './invite-dialog';
-import { RowTemplate } from '../../../shared/table/row-template';
-import { lastValue, sameValues } from '../../../shared/utils/last-value';
+import { RowTemplate } from '@shared/table/row-template';
+import { lastValue, sameValues } from '@shared/utils/last-value';
 
 const DEFAULT_SORT = 'createdAt,desc';
 

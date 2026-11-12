@@ -5,11 +5,11 @@ import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
-import { toProblem } from '../../core/api/problem';
-import type { PostResponse } from '../../core/api/schema';
-import { LabeledField, fieldDescription } from '../../shared/forms/labeled-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../shared/forms/server-errors';
-import { MediaUpload } from '../../shared/media/media-upload';
+import { toProblem } from '@core/api/problem';
+import type { PostResponse } from '@core/api/schema';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
+import { MediaUpload } from '@shared/media/media-upload';
 import { CommunityApi } from './data/community-api';
 
 interface PostModel {

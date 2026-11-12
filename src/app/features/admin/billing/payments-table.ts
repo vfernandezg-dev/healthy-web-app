@@ -10,18 +10,14 @@ import {
   type TableLazyLoadEvent,
 } from 'primeng/table';
 import { Tag } from 'primeng/tag';
-import {
-  PAYMENT_STATUS_LABELS,
-  PAYMENT_STATUS_SEVERITY,
-  optionsOf,
-} from '../../../shared/i18n/labels';
-import { MoneyPipe } from '../../../shared/pipes/money.pipe';
-import { type PageQuery, pageQueryOf, samePageQuery } from '../../../shared/table/page-query';
-import { LoadError } from '../../../shared/ui/load-error';
-import { SortIcon } from '../../../shared/ui/sort-icon';
+import { PAYMENT_STATUS_LABELS, PAYMENT_STATUS_SEVERITY, optionsOf } from '@shared/i18n/labels';
+import { MoneyPipe } from '@shared/pipes/money.pipe';
+import { type PageQuery, pageQueryOf, samePageQuery } from '@shared/table/page-query';
+import { LoadError } from '@shared/ui/load-error';
+import { SortIcon } from '@shared/ui/sort-icon';
 import { ADMIN_PAGE_SIZE, AdminApi } from '../data/admin-api';
-import { RowTemplate } from '../../../shared/table/row-template';
-import { lastValue, sameValues } from '../../../shared/utils/last-value';
+import { RowTemplate } from '@shared/table/row-template';
+import { lastValue, sameValues } from '@shared/utils/last-value';
 
 const DEFAULT_SORT = 'createdAt,desc';
 

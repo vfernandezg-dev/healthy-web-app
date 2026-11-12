@@ -3,8 +3,8 @@ import { Component, DestroyRef, computed, inject, input, output, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LucideFile, LucideImage, LucideTrash2, LucideUpload } from '@lucide/angular';
 import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
-import { toProblem } from '../../core/api/problem';
-import type { UploadResponse } from '../../core/api/schema';
+import { toProblem } from '@core/api/problem';
+import type { UploadResponse } from '@core/api/schema';
 import { MediaUrlPipe } from '../pipes/media-url.pipe';
 import { ProgressBar } from '../ui/progress-bar';
 import { MediaApi, type MediaPurpose } from './media-api';

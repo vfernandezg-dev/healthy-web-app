@@ -15,21 +15,21 @@ import {
 import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { Skeleton } from 'primeng/skeleton';
-import { AuthStore } from '../../core/auth/auth-store';
-import type { GroupResponse, PostResponse } from '../../core/api/schema';
-import { Confirmer } from '../../core/ui/confirmer';
-import { Toaster } from '../../core/ui/toaster';
-import { EmptyState } from '../../shared/ui/empty-state';
-import { LoadError } from '../../shared/ui/load-error';
+import { AuthStore } from '@core/auth/auth-store';
+import type { GroupResponse, PostResponse } from '@core/api/schema';
+import { Confirmer } from '@core/ui/confirmer';
+import { Toaster } from '@core/ui/toaster';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
 import { CommunityApi, POST_PAGE_SIZE } from './data/community-api';
 import { GroupDialog } from './group-dialog';
 import { GroupMembers } from './group-members';
 import { PostCard } from './post-card';
 import { PostDialog } from './post-dialog';
 import { ReportDialog } from './report-dialog';
-import { MEMBERS_PLURAL, type Viewer, membershipLabel, viewerOf } from './shared/membership';
-import { VisibilityBadge } from './shared/visibility-badge';
-import { titleFrom } from '../../core/routing/title-strategy';
+import { MEMBERS_PLURAL, type Viewer, membershipLabel, viewerOf } from './data/membership';
+import { VisibilityBadge } from './ui/visibility-badge';
+import { titleFrom } from '@core/routing/title-strategy';
 
 type Relation = 'owner' | 'member' | 'pending' | 'none';
 

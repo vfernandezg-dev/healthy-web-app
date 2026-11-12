@@ -49,7 +49,7 @@ export class LabeledField {
 }
 
 /** Primer mensaje de error de un campo, si se ha tocado y es inválido. */
-export function fieldError(field: FieldTree<unknown> | undefined): string | null {
+function fieldError(field: FieldTree<unknown> | undefined): string | null {
   if (!field) {
     return null;
   }

@@ -7,17 +7,17 @@ import { SelectButton } from 'primeng/selectbutton';
 import { Skeleton } from 'primeng/skeleton';
 import { Slider } from 'primeng/slider';
 import { Textarea } from 'primeng/textarea';
-import { toProblem } from '../../core/api/problem';
-import type { HabitLogResponse } from '../../core/api/schema';
-import { Confirmer } from '../../core/ui/confirmer';
-import { Toaster } from '../../core/ui/toaster';
-import { LabeledField, fieldDescription } from '../../shared/forms/labeled-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../shared/forms/server-errors';
-import { LoadError } from '../../shared/ui/load-error';
-import { PageHeader } from '../../shared/ui/page-header';
-import { addDays, todayIso } from '../../shared/utils/date';
+import { toProblem } from '@core/api/problem';
+import type { HabitLogResponse } from '@core/api/schema';
+import { Confirmer } from '@core/ui/confirmer';
+import { Toaster } from '@core/ui/toaster';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
+import { addDays, todayIso } from '@shared/utils/date';
 import { HabitsApi } from './data/habits-api';
-import { HabitCalendar } from './habit-calendar';
+import { HabitCalendar } from './ui/habit-calendar';
 
 type Score = 'hydration' | 'nutrition' | 'exercise' | 'sleep';
 

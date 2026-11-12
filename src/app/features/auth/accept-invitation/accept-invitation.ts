@@ -7,14 +7,14 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Skeleton } from 'primeng/skeleton';
 import { Textarea } from 'primeng/textarea';
-import { toProblem } from '../../../core/api/problem';
-import { AuthApi } from '../../../core/auth/auth-api';
-import { AuthStore } from '../../../core/auth/auth-store';
-import { Toaster } from '../../../core/ui/toaster';
-import { LabeledField, fieldDescription } from '../../../shared/forms/labeled-field';
-import { PasswordField, PasswordInput } from '../../../shared/forms/password-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../../shared/forms/server-errors';
-import { MESSAGES, PASSWORD_MAX, PASSWORD_MIN } from '../../../shared/forms/validation';
+import { toProblem } from '@core/api/problem';
+import { AuthApi } from '@core/auth/auth-api';
+import { AuthStore } from '@core/auth/auth-store';
+import { Toaster } from '@core/ui/toaster';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { PasswordField, PasswordInput } from '@shared/forms/password-field';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
+import { MESSAGES, PASSWORD_MAX, PASSWORD_MIN } from '@shared/forms/validation';
 import { takeFragmentToken } from '../fragment-token';
 
 /** Alta de un nutricionista desde su invitación (/auth/accept-invitation#token=…). */

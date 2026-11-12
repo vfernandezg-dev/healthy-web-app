@@ -2,11 +2,11 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input, output } from '@angular/core';
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
-import type { MemberResponse } from '../../core/api/schema';
-import { Confirmer } from '../../core/ui/confirmer';
-import { Toaster } from '../../core/ui/toaster';
-import { PersonAvatar } from '../../shared/ui/person-avatar';
-import { loadMore } from '../../shared/utils/load-more';
+import type { MemberResponse } from '@core/api/schema';
+import { Confirmer } from '@core/ui/confirmer';
+import { Toaster } from '@core/ui/toaster';
+import { PersonAvatar } from '@shared/ui/person-avatar';
+import { loadMore } from '@shared/utils/load-more';
 import { CommunityApi } from './data/community-api';
 
 type Person = NonNullable<MemberResponse['person']>;

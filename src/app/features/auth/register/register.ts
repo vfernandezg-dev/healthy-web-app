@@ -13,13 +13,13 @@ import { LucideCheck, LucideCircle } from '@lucide/angular';
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
-import { toProblem } from '../../../core/api/problem';
-import { AuthStore } from '../../../core/auth/auth-store';
-import { Toaster } from '../../../core/ui/toaster';
-import { LabeledField, fieldDescription } from '../../../shared/forms/labeled-field';
-import { PasswordField, PasswordInput } from '../../../shared/forms/password-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../../shared/forms/server-errors';
-import { MESSAGES, PASSWORD_MAX, PASSWORD_MIN } from '../../../shared/forms/validation';
+import { toProblem } from '@core/api/problem';
+import { AuthStore } from '@core/auth/auth-store';
+import { Toaster } from '@core/ui/toaster';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { PasswordField, PasswordInput } from '@shared/forms/password-field';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
+import { MESSAGES, PASSWORD_MAX, PASSWORD_MIN } from '@shared/forms/validation';
 
 /** Registro público, solo para clientes (los nutricionistas entran por invitación). */
 @Component({

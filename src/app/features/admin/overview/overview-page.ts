@@ -10,13 +10,14 @@ import {
 } from '@lucide/angular';
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
-import { NAVIGATION } from '../../../layout/app-shell/nav-config';
-import { type Role, REPORT_TARGET_LABELS } from '../../../shared/i18n/labels';
-import { MoneyPipe } from '../../../shared/pipes/money.pipe';
-import { PageHeader } from '../../../shared/ui/page-header';
-import { StatCard } from '../../../shared/ui/stat-card';
-import { Shortcuts } from '../../dashboard/shortcuts';
-import { activeSubscriptions, formatAmounts } from '../billing/billing-summary';
+import { NAVIGATION } from '@core/routing/navigation';
+import type { Role } from '@core/auth/roles';
+import { REPORT_TARGET_LABELS } from '@shared/i18n/labels';
+import { MoneyPipe } from '@shared/pipes/money.pipe';
+import { PageHeader } from '@shared/ui/page-header';
+import { StatCard } from '@shared/ui/stat-card';
+import { Shortcuts } from '@shared/ui/shortcuts';
+import { activeSubscriptions, formatAmounts } from '../data/billing-summary';
 import { AdminApi } from '../data/admin-api';
 
 const ROLES: readonly { role: Role; label: string }[] = [

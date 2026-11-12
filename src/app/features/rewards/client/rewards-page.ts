@@ -12,14 +12,14 @@ import {
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { Skeleton } from 'primeng/skeleton';
-import type { RewardResponse } from '../../../core/api/schema';
-import { Confirmer } from '../../../core/ui/confirmer';
-import { Toaster } from '../../../core/ui/toaster';
-import { EmptyState } from '../../../shared/ui/empty-state';
-import { LoadError } from '../../../shared/ui/load-error';
-import { PageHeader } from '../../../shared/ui/page-header';
-import { ProgressBar } from '../../../shared/ui/progress-bar';
-import { lastValue } from '../../../shared/utils/last-value';
+import type { RewardResponse } from '@core/api/schema';
+import { Confirmer } from '@core/ui/confirmer';
+import { Toaster } from '@core/ui/toaster';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
+import { ProgressBar } from '@shared/ui/progress-bar';
+import { lastValue } from '@shared/utils/last-value';
 import { REWARD_PAGE_SIZE, RewardsApi } from '../data/rewards-api';
 
 /** Rachas del cliente hacia las recompensas y las que puede empezar. */

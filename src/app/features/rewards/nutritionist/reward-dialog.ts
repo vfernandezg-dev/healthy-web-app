@@ -8,10 +8,10 @@ import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
 import { SelectButton } from 'primeng/selectbutton';
 import { Textarea } from 'primeng/textarea';
-import { toProblem } from '../../../core/api/problem';
-import type { RewardResponse } from '../../../core/api/schema';
-import { LabeledField, fieldDescription } from '../../../shared/forms/labeled-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../../shared/forms/server-errors';
+import { toProblem } from '@core/api/problem';
+import type { RewardResponse } from '@core/api/schema';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
 import { RewardsApi } from '../data/rewards-api';
 
 type PrizeType = 'CONTENT' | 'MEAL_PLAN';

@@ -13,21 +13,21 @@ import {
 import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
-import { toProblem } from '../../../core/api/problem';
-import type { MealPlanDetailResponse, MealResponse } from '../../../core/api/schema';
-import { Confirmer } from '../../../core/ui/confirmer';
-import { Toaster } from '../../../core/ui/toaster';
-import { focusFirstInvalid, serverFieldErrors } from '../../../shared/forms/server-errors';
+import { toProblem } from '@core/api/problem';
+import type { MealPlanDetailResponse, MealResponse } from '@core/api/schema';
+import { Confirmer } from '@core/ui/confirmer';
+import { Toaster } from '@core/ui/toaster';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
 import {
   MEAL_CATEGORY_LABELS,
   PUBLICATION_STATUS_LABELS,
   PUBLICATION_STATUS_SEVERITY,
-} from '../../../shared/i18n/labels';
-import { LoadError } from '../../../shared/ui/load-error';
+} from '@shared/i18n/labels';
+import { LoadError } from '@shared/ui/load-error';
 import { MealPlansApi } from '../data/meal-plans-api';
-import { mealsByDay } from '../shared/meals-by-day';
+import { mealsByDay } from '../data/meals-by-day';
 import { MealDialog } from './meal-dialog';
-import { PlanFields, emptyPlan, planModelOf, planSchema, toPlanRequest } from './plan-fields';
+import { PlanFields, emptyPlan, planModelOf, planSchema, toPlanRequest } from '../ui/plan-fields';
 
 /** Editor de un plan del nutricionista: datos, comidas por día y publicación. */
 @Component({

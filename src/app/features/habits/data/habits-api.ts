@@ -1,9 +1,9 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, type Signal, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import { silentErrors } from '../../../core/api/http-context';
-import type { HabitLogRequest, HabitLogResponse } from '../../../core/api/schema';
+import { APP_CONFIG } from '@core/api/api-config';
+import { silentErrors } from '@core/api/http-context';
+import type { HabitLogRequest, HabitLogResponse } from '@core/api/schema';
 
 /** Registros diarios de hábitos (cuentan para las rachas de las recompensas). */
 @Injectable({ providedIn: 'root' })

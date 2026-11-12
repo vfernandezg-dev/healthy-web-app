@@ -1,5 +1,5 @@
-import type { BillingSummaryResponse, Money } from '../../../core/api/schema';
-import { TIER_LABELS, type Tier } from '../../../shared/i18n/labels';
+import type { BillingSummaryResponse, Money } from '@core/api/schema';
+import { TIER_LABELS, type Tier } from '@shared/i18n/labels';
 
 /** Suscripciones vigentes: el total y el desglose por nivel («Premium: 8 · VIP: 4»). */
 export function activeSubscriptions(summary: BillingSummaryResponse): {

@@ -1,13 +1,13 @@
 import { httpResource } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { APP_CONFIG } from '../../../core/api/api-config';
+import { APP_CONFIG } from '@core/api/api-config';
 import type {
   PagedModelContentSummaryResponse,
   PagedModelMealPlanSummaryResponse,
   PagedModelNutritionistClientResponse,
   PagedModelRewardResponse,
   PublicationSummaryResponse,
-} from '../../../core/api/schema';
+} from '@core/api/schema';
 
 /** Borradores que enseña el panel de cada tipo (los últimos editados). */
 export const DASHBOARD_DRAFTS = 5;

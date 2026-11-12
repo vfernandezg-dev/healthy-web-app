@@ -2,10 +2,10 @@ import { NgOptimizedImage } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideBookOpen, LucideDynamicIcon, LucideFileText, LucidePlay } from '@lucide/angular';
-import type { ContentSummaryResponse } from '../../../core/api/schema';
-import { CONTENT_CATEGORY_LABELS, CONTENT_TYPE_LABELS } from '../../../shared/i18n/labels';
-import { MediaUrlPipe } from '../../../shared/pipes/media-url.pipe';
-import { TierBadge } from '../../../shared/ui/tier-badge';
+import type { ContentSummaryResponse } from '@core/api/schema';
+import { CONTENT_CATEGORY_LABELS, CONTENT_TYPE_LABELS } from '@shared/i18n/labels';
+import { MediaUrlPipe } from '@shared/pipes/media-url.pipe';
+import { TierBadge } from '@shared/ui/tier-badge';
 
 const TYPE_ICONS = { ARTICLE: LucideBookOpen, VIDEO: LucidePlay, GUIDE: LucideFileText } as const;
 

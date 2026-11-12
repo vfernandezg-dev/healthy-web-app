@@ -4,10 +4,10 @@ import { ButtonDirective, ButtonLabel } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
-import { toProblem } from '../../../core/api/problem';
-import type { InvitationResponse } from '../../../core/api/schema';
-import { LabeledField, fieldDescription } from '../../../shared/forms/labeled-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../../shared/forms/server-errors';
+import { toProblem } from '@core/api/problem';
+import type { InvitationResponse } from '@core/api/schema';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
 import { AdminApi } from '../data/admin-api';
 
 /** Invitar a un nutricionista: recibe por correo un enlace para crear su cuenta. Se abre con {@link InviteDialog.open}. */

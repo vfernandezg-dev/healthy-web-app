@@ -4,7 +4,7 @@ import type { SessionResponse } from '../api/schema';
 import type { Role } from './roles';
 
 /** Configuración de la app para los tests unitarios. */
-export const TEST_CONFIG: AppConfig = {
+const TEST_CONFIG: AppConfig = {
   apiUrl: '/api/v1',
   primengLicenseKey: undefined,
   landingUrl: 'https://healthybites.example',
