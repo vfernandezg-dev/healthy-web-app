@@ -8,7 +8,7 @@ export interface SubmitOptions<T> {
   /** Guarda en la API. Las escrituras de formulario llevan `silentErrors()`: los errores los muestra el formulario. */
   readonly save: () => Promise<T>;
   /** Tras guardar (cerrar el diálogo, avisar, navegar...). */
-  readonly onSuccess?: (result: T) => void | Promise<void>;
+  readonly onSuccess?: (result: T) => unknown;
   /**
    * Dónde mostrar un error que no es de un campo (un mensaje dentro del diálogo). Se vacía al volver a enviar. Sin
    * él, el error sale en un aviso.

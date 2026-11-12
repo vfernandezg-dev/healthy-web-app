@@ -1,28 +1,23 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  LucideArrowLeft,
-  LucideCalendarDays,
-  LucideCheck,
-  LucideFlame,
-  LucideLock,
-} from '@lucide/angular';
+import { LucideArrowLeft, LucideCalendarDays, LucideCheck, LucideFlame } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
-import { toProblem } from '@core/api/problem';
-import { Toaster } from '@core/ui/toaster';
-import { GOAL_LABELS, MEAL_CATEGORY_LABELS, TIER_LABELS, type Tier } from '@shared/i18n/labels';
+import { GOAL_LABELS, MEAL_CATEGORY_LABELS } from '@shared/i18n/labels';
 import { LoadError } from '@shared/ui/load-error';
 import { TierBadge } from '@shared/ui/tier-badge';
 import { MealPlansApi } from '../data/meal-plans-api';
 import { mealsByDay } from '../data/meals-by-day';
 import { titleFrom } from '@core/routing/title-strategy';
+import { mutation } from '@shared/utils/mutation';
+import { Paywall, requiredTierOf } from '@shared/ui/paywall';
 
 /** Un plan con sus comidas por día. Si es de pago y el cliente no tiene acceso, explica cómo conseguirlo. */
 @Component({
   selector: 'app-meal-plan-detail',
   imports: [
+    Paywall,
     RouterLink,
     DecimalPipe,
     ButtonDirective,
@@ -31,7 +26,6 @@ import { titleFrom } from '@core/routing/title-strategy';
     LucideCalendarDays,
     LucideFlame,
     LucideCheck,
-    LucideLock,
     TierBadge,
     LoadError,
   ],
@@ -39,7 +33,6 @@ import { titleFrom } from '@core/routing/title-strategy';
 })
 export class MealPlanDetail {
   private readonly api = inject(MealPlansApi);
-  private readonly toaster = inject(Toaster);
 
   /** Id del plan (parámetro de la ruta). */
   readonly id = input.required<string>();
@@ -55,20 +48,8 @@ export class MealPlanDetail {
   protected readonly goals = GOAL_LABELS;
   protected readonly categories = MEAL_CATEGORY_LABELS;
 
-  protected readonly problem = computed(() =>
-    this.detail.error() ? toProblem(this.detail.error()) : null,
-  );
-  /** Nivel que pide el plan cuando la API responde 403 subscription-required. */
-  protected readonly requiredTier = computed(() => {
-    const problem = this.problem();
-    return problem?.code === 'subscription-required'
-      ? (problem.properties['requiredTier'] as Tier | undefined)
-      : undefined;
-  });
-  protected readonly requiredTierLabel = computed(() => {
-    const tier = this.requiredTier();
-    return tier ? TIER_LABELS[tier] : '';
-  });
+  /** Nivel que pide cuando la API responde 403 subscription-required (bloqueado para el cliente). */
+  protected readonly requiredTier = computed(() => requiredTierOf(this.detail.error()));
   protected readonly days = computed(() => {
     if (!this.detail.hasValue()) {
       return [];
@@ -81,31 +62,16 @@ export class MealPlanDetail {
       this.enrollments.hasValue() &&
       this.enrollments.value().some((enrollment) => enrollment.plan.id === this.id()),
   );
-  protected readonly saving = signal(false);
+  protected readonly follow = mutation(() => this.api.enroll(this.id()), {
+    success: {
+      summary: 'Ya sigues este plan',
+      detail: 'Lo tienes a mano en «Los planes que sigues».',
+    },
+    onSuccess: () => this.enrollments.reload(),
+  });
 
-  protected async follow(): Promise<void> {
-    this.saving.set(true);
-    try {
-      await this.api.enroll(this.id());
-      this.enrollments.reload();
-      this.toaster.success('Ya sigues este plan', 'Lo tienes a mano en «Los planes que sigues».');
-    } catch {
-      // El interceptor de errores ya ha avisado.
-    } finally {
-      this.saving.set(false);
-    }
-  }
-
-  protected async unfollow(): Promise<void> {
-    this.saving.set(true);
-    try {
-      await this.api.unenroll(this.id());
-      this.enrollments.reload();
-      this.toaster.info('Has dejado de seguir el plan');
-    } catch {
-      // El interceptor de errores ya ha avisado.
-    } finally {
-      this.saving.set(false);
-    }
-  }
+  protected readonly unfollow = mutation(() => this.api.unenroll(this.id()), {
+    success: { summary: 'Has dejado de seguir el plan', severity: 'info' },
+    onSuccess: () => this.enrollments.reload(),
+  });
 }

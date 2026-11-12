@@ -1,14 +1,11 @@
-import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
-import { form, submit } from '@angular/forms/signals';
+import { Component, computed, inject, input, linkedSignal } from '@angular/core';
+import { form } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
-import { LucideArchive, LucideArrowLeft, LucideSend, LucideTrash } from '@lucide/angular';
+import { LucideArrowLeft } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
-import { toProblem } from '@core/api/problem';
-import { Confirmer } from '@core/ui/confirmer';
 import { Toaster } from '@core/ui/toaster';
-import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
 import { PUBLICATION_STATUS_LABELS, PUBLICATION_STATUS_SEVERITY } from '@shared/i18n/labels';
 import { LoadError } from '@shared/ui/load-error';
 import { ContentApi } from '../data/content-api';
@@ -19,19 +16,20 @@ import {
   emptyContent,
   toContentRequest,
 } from '../ui/content-fields';
+import { formSubmitter } from '@shared/forms/form-submitter';
+import { mutation } from '@shared/utils/mutation';
+import { PublicationActions } from '@shared/publishing/publication-actions';
 
 /** Editor de un contenido del nutricionista: texto, portada, fichero y publicación. */
 @Component({
   selector: 'app-content-editor',
   imports: [
+    PublicationActions,
     RouterLink,
     ButtonDirective,
     Skeleton,
     Tag,
     LucideArrowLeft,
-    LucideSend,
-    LucideArchive,
-    LucideTrash,
     ContentFields,
     LoadError,
   ],
@@ -58,37 +56,13 @@ import {
             <p class="mt-1 text-muted">Publicado en el catálogo como «{{ current.item.slug }}».</p>
           }
         </div>
-        <div class="flex flex-wrap gap-2">
-          @if (status === 'DRAFT') {
-            <button
-              pButton
-              type="button"
-              severity="danger"
-              variant="text"
-              [disabled]="busy()"
-              (click)="remove()"
-            >
-              <svg lucideTrash></svg>
-              Eliminar
-            </button>
-            <button pButton type="button" [loading]="busy()" (click)="publish()">
-              <svg lucideSend></svg>
-              Publicar
-            </button>
-          } @else if (status === 'PUBLISHED') {
-            <button
-              pButton
-              type="button"
-              severity="secondary"
-              variant="outlined"
-              [loading]="busy()"
-              (click)="archive()"
-            >
-              <svg lucideArchive></svg>
-              Archivar
-            </button>
-          }
-        </div>
+        <app-publication-actions
+          [status]="status"
+          [pending]="pending()"
+          (publish)="publish.run()"
+          (archive)="archive.run()"
+          (remove)="remove.run()"
+        />
       </header>
 
       <form class="card max-w-4xl p-6 sm:p-8" novalidate (submit)="save($event)">
@@ -108,10 +82,10 @@ import {
   `,
 })
 export class ContentEditor {
+  private readonly submitForm = formSubmitter();
   private readonly api = inject(ContentApi);
   private readonly router = inject(Router);
   private readonly toaster = inject(Toaster);
-  private readonly confirmer = inject(Confirmer);
 
   /** Id del contenido (parámetro de la ruta). */
   readonly id = input.required<string>();
@@ -122,7 +96,6 @@ export class ContentEditor {
   );
   protected readonly statusLabels = PUBLICATION_STATUS_LABELS;
   protected readonly statusSeverity = PUBLICATION_STATUS_SEVERITY;
-  protected readonly busy = signal(false);
 
   protected readonly model = linkedSignal(() => {
     const current = this.current();
@@ -130,73 +103,48 @@ export class ContentEditor {
   });
   protected readonly contentForm = form(this.model, contentSchema);
 
-  protected async save(event: Event): Promise<void> {
-    event.preventDefault();
-    await submit(this.contentForm, {
-      action: async () => {
-        try {
-          this.content.value.set(await this.api.update(this.id(), toContentRequest(this.model())));
-          this.contentForm().reset();
-          this.toaster.success('Cambios guardados');
-          return undefined;
-        } catch (error) {
-          const problem = toProblem(error);
-          if (problem.errors.length > 0) {
-            return serverFieldErrors(this.contentForm, problem);
-          }
-          this.toaster.problem(problem);
-          return undefined;
-        }
+  protected save(event: Event): Promise<void> {
+    return this.submitForm(event, this.contentForm, {
+      save: () => this.api.update(this.id(), toContentRequest(this.model())),
+      onSuccess: (content) => {
+        this.content.value.set(content);
+        this.contentForm().reset();
+        this.toaster.success('Cambios guardados');
       },
-      onInvalid: (tree) => focusFirstInvalid(tree),
     });
   }
 
-  protected async publish(): Promise<void> {
-    await this.run(async () => {
-      this.content.value.set(await this.api.publish(this.id()));
-    }, 'Contenido publicado: ya está en el catálogo');
-  }
+  protected readonly publish = mutation(() => this.api.publish(this.id()), {
+    success: 'Contenido publicado: ya está en el catálogo',
+    onSuccess: (content) => this.content.value.set(content),
+  });
 
-  protected async archive(): Promise<void> {
-    const confirmed = await this.confirmer.ask({
+  protected readonly archive = mutation(() => this.api.archive(this.id()), {
+    confirm: {
       header: 'Archivar el contenido',
       message:
         'Dejará de aparecer en el catálogo. Quien lo desbloqueó con una recompensa lo conserva.',
       acceptLabel: 'Archivar',
       danger: true,
-    });
-    if (confirmed) {
-      await this.run(async () => {
-        this.content.value.set(await this.api.archive(this.id()));
-      }, 'Contenido archivado');
-    }
-  }
+    },
+    success: 'Contenido archivado',
+    onSuccess: (content) => this.content.value.set(content),
+  });
 
-  protected async remove(): Promise<void> {
-    const confirmed = await this.confirmer.ask({
+  protected readonly remove = mutation(() => this.api.delete(this.id()), {
+    confirm: {
       header: 'Eliminar el borrador',
       message: 'Se borrará el contenido. Esta acción no se puede deshacer.',
       acceptLabel: 'Eliminar',
       danger: true,
-    });
-    if (confirmed) {
-      await this.run(async () => {
-        await this.api.delete(this.id());
-        await this.router.navigate(['/nutritionist/content']);
-      }, 'Borrador eliminado');
-    }
-  }
+    },
+    success: 'Borrador eliminado',
+    onSuccess: async () => {
+      await this.router.navigate(['/nutritionist/content']);
+    },
+  });
 
-  private async run(action: () => Promise<void>, success: string): Promise<void> {
-    this.busy.set(true);
-    try {
-      await action();
-      this.toaster.success(success);
-    } catch {
-      // El interceptor de errores ya ha avisado.
-    } finally {
-      this.busy.set(false);
-    }
-  }
+  protected readonly pending = computed(
+    () => this.publish.pending() || this.archive.pending() || this.remove.pending(),
+  );
 }

@@ -6,23 +6,8 @@
   Planes alimenticios
 </a>
 
-@if (requiredTier()) {
-  <div class="card mx-auto max-w-xl px-6 py-12 text-center sm:px-12">
-    <span class="mx-auto grid size-14 place-items-center rounded-full bg-mint text-brand-900">
-      <svg lucideLock class="size-7"></svg>
-    </span>
-    <h1 class="mt-6 text-2xl font-bold">Este plan es {{ requiredTierLabel() }}</h1>
-    <p class="mt-2 text-muted">
-      Suscríbete a {{ requiredTierLabel() }} para ver sus comidas y seguirlo. También puedes
-      conseguirlo completando una racha de hábitos que lo tenga como premio.
-    </p>
-    <div class="mt-8 flex flex-wrap justify-center gap-3">
-      <a pButton routerLink="/client/subscription">Ver los planes de suscripción</a>
-      <a pButton routerLink="/client/rewards" severity="secondary" variant="outlined">
-        Ver las recompensas
-      </a>
-    </div>
-  </div>
+@if (requiredTier(); as tier) {
+  <app-paywall [tier]="tier" subject="Este plan" benefit="ver sus comidas y seguirlo" />
 } @else if (detail.error()) {
   <app-load-error [error]="detail.error()" (retry)="detail.reload()" />
 } @else if (detail.hasValue()) {
@@ -63,13 +48,18 @@
           type="button"
           severity="secondary"
           variant="outlined"
-          [loading]="saving()"
-          (click)="unfollow()"
+          [loading]="follow.pending() || unfollow.pending()"
+          (click)="unfollow.run()"
         >
           Dejar de seguirlo
         </button>
       } @else {
-        <button pButton type="button" [loading]="saving()" (click)="follow()">
+        <button
+          pButton
+          type="button"
+          [loading]="follow.pending() || unfollow.pending()"
+          (click)="follow.run()"
+        >
           Seguir este plan
         </button>
       }

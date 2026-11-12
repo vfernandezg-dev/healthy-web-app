@@ -1,34 +1,30 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LucideArrowLeft, LucideDownload, LucideLock, LucidePlay } from '@lucide/angular';
+import { LucideArrowLeft, LucideDownload, LucidePlay } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { toProblem } from '@core/api/problem';
 import { ExternalNavigation } from '@core/routing/external-navigation';
-import {
-  CONTENT_CATEGORY_LABELS,
-  CONTENT_TYPE_LABELS,
-  TIER_LABELS,
-  type Tier,
-} from '@shared/i18n/labels';
+import { CONTENT_CATEGORY_LABELS, CONTENT_TYPE_LABELS } from '@shared/i18n/labels';
 import { MediaUrlPipe } from '@shared/pipes/media-url.pipe';
 import { LoadError } from '@shared/ui/load-error';
 import { TierBadge } from '@shared/ui/tier-badge';
 import { ContentApi } from '../data/content-api';
 import { titleFrom } from '@core/routing/title-strategy';
+import { Paywall, requiredTierOf } from '@shared/ui/paywall';
 
 /** Un contenido: portada, texto y su fichero (vídeo o descarga) con enlace firmado. */
 @Component({
   selector: 'app-content-detail',
   imports: [
+    Paywall,
     RouterLink,
     NgOptimizedImage,
     MediaUrlPipe,
     ButtonDirective,
     Skeleton,
     LucideArrowLeft,
-    LucideLock,
     LucidePlay,
     LucideDownload,
     TierBadge,
@@ -52,19 +48,8 @@ export class ContentDetail {
   protected readonly types = CONTENT_TYPE_LABELS;
   protected readonly categories = CONTENT_CATEGORY_LABELS;
 
-  private readonly problem = computed(() =>
-    this.detail.error() ? toProblem(this.detail.error()) : null,
-  );
-  protected readonly requiredTier = computed(() => {
-    const problem = this.problem();
-    return problem?.code === 'subscription-required'
-      ? (problem.properties['requiredTier'] as Tier | undefined)
-      : undefined;
-  });
-  protected readonly requiredTierLabel = computed(() => {
-    const tier = this.requiredTier();
-    return tier ? TIER_LABELS[tier] : '';
-  });
+  /** Nivel que pide cuando la API responde 403 subscription-required (bloqueado para el cliente). */
+  protected readonly requiredTier = computed(() => requiredTierOf(this.detail.error()));
   /** URL firmada del vídeo, cuando se pide verlo. */
   protected readonly videoUrl = signal<string | null>(null);
   protected readonly opening = signal(false);

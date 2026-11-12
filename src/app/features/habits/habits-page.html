@@ -159,7 +159,7 @@
                   variant="text"
                   [iconOnly]="true"
                   [attr.aria-label]="`Borrar el registro del ${(log.loggedOn | date: 'longDate')}`"
-                  (click)="remove(log)"
+                  (click)="remove.run(log)"
                 >
                   <svg lucideTrash></svg>
                 </button>

@@ -10,7 +10,7 @@
   <p-message severity="error" class="mt-6 block">{{ message }}</p-message>
 }
 
-<form class="mt-8 space-y-5" novalidate (submit)="onSubmit($event)">
+<form class="mt-8 space-y-5" novalidate (submit)="save($event)">
   <app-field label="Correo electrónico" inputId="login-email" [field]="loginForm.email">
     <input
       pInputText

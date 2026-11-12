@@ -1,19 +1,18 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormField, form, maxLength, minLength, required, submit } from '@angular/forms/signals';
+import { FormField, form, maxLength, minLength, required } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { LucideLink2Off } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
-import { toProblem } from '@core/api/problem';
 import { AuthApi } from '@core/auth/auth-api';
 import { AuthStore } from '@core/auth/auth-store';
 import { Toaster } from '@core/ui/toaster';
 import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
 import { PasswordField, PasswordInput } from '@shared/forms/password-field';
-import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
 import { MESSAGES, PASSWORD_MAX, PASSWORD_MIN } from '@shared/forms/validation';
 import { takeFragmentToken } from '../fragment-token';
+import { formSubmitter } from '@shared/forms/form-submitter';
 
 /** Nueva contraseña desde el enlace del correo (/auth/reset-password#token=…). */
 @Component({
@@ -42,7 +41,7 @@ import { takeFragmentToken } from '../fragment-token';
           >.
         </p-message>
       }
-      <form class="mt-8 space-y-5" novalidate (submit)="onSubmit($event)">
+      <form class="mt-8 space-y-5" novalidate (submit)="save($event)">
         <app-field
           label="Contraseña nueva"
           inputId="reset-password"
@@ -85,6 +84,7 @@ import { takeFragmentToken } from '../fragment-token';
   `,
 })
 export class ResetPassword {
+  private readonly submitForm = formSubmitter();
   private readonly api = inject(AuthApi);
   private readonly auth = inject(AuthStore);
   private readonly router = inject(Router);
@@ -101,34 +101,23 @@ export class ResetPassword {
   protected readonly failure = signal<string | null>(null);
   protected readonly describe = fieldDescription;
 
-  protected async onSubmit(event: Event): Promise<void> {
-    event.preventDefault();
+  protected save(event: Event): Promise<void> {
     const token = this.token;
     if (!token) {
-      return;
+      event.preventDefault();
+      return Promise.resolve();
     }
-    this.failure.set(null);
-    await submit(this.resetForm, {
-      action: async () => {
-        try {
-          await this.api.resetPassword(token, this.model().password);
-          // Cambiar la contraseña cierra todas las sesiones, también la de esta pestaña si la había.
-          if (this.auth.isAuthenticated()) {
-            await this.auth.logout();
-          }
-          this.toaster.success('Contraseña cambiada', 'Ya puedes iniciar sesión con la nueva.');
-          await this.router.navigateByUrl('/auth/login');
-          return undefined;
-        } catch (error) {
-          const problem = toProblem(error);
-          if (problem.errors.length > 0) {
-            return serverFieldErrors(this.resetForm, problem);
-          }
-          this.failure.set(problem.detail);
-          return undefined;
+    return this.submitForm(event, this.resetForm, {
+      failure: this.failure,
+      save: () => this.api.resetPassword(token, this.model().password),
+      onSuccess: async () => {
+        // Cambiar la contraseña cierra todas las sesiones, también la de esta pestaña si la había.
+        if (this.auth.isAuthenticated()) {
+          await this.auth.logout();
         }
+        this.toaster.success('Contraseña cambiada', 'Ya puedes iniciar sesión con la nueva.');
+        await this.router.navigateByUrl('/auth/login');
       },
-      onInvalid: (tree) => focusFirstInvalid(tree),
     });
   }
 }

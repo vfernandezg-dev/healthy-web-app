@@ -1,5 +1,5 @@
 import { Component, inject, resource, signal } from '@angular/core';
-import { FormField, form, maxLength, minLength, required, submit } from '@angular/forms/signals';
+import { FormField, form, maxLength, minLength, required } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { LucideLink2Off } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
@@ -13,9 +13,9 @@ import { AuthStore } from '@core/auth/auth-store';
 import { Toaster } from '@core/ui/toaster';
 import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
 import { PasswordField, PasswordInput } from '@shared/forms/password-field';
-import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
 import { MESSAGES, PASSWORD_MAX, PASSWORD_MIN } from '@shared/forms/validation';
 import { takeFragmentToken } from '../fragment-token';
+import { formSubmitter } from '@shared/forms/form-submitter';
 
 /** Alta de un nutricionista desde su invitación (/auth/accept-invitation#token=…). */
 @Component({
@@ -36,6 +36,7 @@ import { takeFragmentToken } from '../fragment-token';
   templateUrl: './accept-invitation.html',
 })
 export class AcceptInvitation {
+  private readonly submitForm = formSubmitter();
   private readonly api = inject(AuthApi);
   private readonly auth = inject(AuthStore);
   private readonly router = inject(Router);
@@ -63,34 +64,22 @@ export class AcceptInvitation {
     return toProblem(this.invitation.error()).detail;
   }
 
-  protected async onSubmit(event: Event): Promise<void> {
-    event.preventDefault();
+  protected save(event: Event): Promise<void> {
     const token = this.token;
     if (!token) {
-      return;
+      event.preventDefault();
+      return Promise.resolve();
     }
-    this.failure.set(null);
-    await submit(this.acceptForm, {
-      action: async () => {
+    return this.submitForm(event, this.acceptForm, {
+      failure: this.failure,
+      save: () => {
         const { password, bio } = this.model();
-        try {
-          const user = await this.auth.acceptInvitation(token, password, bio.trim() || null);
-          this.toaster.success(
-            `Te damos la bienvenida, ${user.firstName}`,
-            'Tu cuenta está lista.',
-          );
-          await this.router.navigateByUrl(this.auth.homeUrl());
-          return undefined;
-        } catch (error) {
-          const problem = toProblem(error);
-          if (problem.errors.length > 0) {
-            return serverFieldErrors(this.acceptForm, problem);
-          }
-          this.failure.set(problem.detail);
-          return undefined;
-        }
+        return this.auth.acceptInvitation(token, password, bio.trim() || null);
       },
-      onInvalid: (tree) => focusFirstInvalid(tree),
+      onSuccess: async (user) => {
+        this.toaster.success(`Te damos la bienvenida, ${user.firstName}`, 'Tu cuenta está lista.');
+        await this.router.navigateByUrl(this.auth.homeUrl());
+      },
     });
   }
 }

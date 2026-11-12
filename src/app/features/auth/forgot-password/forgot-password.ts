@@ -1,15 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormField, email, form, required, submit } from '@angular/forms/signals';
+import { FormField, email, form, required } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { LucideMailCheck } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
-import { toProblem } from '@core/api/problem';
 import { AuthApi } from '@core/auth/auth-api';
 import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
-import { focusFirstInvalid } from '@shared/forms/server-errors';
 import { MESSAGES } from '@shared/forms/validation';
+import { formSubmitter } from '@shared/forms/form-submitter';
 
 /** Pide el enlace para restablecer la contraseña. La respuesta es la misma exista o no la cuenta. */
 @Component({
@@ -50,7 +49,7 @@ import { MESSAGES } from '@shared/forms/validation';
       @if (failure(); as message) {
         <p-message severity="error" class="mt-6 block">{{ message }}</p-message>
       }
-      <form class="mt-8 space-y-5" novalidate (submit)="onSubmit($event)">
+      <form class="mt-8 space-y-5" novalidate (submit)="save($event)">
         <app-field label="Correo electrónico" inputId="forgot-email" [field]="forgotForm.email">
           <input
             pInputText
@@ -76,6 +75,7 @@ import { MESSAGES } from '@shared/forms/validation';
   `,
 })
 export class ForgotPassword {
+  private readonly submitForm = formSubmitter();
   private readonly api = inject(AuthApi);
 
   protected readonly model = signal({ email: '' });
@@ -87,21 +87,12 @@ export class ForgotPassword {
   protected readonly failure = signal<string | null>(null);
   protected readonly describe = fieldDescription;
 
-  protected async onSubmit(event: Event): Promise<void> {
-    event.preventDefault();
-    this.failure.set(null);
-    await submit(this.forgotForm, {
-      action: async () => {
-        const address = this.model().email.trim();
-        try {
-          await this.api.forgotPassword(address);
-          this.sentTo.set(address);
-        } catch (error) {
-          this.failure.set(toProblem(error).detail);
-        }
-        return undefined;
-      },
-      onInvalid: (tree) => focusFirstInvalid(tree),
+  protected save(event: Event): Promise<void> {
+    const address = this.model().email.trim();
+    return this.submitForm(event, this.forgotForm, {
+      failure: this.failure,
+      save: () => this.api.forgotPassword(address),
+      onSuccess: () => this.sentTo.set(address),
     });
   }
 }

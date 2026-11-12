@@ -28,37 +28,13 @@
         }
       </p>
     </div>
-    <div class="flex flex-wrap gap-2">
-      @if (status === 'DRAFT') {
-        <button
-          pButton
-          type="button"
-          severity="danger"
-          variant="text"
-          [disabled]="busy()"
-          (click)="remove()"
-        >
-          <svg lucideTrash></svg>
-          Eliminar
-        </button>
-        <button pButton type="button" [loading]="busy()" (click)="publish()">
-          <svg lucideSend></svg>
-          Publicar
-        </button>
-      } @else if (status === 'PUBLISHED') {
-        <button
-          pButton
-          type="button"
-          severity="secondary"
-          variant="outlined"
-          [loading]="busy()"
-          (click)="archive()"
-        >
-          <svg lucideArchive></svg>
-          Archivar
-        </button>
-      }
-    </div>
+    <app-publication-actions
+      [status]="status"
+      [pending]="pending()"
+      (publish)="publish.run()"
+      (archive)="archive.run()"
+      (remove)="remove.run()"
+    />
   </header>
 
   <div class="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] xl:items-start">
@@ -119,7 +95,7 @@
                       variant="text"
                       [iconOnly]="true"
                       [attr.aria-label]="`Quitar ${meal.name}`"
-                      (click)="deleteMeal(meal)"
+                      (click)="deleteMeal.run(meal)"
                     >
                       <svg lucideTrash></svg>
                     </button>

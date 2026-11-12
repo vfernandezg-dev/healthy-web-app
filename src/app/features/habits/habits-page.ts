@@ -1,23 +1,22 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormField, form, maxLength, submit } from '@angular/forms/signals';
+import { FormField, form, maxLength } from '@angular/forms/signals';
 import { LucidePencil, LucideTrash } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { SelectButton } from 'primeng/selectbutton';
 import { Skeleton } from 'primeng/skeleton';
 import { Slider } from 'primeng/slider';
 import { Textarea } from 'primeng/textarea';
-import { toProblem } from '@core/api/problem';
 import type { HabitLogResponse } from '@core/api/schema';
-import { Confirmer } from '@core/ui/confirmer';
 import { Toaster } from '@core/ui/toaster';
 import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
-import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
 import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
 import { addDays, todayIso } from '@shared/utils/date';
 import { HabitsApi } from './data/habits-api';
 import { HabitCalendar } from './ui/habit-calendar';
+import { formSubmitter } from '@shared/forms/form-submitter';
+import { mutation } from '@shared/utils/mutation';
 
 type Score = 'hydration' | 'nutrition' | 'exercise' | 'sleep';
 
@@ -59,9 +58,9 @@ const SCORES: readonly { key: Score; label: string; hint: string }[] = [
   templateUrl: './habits-page.html',
 })
 export class HabitsPage {
+  private readonly submitForm = formSubmitter();
   private readonly api = inject(HabitsApi);
   private readonly toaster = inject(Toaster);
-  private readonly confirmer = inject(Confirmer);
 
   protected readonly today = todayIso();
   private readonly yesterday = addDays(this.today, -1);
@@ -125,10 +124,10 @@ export class HabitsPage {
     this.habitForm().reset(this.emptyModel());
   }
 
-  protected async save(event: Event): Promise<void> {
-    event.preventDefault();
-    await submit(this.habitForm, {
-      action: async () => {
+  protected save(event: Event): Promise<void> {
+    const editing = this.editing();
+    return this.submitForm(event, this.habitForm, {
+      save: () => {
         const value = this.model();
         const body = {
           loggedOn: value.loggedOn,
@@ -138,51 +137,29 @@ export class HabitsPage {
           sleep: value.sleep,
           notes: value.notes.trim() || null,
         };
-        const editing = this.editing();
-        try {
-          if (editing) {
-            await this.api.update(editing.id, body);
-          } else {
-            await this.api.create(body);
-          }
-          this.cancel();
-          this.logs.reload();
-          this.toaster.success(
-            editing ? 'Registro actualizado' : '¡Día registrado!',
-            editing ? undefined : 'Suma a tus rachas.',
-          );
-          return undefined;
-        } catch (error) {
-          const problem = toProblem(error);
-          if (problem.errors.length > 0) {
-            return serverFieldErrors(this.habitForm, problem);
-          }
-          this.toaster.problem(problem);
-          return undefined;
-        }
+        return editing ? this.api.update(editing.id, body) : this.api.create(body);
       },
-      onInvalid: (tree) => focusFirstInvalid(tree),
+      onSuccess: () => {
+        this.cancel();
+        this.logs.reload();
+        this.toaster.success(
+          editing ? 'Registro actualizado' : '¡Día registrado!',
+          editing ? undefined : 'Suma a tus rachas.',
+        );
+      },
     });
   }
 
-  protected async remove(log: HabitLogResponse): Promise<void> {
-    const confirmed = await this.confirmer.ask({
+  protected readonly remove = mutation((log: HabitLogResponse) => this.api.delete(log.id), {
+    confirm: {
       header: 'Borrar el registro',
       message: 'Se borrará el registro de ese día. Las rachas ya contadas no cambian.',
       acceptLabel: 'Borrar',
       danger: true,
-    });
-    if (!confirmed) {
-      return;
-    }
-    try {
-      await this.api.delete(log.id);
-      this.logs.reload();
-      this.toaster.success('Registro borrado');
-    } catch {
-      // El interceptor de errores ya ha avisado.
-    }
-  }
+    },
+    success: 'Registro borrado',
+    onSuccess: () => this.logs.reload(),
+  });
 
   private emptyModel(day: string = this.today): HabitModel {
     return { loggedOn: day, hydration: 5, nutrition: 5, exercise: 5, sleep: 5, notes: '' };

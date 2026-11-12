@@ -45,6 +45,7 @@ describe('mutation', () => {
     const first = action.run();
     await Promise.resolve();
     expect(action.pending()).toBe(true);
+    expect(action.running()).toEqual([]);
     await expect(action.run()).resolves.toBe(false);
 
     finish();

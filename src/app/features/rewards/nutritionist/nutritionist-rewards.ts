@@ -1,202 +1,75 @@
-import { Component, inject, signal, computed } from '@angular/core';
-import {
-  LucideBookOpen,
-  LucideDynamicIcon,
-  LucideFlame,
-  LucidePencil,
-  LucidePlus,
-  LucideTrophy,
-  LucideUtensils,
-} from '@lucide/angular';
+import { Component, inject, signal } from '@angular/core';
+import { LucidePencil, LucidePlus, LucideTrophy } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
-import { type PaginatorState, Paginator } from 'primeng/paginator';
-import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
 import type { RewardResponse } from '@core/api/schema';
-import { Confirmer } from '@core/ui/confirmer';
 import { Toaster } from '@core/ui/toaster';
-import { EmptyState } from '@shared/ui/empty-state';
-import { LoadError } from '@shared/ui/load-error';
-import { PageHeader } from '@shared/ui/page-header';
-import { lastValue } from '@shared/utils/last-value';
-import { RewardsApi } from '../data/rewards-api';
-import { RewardDialog } from './reward-dialog';
 import { PAGE_SIZE } from '@shared/table/page-size';
+import { PagedGrid } from '@shared/table/paged-grid';
+import { pagedQuery } from '@shared/table/paged-query';
+import { RowTemplate } from '@shared/table/row-template';
 import { dialogState } from '@shared/ui/dialog-state';
+import { EmptyState } from '@shared/ui/empty-state';
+import { PageHeader } from '@shared/ui/page-header';
+import { mutation } from '@shared/utils/mutation';
+import { type OwnRewardFilters, RewardsApi } from '../data/rewards-api';
+import { RewardCard } from '../ui/reward-card';
+import { RewardDialog } from './reward-dialog';
 
-/** Recompensas del nutricionista: rachas de hábitos que desbloquean un contenido o un plan suyo. */
+/** Las recompensas del nutricionista (activas y retiradas): crearlas, editarlas y retirarlas. */
 @Component({
   selector: 'app-nutritionist-rewards',
   imports: [
     ButtonDirective,
-    Paginator,
-    Skeleton,
     Tag,
-    LucideDynamicIcon,
-    LucideFlame,
     LucidePlus,
     LucidePencil,
-    RewardDialog,
     EmptyState,
-    LoadError,
     PageHeader,
+    PagedGrid,
+    RowTemplate,
+    RewardCard,
+    RewardDialog,
   ],
-  template: `
-    <app-page-header
-      title="Tus recompensas"
-      description="Premia la constancia: cuando un cliente registra sus hábitos los días que pidas, desbloquea un contenido o un plan tuyo."
-    >
-      <button pButton type="button" (click)="rewardDialog.open(null)">
-        <svg lucidePlus></svg>
-        Nueva recompensa
-      </button>
-    </app-page-header>
-
-    @if (rewards.error()) {
-      <app-load-error [error]="rewards.error()" (retry)="rewards.reload()" />
-    } @else if (result(); as result) {
-      @if (result.content.length === 0) {
-        <app-empty-state
-          [icon]="trophy"
-          title="Aún no has creado recompensas"
-          description="Elige uno de tus contenidos o planes publicados como premio y cuántos días seguidos hacen falta."
-        />
-      } @else {
-        <ul
-          class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
-          role="list"
-          [attr.aria-busy]="rewards.isLoading()"
-        >
-          @for (reward of result.content; track reward.id) {
-            <li class="card flex flex-col p-6">
-              <div class="flex items-center justify-between gap-2">
-                <span
-                  class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-900"
-                >
-                  <svg lucideFlame class="size-3.5"></svg> {{ reward.requiredStreakDays }} días
-                </span>
-                <p-tag
-                  [value]="reward.active ? 'Activa' : 'Retirada'"
-                  [severity]="reward.active ? 'success' : 'secondary'"
-                />
-              </div>
-              <h2 class="mt-3 text-lg font-bold">{{ reward.title }}</h2>
-              <p class="mt-2 flex-1 text-muted">{{ reward.description }}</p>
-              <p class="mt-4 flex items-center gap-2 text-sm font-medium">
-                <svg [lucideIcon]="prizeIcon(reward)" class="size-4 text-brand-700"></svg>
-                {{ reward.target.title }}
-              </p>
-              @if (reward.active) {
-                <div class="mt-5 flex justify-end gap-2">
-                  <button
-                    pButton
-                    type="button"
-                    size="small"
-                    severity="secondary"
-                    variant="text"
-                    (click)="deactivate(reward)"
-                  >
-                    Retirar
-                  </button>
-                  <button
-                    pButton
-                    type="button"
-                    size="small"
-                    severity="secondary"
-                    (click)="rewardDialog.open(reward)"
-                  >
-                    <svg lucidePencil></svg>
-                    Editar
-                  </button>
-                </div>
-              }
-            </li>
-          }
-        </ul>
-        @if (result.page.totalPages > 1) {
-          <p-paginator
-            class="mt-6 block"
-            [first]="result.page.number * pageSize"
-            [rows]="pageSize"
-            [totalRecords]="result.page.totalElements"
-            (onPageChange)="changePage($event)"
-          />
-        }
-      }
-    } @else {
-      <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true">
-        @for (placeholder of [1, 2]; track placeholder) {
-          <p-skeleton height="14rem" borderRadius="1.5rem" />
-        }
-      </div>
-    }
-
-    @defer (when rewardDialog.isOpen(); prefetch on idle) {
-      @if (rewardDialog.data(); as dialog) {
-        <app-reward-dialog
-          [reward]="dialog.value"
-          (saved)="saved($event)"
-          (closed)="rewardDialog.close()"
-        />
-      }
-    }
-  `,
+  templateUrl: './nutritionist-rewards.html',
 })
 export class NutritionistRewards {
   private readonly api = inject(RewardsApi);
   private readonly toaster = inject(Toaster);
-  private readonly confirmer = inject(Confirmer);
 
   protected readonly rewardDialog = dialogState<RewardResponse | null>();
-  protected readonly pageSize = PAGE_SIZE.grid;
-  private readonly page = signal(0);
-  protected readonly rewards = this.api.mine(
-    computed(() => ({
-      active: null,
-      page: this.page(),
-      size: PAGE_SIZE.grid,
-      sort: 'createdAt,desc',
-    })),
-  );
-  /** La última página: se sigue viendo mientras carga la siguiente. */
-  protected readonly result = lastValue(this.rewards);
   protected readonly trophy = LucideTrophy;
 
-  protected prizeIcon(reward: RewardResponse) {
-    return reward.target.type === 'MEAL_PLAN' ? LucideUtensils : LucideBookOpen;
-  }
+  /** Las últimas creadas primero. */
+  protected readonly rewards = pagedQuery({
+    filters: signal<OwnRewardFilters>({ active: null }),
+    defaultSort: 'createdAt,desc',
+    pageSize: PAGE_SIZE.grid,
+    load: (request) => this.api.mine(request),
+  });
 
-  protected changePage(event: PaginatorState): void {
-    this.page.set(event.page ?? 0);
-  }
-
-  protected saved(reward: RewardResponse): void {
+  protected saved(editing: boolean): void {
     this.toaster.success('Recompensa guardada');
-    // Las nuevas salen las primeras; una editada sigue en su página.
-    const edited = this.result()?.content.some((item) => item.id === reward.id) ?? false;
-    if (edited || this.page() === 0) {
+    // Una nueva sale la primera; una editada sigue en su página.
+    if (editing) {
       this.rewards.reload();
     } else {
-      this.page.set(0);
+      this.rewards.afterCreate();
     }
   }
 
-  protected async deactivate(reward: RewardResponse): Promise<void> {
-    const confirmed = await this.confirmer.ask({
-      header: 'Retirar la recompensa',
-      message: 'Dejará de ofrecerse a los clientes. Quien ya completó su racha conserva el premio.',
-      acceptLabel: 'Retirar',
-      danger: true,
-    });
-    if (!confirmed) {
-      return;
-    }
-    try {
-      await this.api.deactivate(reward.id);
-      this.rewards.reload();
-      this.toaster.success('Recompensa retirada');
-    } catch {
-      // El interceptor de errores ya ha avisado.
-    }
-  }
+  protected readonly deactivate = mutation(
+    (reward: RewardResponse) => this.api.deactivate(reward.id),
+    {
+      confirm: {
+        header: 'Retirar la recompensa',
+        message:
+          'Dejará de ofrecerse a los clientes. Quien ya completó su racha conserva el premio.',
+        acceptLabel: 'Retirar',
+        danger: true,
+      },
+      success: 'Recompensa retirada',
+      onSuccess: () => this.rewards.reload(),
+    },
+  );
 }

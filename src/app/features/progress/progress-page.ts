@@ -1,15 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import {
-  FormField,
-  form,
-  max,
-  maxLength,
-  min,
-  required,
-  submit,
-  validate,
-} from '@angular/forms/signals';
+import { FormField, form, max, maxLength, min, required, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { LucideFlag, LucidePencil, LucidePlus, LucideTarget, LucideTrash } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
@@ -23,7 +14,6 @@ import { Confirmer } from '@core/ui/confirmer';
 import { Toaster } from '@core/ui/toaster';
 import { WeightChart } from '@shared/charts/weight-chart';
 import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
-import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
 import { GOAL_STATUS_LABELS, GOAL_STATUS_SEVERITY } from '@shared/i18n/labels';
 import { EmptyState } from '@shared/ui/empty-state';
 import { LoadError } from '@shared/ui/load-error';
@@ -34,6 +24,7 @@ import { ProgressApi } from './data/progress-api';
 import { GoalDialog } from './goal-dialog';
 import { goalProgress } from './data/progress-math';
 import { dialogState } from '@shared/ui/dialog-state';
+import { formSubmitter } from '@shared/forms/form-submitter';
 
 interface EntryModel {
   measuredOn: string;
@@ -69,6 +60,7 @@ interface EntryModel {
   templateUrl: './progress-page.html',
 })
 export class ProgressPage {
+  private readonly submitForm = formSubmitter();
   private readonly api = inject(ProgressApi);
   private readonly toaster = inject(Toaster);
   private readonly confirmer = inject(Confirmer);
@@ -183,45 +175,32 @@ export class ProgressPage {
     this.entryForm().reset(this.emptyEntry());
   }
 
-  protected async saveEntry(event: Event, goalId: string): Promise<void> {
-    event.preventDefault();
-    await submit(this.entryForm, {
-      action: async () => {
+  protected saveEntry(event: Event, goalId: string): Promise<void> {
+    const editing = this.editingEntry();
+    return this.submitForm(event, this.entryForm, {
+      // Un pesaje repetido o con fecha futura: el error va en la fecha.
+      codeFields: {
+        'weight-entry-exists': this.entryForm.measuredOn,
+        'future-date': this.entryForm.measuredOn,
+      },
+      save: () => {
         const value = this.entryModel();
         const body = {
           measuredOn: value.measuredOn,
+          // El esquema exige el peso: aquí nunca es null.
           weightKg: value.weightKg ?? 0,
           notes: value.notes.trim() || null,
         };
-        const editing = this.editingEntry();
-        try {
-          if (editing) {
-            await this.api.updateEntry(goalId, editing.id, body);
-          } else {
-            await this.api.addEntry(goalId, body);
-          }
-          this.cancelEdit();
-          this.entries.reload();
-          this.recommendation.reload();
-          this.toaster.success(editing ? 'Pesaje actualizado' : 'Pesaje añadido');
-          return undefined;
-        } catch (error) {
-          const problem = toProblem(error);
-          if (problem.errors.length > 0) {
-            return serverFieldErrors(this.entryForm, problem);
-          }
-          if (problem.code === 'weight-entry-exists' || problem.code === 'future-date') {
-            return {
-              kind: 'server',
-              message: problem.detail,
-              fieldTree: this.entryForm.measuredOn,
-            };
-          }
-          this.toaster.problem(problem);
-          return undefined;
-        }
+        return editing
+          ? this.api.updateEntry(goalId, editing.id, body)
+          : this.api.addEntry(goalId, body);
       },
-      onInvalid: (tree) => focusFirstInvalid(tree),
+      onSuccess: () => {
+        this.cancelEdit();
+        this.entries.reload();
+        this.recommendation.reload();
+        this.toaster.success(editing ? 'Pesaje actualizado' : 'Pesaje añadido');
+      },
     });
   }
 

@@ -1,4 +1,4 @@
-import { type Signal, inject, signal } from '@angular/core';
+import { type Signal, computed, inject, signal } from '@angular/core';
 import { type ConfirmOptions, Confirmer } from '@core/ui/confirmer';
 import { Toaster } from '@core/ui/toaster';
 
@@ -6,6 +6,8 @@ import { Toaster } from '@core/ui/toaster';
 export interface Mutation<A extends unknown[]> {
   /** Está en marcha: para el `[loading]` del botón y para no lanzarla dos veces. */
   readonly pending: Signal<boolean>;
+  /** Los argumentos de la llamada en marcha (null si no hay ninguna): para el botón de un elemento concreto. */
+  readonly running: Signal<A | null>;
   /**
    * La ejecuta (tras confirmarla, si se pidió). Devuelve si se hizo: false si se canceló, si ya estaba en marcha o si
    * falló. Nunca lanza: los errores de escritura ya los avisa el interceptor de errores.
@@ -13,13 +15,18 @@ export interface Mutation<A extends unknown[]> {
   run(...args: A): Promise<boolean>;
 }
 
+/** Aviso al terminar: un título, o título con detalle; `info` para lo que no es un logro (dejar de seguir...). */
+export type Notice =
+  | string
+  | { readonly summary: string; readonly detail?: string; readonly severity?: 'success' | 'info' };
+
 export interface MutationOptions<A extends unknown[], R> {
   /** Pide confirmación antes (acciones destructivas). */
   readonly confirm?: ConfirmOptions | ((...args: A) => ConfirmOptions);
   /** Aviso al terminar bien. */
-  readonly success?: string | ((result: R, ...args: A) => string);
+  readonly success?: Notice | ((result: R, ...args: A) => Notice);
   /** Tras terminar bien (actualizar la vista, navegar...). */
-  readonly onSuccess?: (result: R, ...args: A) => void | Promise<void>;
+  readonly onSuccess?: (result: R, ...args: A) => unknown;
 }
 
 /**
@@ -42,10 +49,12 @@ export function mutation<A extends unknown[], R>(
 ): Mutation<A> {
   const toaster = inject(Toaster);
   const confirmer = inject(Confirmer);
-  const pending = signal(false);
+  const running = signal<A | null>(null);
+  const pending = computed(() => running() !== null);
 
   return {
-    pending: pending.asReadonly(),
+    pending,
+    running: running.asReadonly(),
     async run(...args: A): Promise<boolean> {
       if (pending()) {
         return false;
@@ -55,15 +64,21 @@ export function mutation<A extends unknown[], R>(
       if (confirm && !(await confirmer.ask(confirm))) {
         return false;
       }
-      pending.set(true);
+      running.set(args);
       try {
         const result = await action(...args);
-        const success =
+        const notice =
           typeof options.success === 'function'
             ? options.success(result, ...args)
             : options.success;
-        if (success) {
-          toaster.success(success);
+        if (typeof notice === 'string') {
+          toaster.success(notice);
+        } else if (notice) {
+          if (notice.severity === 'info') {
+            toaster.info(notice.summary, notice.detail);
+          } else {
+            toaster.success(notice.summary, notice.detail);
+          }
         }
         await options.onSuccess?.(result, ...args);
         return true;
@@ -71,7 +86,7 @@ export function mutation<A extends unknown[], R>(
         // El interceptor de errores ya ha avisado (las escrituras sin silentErrors()).
         return false;
       } finally {
-        pending.set(false);
+        running.set(null);
       }
     },
   };

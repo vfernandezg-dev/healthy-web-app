@@ -1,27 +1,20 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  LucideBookOpen,
-  LucideCircleCheck,
-  LucideDynamicIcon,
-  LucideFlame,
-  LucideTrophy,
-  LucideUtensils,
-} from '@lucide/angular';
+import { LucideCircleCheck, LucideDynamicIcon, LucideFlame, LucideTrophy } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
-import { type PaginatorState, Paginator } from 'primeng/paginator';
-import { Skeleton } from 'primeng/skeleton';
-import type { RewardResponse } from '@core/api/schema';
-import { Confirmer } from '@core/ui/confirmer';
-import { Toaster } from '@core/ui/toaster';
+import type { RewardResponse, StreakResponse } from '@core/api/schema';
+import { PAGE_SIZE } from '@shared/table/page-size';
+import { PagedGrid } from '@shared/table/paged-grid';
+import { pagedQuery } from '@shared/table/paged-query';
+import { RowTemplate } from '@shared/table/row-template';
 import { EmptyState } from '@shared/ui/empty-state';
-import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
 import { ProgressBar } from '@shared/ui/progress-bar';
-import { lastValue } from '@shared/utils/last-value';
+import { mutation } from '@shared/utils/mutation';
 import { RewardsApi } from '../data/rewards-api';
-import { PAGE_SIZE } from '@shared/table/page-size';
+import { prizeLink, streakPercent } from '../data/streaks';
+import { RewardCard, prizeIcon } from '../ui/reward-card';
 
 /** Rachas del cliente hacia las recompensas y las que puede empezar. */
 @Component({
@@ -30,93 +23,56 @@ import { PAGE_SIZE } from '@shared/table/page-size';
     DatePipe,
     RouterLink,
     ButtonDirective,
-    Paginator,
-    Skeleton,
     LucideDynamicIcon,
     LucideFlame,
     LucideCircleCheck,
     ProgressBar,
     EmptyState,
-    LoadError,
     PageHeader,
+    PagedGrid,
+    RowTemplate,
+    RewardCard,
   ],
   templateUrl: './rewards-page.html',
 })
 export class RewardsPage {
   private readonly api = inject(RewardsApi);
-  private readonly toaster = inject(Toaster);
-  private readonly confirmer = inject(Confirmer);
 
-  protected readonly pageSize = PAGE_SIZE.grid;
-  private readonly page = signal(0);
-  protected readonly catalog = this.api.catalog(
-    computed(() => ({ page: this.page(), size: PAGE_SIZE.grid, sort: 'requiredStreakDays,asc' })),
-  );
-  /** La última página del catálogo: se sigue viendo mientras carga la siguiente. */
-  protected readonly result = lastValue(this.catalog);
+  /** Recompensas activas, de la más corta a la más larga, cada una con la racha del cliente (si la tiene). */
+  protected readonly catalog = pagedQuery({
+    defaultSort: 'requiredStreakDays,asc',
+    pageSize: PAGE_SIZE.grid,
+    load: (request) => this.api.catalog(request),
+  });
   private readonly streaks = this.api.streaks();
 
   /** Rachas en curso y completadas (de /me/streaks, que incluye las de recompensas retiradas). */
   protected readonly mine = computed(() =>
     this.streaks.hasValue() ? this.streaks.value().filter((reward) => reward.streak) : [],
   );
-  protected readonly starting = signal<string | null>(null);
   protected readonly trophy = LucideTrophy;
+  protected readonly prizeIcon = prizeIcon;
+  protected readonly prizeLink = prizeLink;
+  protected readonly percent = streakPercent;
 
-  protected prizeIcon(reward: RewardResponse) {
-    return reward.target.type === 'MEAL_PLAN' ? LucideUtensils : LucideBookOpen;
-  }
+  protected readonly start = mutation((reward: RewardResponse) => this.api.start(reward.id), {
+    success: { summary: 'Racha empezada', detail: 'Cada día que registres tus hábitos sumará.' },
+    onSuccess: () => this.reload(),
+  });
 
-  /** Dónde ver el premio desbloqueado: el plan por su id; el contenido, en el catálogo («Desbloqueado…»). */
-  protected prizeLink(reward: RewardResponse): string {
-    return reward.target.type === 'MEAL_PLAN'
-      ? `/client/meal-plans/${reward.target.id}`
-      : '/client/content';
-  }
-
-  protected percent(reward: RewardResponse): number {
-    return ((reward.streak?.currentDays ?? 0) / reward.requiredStreakDays) * 100;
-  }
-
-  protected changePage(event: PaginatorState): void {
-    this.page.set(event.page ?? 0);
-  }
-
-  protected async start(reward: RewardResponse): Promise<void> {
-    this.starting.set(reward.id);
-    try {
-      await this.api.start(reward.id);
-      this.reload();
-      this.toaster.success('Racha empezada', 'Cada día que registres tus hábitos sumará.');
-    } catch {
-      // El interceptor de errores ya ha avisado.
-    } finally {
-      this.starting.set(null);
-    }
-  }
-
-  protected async abandon(reward: RewardResponse): Promise<void> {
-    const streak = reward.streak;
-    if (!streak) {
-      return;
-    }
-    const confirmed = await this.confirmer.ask({
-      header: 'Abandonar la racha',
-      message: `Perderás los ${streak.currentDays} días que llevas hacia «${reward.title}».`,
-      acceptLabel: 'Abandonar',
-      danger: true,
-    });
-    if (!confirmed) {
-      return;
-    }
-    try {
-      await this.api.abandon(streak.id);
-      this.reload();
-      this.toaster.info('Racha abandonada');
-    } catch {
-      // El interceptor de errores ya ha avisado.
-    }
-  }
+  protected readonly abandon = mutation(
+    (_reward: RewardResponse, streak: StreakResponse) => this.api.abandon(streak.id),
+    {
+      confirm: (reward, streak) => ({
+        header: 'Abandonar la racha',
+        message: `Perderás los ${streak.currentDays} días que llevas hacia «${reward.title}».`,
+        acceptLabel: 'Abandonar',
+        danger: true,
+      }),
+      success: { summary: 'Racha abandonada', severity: 'info' },
+      onSuccess: () => this.reload(),
+    },
+  );
 
   private reload(): void {
     this.catalog.reload();

@@ -1,23 +1,13 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
-import { form, submit } from '@angular/forms/signals';
+import { Component, computed, inject, input, linkedSignal } from '@angular/core';
+import { form } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
-import {
-  LucideArchive,
-  LucideArrowLeft,
-  LucidePencil,
-  LucidePlus,
-  LucideSend,
-  LucideTrash,
-} from '@lucide/angular';
+import { LucideArrowLeft, LucidePencil, LucidePlus, LucideTrash } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
-import { toProblem } from '@core/api/problem';
 import type { MealPlanDetailResponse, MealResponse } from '@core/api/schema';
-import { Confirmer } from '@core/ui/confirmer';
 import { Toaster } from '@core/ui/toaster';
-import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
 import {
   MEAL_CATEGORY_LABELS,
   PUBLICATION_STATUS_LABELS,
@@ -29,11 +19,15 @@ import { mealsByDay } from '../data/meals-by-day';
 import { MealDialog, type MealTarget } from './meal-dialog';
 import { PlanFields, emptyPlan, planModelOf, planSchema, toPlanRequest } from '../ui/plan-fields';
 import { dialogState } from '@shared/ui/dialog-state';
+import { formSubmitter } from '@shared/forms/form-submitter';
+import { mutation } from '@shared/utils/mutation';
+import { PublicationActions } from '@shared/publishing/publication-actions';
 
 /** Editor de un plan del nutricionista: datos, comidas por día y publicación. */
 @Component({
   selector: 'app-plan-editor',
   imports: [
+    PublicationActions,
     RouterLink,
     DecimalPipe,
     ButtonDirective,
@@ -43,8 +37,6 @@ import { dialogState } from '@shared/ui/dialog-state';
     LucidePlus,
     LucidePencil,
     LucideTrash,
-    LucideSend,
-    LucideArchive,
     PlanFields,
     MealDialog,
     LoadError,
@@ -52,10 +44,10 @@ import { dialogState } from '@shared/ui/dialog-state';
   templateUrl: './plan-editor.html',
 })
 export class PlanEditor {
+  private readonly submitForm = formSubmitter();
   private readonly api = inject(MealPlansApi);
   private readonly router = inject(Router);
   private readonly toaster = inject(Toaster);
-  private readonly confirmer = inject(Confirmer);
   protected readonly mealDialog = dialogState<MealTarget>();
 
   /** Id del plan (parámetro de la ruta). */
@@ -72,7 +64,6 @@ export class PlanEditor {
   protected readonly categories = MEAL_CATEGORY_LABELS;
   protected readonly statusLabels = PUBLICATION_STATUS_LABELS;
   protected readonly statusSeverity = PUBLICATION_STATUS_SEVERITY;
-  protected readonly busy = signal(false);
 
   protected readonly model = linkedSignal(() => {
     const current = this.current();
@@ -80,25 +71,14 @@ export class PlanEditor {
   });
   protected readonly planForm = form(this.model, planSchema);
 
-  protected async savePlan(event: Event): Promise<void> {
-    event.preventDefault();
-    await submit(this.planForm, {
-      action: async () => {
-        try {
-          this.detail.value.set(await this.api.update(this.id(), toPlanRequest(this.model())));
-          this.planForm().reset();
-          this.toaster.success('Plan guardado');
-          return undefined;
-        } catch (error) {
-          const problem = toProblem(error);
-          if (problem.errors.length > 0) {
-            return serverFieldErrors(this.planForm, problem);
-          }
-          this.toaster.problem(problem);
-          return undefined;
-        }
+  protected savePlan(event: Event): Promise<void> {
+    return this.submitForm(event, this.planForm, {
+      save: () => this.api.update(this.id(), toPlanRequest(this.model())),
+      onSuccess: (plan) => {
+        this.detail.value.set(plan);
+        this.planForm().reset();
+        this.toaster.success('Plan guardado');
       },
-      onInvalid: (tree) => focusFirstInvalid(tree),
     });
   }
 
@@ -107,67 +87,51 @@ export class PlanEditor {
     this.toaster.success('Comida guardada');
   }
 
-  protected async deleteMeal(meal: MealResponse): Promise<void> {
-    const confirmed = await this.confirmer.ask({
-      header: 'Quitar la comida',
-      message: `Se quitará «${meal.name}» del día ${meal.dayNumber}.`,
-      acceptLabel: 'Quitar',
-      danger: true,
-    });
-    if (confirmed) {
-      await this.run(async () => {
-        await this.api.deleteMeal(this.id(), meal.id);
-        this.detail.reload();
-      }, 'Comida quitada');
-    }
-  }
+  protected readonly deleteMeal = mutation(
+    (meal: MealResponse) => this.api.deleteMeal(this.id(), meal.id),
+    {
+      confirm: (meal) => ({
+        header: 'Quitar la comida',
+        message: `Se quitará «${meal.name}» del día ${meal.dayNumber}.`,
+        acceptLabel: 'Quitar',
+        danger: true,
+      }),
+      success: 'Comida quitada',
+      onSuccess: () => this.detail.reload(),
+    },
+  );
 
-  protected async publish(): Promise<void> {
-    await this.run(async () => {
-      this.detail.value.set(await this.api.publish(this.id()));
-    }, 'Plan publicado: ya está en el catálogo');
-  }
+  protected readonly publish = mutation(() => this.api.publish(this.id()), {
+    success: 'Plan publicado: ya está en el catálogo',
+    onSuccess: (plan) => this.detail.value.set(plan),
+  });
 
-  protected async archive(): Promise<void> {
-    const confirmed = await this.confirmer.ask({
+  protected readonly archive = mutation(() => this.api.archive(this.id()), {
+    confirm: {
       header: 'Archivar el plan',
       message:
         'Dejará de aparecer en el catálogo. Quien ya lo sigue lo conserva. No se puede volver a publicar.',
       acceptLabel: 'Archivar',
       danger: true,
-    });
-    if (confirmed) {
-      await this.run(async () => {
-        this.detail.value.set(await this.api.archive(this.id()));
-      }, 'Plan archivado');
-    }
-  }
+    },
+    success: 'Plan archivado',
+    onSuccess: (plan) => this.detail.value.set(plan),
+  });
 
-  protected async remove(): Promise<void> {
-    const confirmed = await this.confirmer.ask({
+  protected readonly remove = mutation(() => this.api.delete(this.id()), {
+    confirm: {
       header: 'Eliminar el borrador',
       message: 'Se borrará el plan con todas sus comidas. Esta acción no se puede deshacer.',
       acceptLabel: 'Eliminar',
       danger: true,
-    });
-    if (confirmed) {
-      await this.run(async () => {
-        await this.api.delete(this.id());
-        await this.router.navigate(['/nutritionist/meal-plans']);
-      }, 'Borrador eliminado');
-    }
-  }
+    },
+    success: 'Borrador eliminado',
+    onSuccess: async () => {
+      await this.router.navigate(['/nutritionist/meal-plans']);
+    },
+  });
 
-  /** Ejecuta una acción con el estado «ocupado»; si falla, el interceptor ya ha avisado. */
-  private async run(action: () => Promise<void>, success: string): Promise<void> {
-    this.busy.set(true);
-    try {
-      await action();
-      this.toaster.success(success);
-    } catch {
-      // El interceptor de errores ya ha avisado.
-    } finally {
-      this.busy.set(false);
-    }
-  }
+  protected readonly pending = computed(
+    () => this.publish.pending() || this.archive.pending() || this.remove.pending(),
+  );
 }
