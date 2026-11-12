@@ -192,8 +192,8 @@ importers:
   .:
     dependencies:
       '@angular/cdk':
-        specifier: ^22.2.6
-        version: 22.2.6(31575fdcd76c2461da240d509d191da3)
+        specifier: ^22.2.7
+        version: 22.2.7(31575fdcd76c2461da240d509d191da3)
       '@angular/common':
         specifier: ^22.2.5
         version: 22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2)
@@ -229,7 +229,7 @@ importers:
         version: 22.0.0(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(echarts@6.1.0)
       primeng:
         specifier: ^22.1.4
-        version: 22.1.4(ceaf7ae32978fe35d08c63f9a2535922)
+        version: 22.1.4(e9330bb4c88235b2c7c70cd33ca52a13)
       rxjs:
         specifier: ~7.8.2
         version: 7.8.2
@@ -432,8 +432,8 @@ packages:
       vitest:
         optional: true
 
-  '@angular/cdk@22.2.6':
-    resolution: {integrity: sha512-BNAEN+NTWneKcWLi6ZSvbHA99O2AcSQjvnKG/Fa7V9eB+WgXhDRTrfa8qSx2zb57NjFnmABgPWIVkvF76VymEQ==}
+  '@angular/cdk@22.2.7':
+    resolution: {integrity: sha512-S9gJRQVGchy38Y0aYnEfKjFYY34c9sKbbLvwbef6wzGnYvesmsTqskQRbysWvg+F7mZuHuK0uZEDCvEfOZxYbw==}
     peerDependencies:
       '@angular/common': ^22.0.0 || ^23.0.0
       '@angular/core': ^22.0.0 || ^23.0.0
@@ -4420,7 +4420,7 @@ snapshots:
       - tsx
       - yaml
 
-  '@angular/cdk@22.2.6(31575fdcd76c2461da240d509d191da3)':
+  '@angular/cdk@22.2.7(31575fdcd76c2461da240d509d191da3)':
     dependencies:
       '@angular/common': 22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2)
       '@angular/core': 22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3)
@@ -7356,9 +7356,9 @@ snapshots:
 
   prettier@3.9.10: {}
 
-  primeng@22.1.4(ceaf7ae32978fe35d08c63f9a2535922):
+  primeng@22.1.4(e9330bb4c88235b2c7c70cd33ca52a13):
     dependencies:
-      '@angular/cdk': 22.2.6(31575fdcd76c2461da240d509d191da3)
+      '@angular/cdk': 22.2.7(31575fdcd76c2461da240d509d191da3)
       '@angular/common': 22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2)
       '@angular/core': 22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3)
       '@angular/forms': 22.2.5(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.2.5(@angular/animations@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3)))(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2)

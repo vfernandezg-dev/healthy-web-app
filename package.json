@@ -29,7 +29,7 @@
     "verify": "pnpm lint && pnpm typecheck:e2e && pnpm format:check && pnpm api:check && pnpm theme:check && pnpm test && pnpm build"
   },
   "dependencies": {
-    "@angular/cdk": "^22.2.6",
+    "@angular/cdk": "^22.2.7",
     "@angular/common": "^22.2.5",
     "@angular/compiler": "^22.2.5",
     "@angular/core": "^22.2.5",
