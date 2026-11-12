@@ -1,15 +1,7 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NgApexchartsModule } from 'ng-apexcharts';
-
-import {
-  ChartComponent,
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexXAxis,
-  ApexTitleSubtitle
-} from "ng-apexcharts";
+import { ApexChartComponent } from '../../../../shared/components/apex-chart/apex-chart.component';
 import { SeguimientoResponse } from '../../../../shared/models/seguimiento-response.model';
 import { SeguimientoService } from '../../../../core/services/seguimiento.service';
 import { MetaResponseModel } from '../../../../shared/models/meta-response.model';
@@ -26,7 +18,7 @@ export type ChartOptions = {
     imports: [
         FormsModule,
         ReactiveFormsModule,
-        NgApexchartsModule
+        ApexChartComponent
     ],
     templateUrl: './grafico-peso.component.html',
     styleUrl: './grafico-peso.component.css'
@@ -34,7 +26,6 @@ export type ChartOptions = {
 
 
 export class GraficoPesoComponent implements OnInit {
-  @ViewChild("chart") chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
   meta: MetaResponseModel[] = [];
