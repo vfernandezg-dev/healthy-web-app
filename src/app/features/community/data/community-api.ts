@@ -7,8 +7,9 @@ import type {
   CommentResponse,
   GroupRequest,
   GroupResponse,
-  MemberResponse,
+  PagedModelCommentResponse,
   PagedModelGroupResponse,
+  PagedModelMemberResponse,
   PagedModelPostResponse,
   PostRequest,
   PostResponse,
@@ -16,6 +17,8 @@ import type {
 
 export const GROUP_PAGE_SIZE = 12;
 export const POST_PAGE_SIZE = 10;
+export const COMMENT_PAGE_SIZE = 20;
+export const MEMBER_PAGE_SIZE = 20;
 
 /** Comunidad: grupos, membresías, publicaciones, comentarios y denuncias. */
 @Injectable({ providedIn: 'root' })
@@ -74,11 +77,14 @@ export class CommunityApi {
     return firstValueFrom(this.http.delete<void>(`${this.api}/groups/${groupId}/members/me`));
   }
 
-  /** El creador ve también las solicitudes pendientes. Sin grupo, no pide nada. */
-  members(groupId: Signal<string | undefined>) {
-    return httpResource<MemberResponse[]>(() => {
-      const id = groupId();
-      return id ? `${this.api}/groups/${id}/members` : undefined;
+  /** Por orden de llegada. El creador ve también las solicitudes pendientes (entre los demás, por su fecha). */
+  members(query: Signal<{ groupId: string; page: number }>) {
+    return httpResource<PagedModelMemberResponse>(() => {
+      const { groupId, page } = query();
+      return {
+        url: `${this.api}/groups/${groupId}/members`,
+        params: { page, size: MEMBER_PAGE_SIZE, sort: 'createdAt,asc' },
+      };
     });
   }
 
@@ -129,10 +135,15 @@ export class CommunityApi {
   }
 
   /** Comentarios de una publicación, del más antiguo al más nuevo. Sin publicación, no pide nada. */
-  comments(postId: Signal<string | undefined>) {
-    return httpResource<CommentResponse[]>(() => {
-      const id = postId();
-      return id ? `${this.api}/posts/${id}/comments` : undefined;
+  comments(query: Signal<{ postId: string; page: number } | undefined>) {
+    return httpResource<PagedModelCommentResponse>(() => {
+      const value = query();
+      return value
+        ? {
+            url: `${this.api}/posts/${value.postId}/comments`,
+            params: { page: value.page, size: COMMENT_PAGE_SIZE, sort: 'createdAt,asc' },
+          }
+        : undefined;
     });
   }
 

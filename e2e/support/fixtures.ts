@@ -194,9 +194,9 @@ export function readsFor(role: Role): Record<string, unknown> {
     '/groups': paged([GROUP], 12),
     '/groups/group-1': GROUP,
     '/groups/group-1/posts': paged([], 10),
-    '/groups/group-1/members': [
+    '/groups/group-1/members': paged<S['MemberResponse']>([
       { person: CARLOS, role: 'OWNER', status: 'ACTIVE', since: '2026-10-01T10:00:00Z' },
-    ] satisfies S['MemberResponse'][],
+    ]),
     // Nutricionista
     '/nutritionist/meal-plans': paged([PLAN]),
     '/nutritionist/meal-plans/summary': SUMMARY,

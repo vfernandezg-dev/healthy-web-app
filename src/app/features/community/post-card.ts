@@ -1,4 +1,4 @@
-import { DatePipe, NgOptimizedImage } from '@angular/common';
+import { DatePipe, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormField, form, maxLength, required, submit } from '@angular/forms/signals';
 import { LucideFlag, LucideMessageCircle, LucidePencil, LucideTrash2 } from '@lucide/angular';
@@ -12,6 +12,7 @@ import { LabeledField, fieldDescription } from '../../shared/forms/labeled-field
 import { focusFirstInvalid } from '../../shared/forms/server-errors';
 import { MediaUrlPipe } from '../../shared/pipes/media-url.pipe';
 import { PersonAvatar } from '../../shared/ui/person-avatar';
+import { loadMore } from '../../shared/utils/load-more';
 import { CommunityApi } from './data/community-api';
 import type { Viewer } from './shared/membership';
 
@@ -25,13 +26,14 @@ type Author = PostResponse['author'];
 
 /**
  * Una publicación del grupo con sus acciones (editar, borrar, denunciar) y sus comentarios, que se cargan al
- * desplegarlos.
+ * desplegarlos: los 20 más antiguos y, con «Ver más comentarios», los siguientes.
  */
 @Component({
   selector: 'app-post-card',
   imports: [
     DatePipe,
     NgOptimizedImage,
+    NgTemplateOutlet,
     MediaUrlPipe,
     FormField,
     Textarea,
@@ -90,7 +92,7 @@ type Author = PostResponse['author'];
           [attr.aria-expanded]="expanded()"
           [attr.aria-controls]="expanded() ? commentsId() : null"
           [attr.aria-describedby]="titleId()"
-          (click)="expanded.set(!expanded())"
+          (click)="toggleComments()"
         >
           <svg lucideMessageCircle pButtonIcon></svg>
           <span pButtonLabel>{{ expanded() ? 'Ocultar los comentarios' : 'Comentarios' }}</span>
@@ -143,19 +145,12 @@ type Author = PostResponse['author'];
 
       @if (expanded()) {
         <div [id]="commentsId()" class="mt-4 space-y-4">
-          @if (comments.error()) {
-            <p class="text-sm text-red-700" role="alert">
-              No se han podido cargar los comentarios.
-              <button type="button" class="font-semibold underline" (click)="comments.reload()">
-                Reintentar
-              </button>
-            </p>
-          } @else if (comments.hasValue()) {
-            @if (comments.value().length === 0) {
+          @if (comments.loaded()) {
+            @if (comments.items().length === 0) {
               <p class="text-sm text-muted">Aún no hay comentarios.</p>
             } @else {
               <ul class="space-y-3" role="list">
-                @for (comment of comments.value(); track comment.id) {
+                @for (comment of comments.items(); track comment.id) {
                   <li class="rounded-2xl bg-brand-50/70 px-4 py-3">
                     <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                       <p class="text-sm">
@@ -207,6 +202,25 @@ type Author = PostResponse['author'];
                 }
               </ul>
             }
+            @if (comments.resource.error()) {
+              <ng-container *ngTemplateOutlet="loadError" />
+            } @else if (comments.hasMore()) {
+              <button
+                pButton
+                type="button"
+                size="small"
+                severity="secondary"
+                variant="outlined"
+                class="w-full"
+                [attr.aria-describedby]="titleId()"
+                [loading]="comments.resource.isLoading()"
+                (click)="comments.more()"
+              >
+                <span pButtonLabel>Ver más comentarios</span>
+              </button>
+            }
+          } @else if (comments.resource.error()) {
+            <ng-container *ngTemplateOutlet="loadError" />
           } @else {
             <p-skeleton height="4rem" borderRadius="1rem" />
           }
@@ -239,6 +253,15 @@ type Author = PostResponse['author'];
         </div>
       }
     </article>
+
+    <ng-template #loadError>
+      <p class="text-sm text-red-700" role="alert">
+        No se han podido cargar los comentarios.
+        <button type="button" class="font-semibold underline" (click)="comments.resource.reload()">
+          Reintentar
+        </button>
+      </p>
+    </ng-template>
   `,
 })
 export class PostCard {
@@ -267,15 +290,32 @@ export class PostCard {
   });
 
   protected readonly expanded = signal(false);
-  protected readonly comments = this.api.comments(
-    computed(() => (this.expanded() ? this.post().id : undefined)),
-  );
+  /** Solo se piden con la lista abierta; el id evita pedirlos otra vez si llega otra copia de la publicación. */
+  private readonly commentsOf = computed(() => (this.expanded() ? this.post().id : undefined));
+  protected readonly comments = loadMore({
+    resource: (page) =>
+      this.api.comments(
+        computed(() => {
+          const postId = this.commentsOf();
+          return postId ? { postId, page: page() } : undefined;
+        }),
+      ),
+    key: (comment) => comment.id,
+  });
 
   protected readonly commentModel = signal({ body: '' });
   protected readonly commentForm = form(this.commentModel, (path) => {
     required(path.body, { message: 'Escribe tu comentario' });
     maxLength(path.body, 1000, { message: 'Máximo 1000 caracteres' });
   });
+
+  /** Al abrirlos, empiezan otra vez por la primera página. */
+  protected toggleComments(): void {
+    if (!this.expanded()) {
+      this.comments.reset();
+    }
+    this.expanded.update((open) => !open);
+  }
 
   protected isMine(author: Author): boolean {
     return !!author && author.id === this.viewer().userId;
@@ -290,9 +330,10 @@ export class PostCard {
     await submit(this.commentForm, {
       action: async () => {
         try {
-          await this.api.comment(this.post().id, this.commentModel().body.trim());
+          const created = await this.api.comment(this.post().id, this.commentModel().body.trim());
           this.commentForm().reset({ body: '' });
-          this.comments.reload();
+          // Es el más nuevo: va al final aunque queden páginas sin pedir.
+          this.comments.append(created);
         } catch {
           // El interceptor de errores ya ha avisado.
         }
@@ -316,7 +357,7 @@ export class PostCard {
     }
     try {
       await this.api.deleteComment(comment.id);
-      this.comments.reload();
+      this.comments.remove(comment.id);
       this.toaster.success('Comentario eliminado');
     } catch {
       // El interceptor de errores ya ha avisado.
