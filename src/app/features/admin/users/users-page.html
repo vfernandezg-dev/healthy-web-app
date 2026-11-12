@@ -130,7 +130,7 @@
 
 <ng-template #person let-user [appRow]="items()">
   <div class="flex items-center gap-3">
-    <app-person-avatar [name]="user.firstName + ' ' + user.lastName" />
+    <app-person-avatar [name]="`${user.firstName} ${user.lastName}`" />
     <div class="min-w-0">
       <p class="truncate font-semibold">{{ user.firstName }} {{ user.lastName }}</p>
       <p class="truncate text-sm text-muted">{{ user.email }}</p>
@@ -156,10 +156,10 @@
       size="small"
       severity="danger"
       variant="text"
-      [attr.aria-label]="'Desactivar la cuenta de ' + user.firstName + ' ' + user.lastName"
+      [attr.aria-label]="`Desactivar la cuenta de ${user.firstName} ${user.lastName}`"
       (click)="deactivate(user)"
     >
-      <span pButtonLabel>Desactivar</span>
+      Desactivar
     </button>
   } @else {
     <button
@@ -168,10 +168,10 @@
       size="small"
       severity="secondary"
       variant="outlined"
-      [attr.aria-label]="'Reactivar la cuenta de ' + user.firstName + ' ' + user.lastName"
+      [attr.aria-label]="`Reactivar la cuenta de ${user.firstName} ${user.lastName}`"
       (click)="activate(user)"
     >
-      <span pButtonLabel>Reactivar</span>
+      Reactivar
     </button>
   }
 </ng-template>

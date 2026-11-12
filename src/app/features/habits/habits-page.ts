@@ -1,8 +1,8 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormField, form, maxLength, submit } from '@angular/forms/signals';
-import { LucidePencil, LucideTrash2 } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { LucidePencil, LucideTrash } from '@lucide/angular';
+import { ButtonDirective } from 'primeng/button';
 import { SelectButton } from 'primeng/selectbutton';
 import { Skeleton } from 'primeng/skeleton';
 import { Slider } from 'primeng/slider';
@@ -49,10 +49,8 @@ const SCORES: readonly { key: Score; label: string; hint: string }[] = [
     Textarea,
     Skeleton,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     LucidePencil,
-    LucideTrash2,
+    LucideTrash,
     LabeledField,
     HabitCalendar,
     LoadError,

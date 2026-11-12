@@ -8,11 +8,11 @@ import {
   LucideMessageSquare,
   LucidePencil,
   LucidePlus,
-  LucideTrash2,
+  LucideTrash,
   LucideUserPlus,
   LucideUsers,
 } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { Skeleton } from 'primeng/skeleton';
 import { AuthStore } from '@core/auth/auth-store';
@@ -44,15 +44,13 @@ type Relation = 'owner' | 'member' | 'pending' | 'none';
     DatePipe,
     I18nPluralPipe,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     Paginator,
     Skeleton,
     LucideArrowLeft,
     LucideLogOut,
     LucidePencil,
     LucidePlus,
-    LucideTrash2,
+    LucideTrash,
     LucideUserPlus,
     LucideUsers,
     VisibilityBadge,

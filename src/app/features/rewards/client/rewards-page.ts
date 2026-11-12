@@ -9,7 +9,7 @@ import {
   LucideTrophy,
   LucideUtensils,
 } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { Skeleton } from 'primeng/skeleton';
 import type { RewardResponse } from '@core/api/schema';
@@ -29,7 +29,6 @@ import { REWARD_PAGE_SIZE, RewardsApi } from '../data/rewards-api';
     DatePipe,
     RouterLink,
     ButtonDirective,
-    ButtonLabel,
     Paginator,
     Skeleton,
     LucideDynamicIcon,

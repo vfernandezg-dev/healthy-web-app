@@ -11,8 +11,8 @@ import {
   validate,
 } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
-import { LucideFlag, LucidePencil, LucidePlus, LucideTarget, LucideTrash2 } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { LucideFlag, LucidePencil, LucidePlus, LucideTarget, LucideTrash } from '@lucide/angular';
+import { ButtonDirective } from 'primeng/button';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Skeleton } from 'primeng/skeleton';
@@ -54,11 +54,9 @@ interface EntryModel {
     Skeleton,
     Tag,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     LucidePlus,
     LucidePencil,
-    LucideTrash2,
+    LucideTrash,
     LucideFlag,
     LabeledField,
     WeightChart,

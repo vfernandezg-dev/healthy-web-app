@@ -13,8 +13,8 @@ describe('mealsByDay', () => {
     );
 
     expect(days.map((day) => day.day)).toEqual([1, 2, 3]);
-    expect(days[0].meals.map((m) => m.id)).toEqual(['desayuno', 'cena']);
-    expect(days[0].calories).toBe(1000);
+    expect(days[0]?.meals.map((m) => m.id)).toEqual(['desayuno', 'cena']);
+    expect(days[0]?.calories).toBe(1000);
     expect(days[2]).toEqual({ day: 3, meals: [], calories: 0 });
   });
 });

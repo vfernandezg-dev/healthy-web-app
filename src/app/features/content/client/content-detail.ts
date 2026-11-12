@@ -2,7 +2,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideArrowLeft, LucideDownload, LucideLock, LucidePlay } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { APP_CONFIG } from '@core/api/api-config';
 import { toProblem } from '@core/api/problem';
@@ -27,8 +27,6 @@ import { titleFrom } from '@core/routing/title-strategy';
     NgOptimizedImage,
     MediaUrlPipe,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     Skeleton,
     LucideArrowLeft,
     LucideLock,

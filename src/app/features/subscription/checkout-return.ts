@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, inject, input, resource } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideCircleCheck, LucideCircleX } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { toProblem } from '@core/api/problem';
 import { TIER_LABELS } from '@shared/i18n/labels';
@@ -18,7 +18,6 @@ import { BillingApi } from './data/billing-api';
     DatePipe,
     RouterLink,
     ButtonDirective,
-    ButtonLabel,
     ProgressSpinner,
     LucideCircleCheck,
     LucideCircleX,
@@ -49,9 +48,9 @@ import { BillingApi } from './data/billing-api';
           por correo.
         </p>
         <div class="mt-8 flex flex-wrap justify-center gap-3">
-          <a pButton routerLink="/client/content"><span pButtonLabel>Ver el contenido</span></a>
+          <a pButton routerLink="/client/content">Ver el contenido</a>
           <a pButton routerLink="/client/subscription" severity="secondary" variant="outlined">
-            <span pButtonLabel>Ver mi suscripción</span>
+            Ver mi suscripción
           </a>
         </div>
       } @else {
@@ -61,7 +60,7 @@ import { BillingApi } from './data/billing-api';
         <h1 class="mt-6 text-2xl font-bold">No se ha podido completar el pago</h1>
         <p class="mt-2 text-muted">{{ failure() }}</p>
         <a pButton routerLink="/client/subscription" severity="secondary" class="mt-8">
-          <span pButtonLabel>Volver a la suscripción</span>
+          Volver a la suscripción
         </a>
       }
     </div>

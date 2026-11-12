@@ -1,6 +1,6 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { FormField, email, form, maxLength, required, submit } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
@@ -13,7 +13,7 @@ import { AdminApi } from '../data/admin-api';
 /** Invitar a un nutricionista: recibe por correo un enlace para crear su cuenta. Se abre con {@link InviteDialog.open}. */
 @Component({
   selector: 'app-invite-dialog',
-  imports: [FormField, Dialog, InputText, Message, ButtonDirective, ButtonLabel, LabeledField],
+  imports: [FormField, Dialog, InputText, Message, ButtonDirective, LabeledField],
   template: `
     <p-dialog
       [(visible)]="visible"
@@ -73,10 +73,10 @@ import { AdminApi } from '../data/admin-api';
           variant="text"
           (click)="visible.set(false)"
         >
-          <span pButtonLabel>Cancelar</span>
+          Cancelar
         </button>
         <button pButton type="submit" form="invite-form" [loading]="inviteForm().submitting()">
-          <span pButtonLabel>Enviar la invitación</span>
+          Enviar la invitación
         </button>
       </ng-template>
     </p-dialog>

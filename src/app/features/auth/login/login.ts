@@ -1,7 +1,7 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { FormField, email, form, required, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { toProblem } from '@core/api/problem';
@@ -19,7 +19,6 @@ import { MESSAGES } from '@shared/forms/validation';
     FormField,
     InputText,
     ButtonDirective,
-    ButtonLabel,
     Message,
     LabeledField,
     PasswordField,

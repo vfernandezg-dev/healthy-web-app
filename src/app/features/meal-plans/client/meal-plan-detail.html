@@ -17,11 +17,9 @@
       conseguirlo completando una racha de hábitos que lo tenga como premio.
     </p>
     <div class="mt-8 flex flex-wrap justify-center gap-3">
-      <a pButton routerLink="/client/subscription"
-        ><span pButtonLabel>Ver los planes de suscripción</span></a
-      >
+      <a pButton routerLink="/client/subscription">Ver los planes de suscripción</a>
       <a pButton routerLink="/client/rewards" severity="secondary" variant="outlined">
-        <span pButtonLabel>Ver las recompensas</span>
+        Ver las recompensas
       </a>
     </div>
   </div>
@@ -68,11 +66,11 @@
           [loading]="saving()"
           (click)="unfollow()"
         >
-          <span pButtonLabel>Dejar de seguirlo</span>
+          Dejar de seguirlo
         </button>
       } @else {
         <button pButton type="button" [loading]="saving()" (click)="follow()">
-          <span pButtonLabel>Seguir este plan</span>
+          Seguir este plan
         </button>
       }
     </div>
@@ -80,9 +78,9 @@
 
   <div class="space-y-6">
     @for (day of days(); track day.day) {
-      <section class="card p-6" [attr.aria-labelledby]="'day-' + day.day">
+      <section class="card p-6" [attr.aria-labelledby]="`day-${day.day}`">
         <div class="mb-4 flex items-baseline justify-between gap-4">
-          <h2 [id]="'day-' + day.day" class="text-xl font-bold">Día {{ day.day }}</h2>
+          <h2 [id]="`day-${day.day}`" class="text-xl font-bold">Día {{ day.day }}</h2>
           @if (day.calories > 0) {
             <p class="text-sm font-medium text-muted">{{ day.calories | number }} kcal</p>
           }

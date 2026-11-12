@@ -1,7 +1,7 @@
 import { DatePipe, formatDate } from '@angular/common';
 import { Component, LOCALE_ID, computed, inject, signal } from '@angular/core';
 import { LucideReceipt } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
 import type { PlanResponse } from '@core/api/schema';
@@ -25,17 +25,7 @@ const TIER_ORDER: readonly Tier[] = ['BASIC', 'PREMIUM', 'VIP'];
 /** Plan actual, planes disponibles (pago con PayPal) e historial de pagos del cliente. */
 @Component({
   selector: 'app-subscription-page',
-  imports: [
-    DatePipe,
-    MoneyPipe,
-    ButtonDirective,
-    ButtonLabel,
-    Skeleton,
-    Tag,
-    EmptyState,
-    LoadError,
-    PageHeader,
-  ],
+  imports: [DatePipe, MoneyPipe, ButtonDirective, Skeleton, Tag, EmptyState, LoadError, PageHeader],
   templateUrl: './subscription-page.html',
 })
 export class SubscriptionPage {

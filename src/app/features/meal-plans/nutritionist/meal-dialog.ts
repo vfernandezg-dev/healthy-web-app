@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormField, form, max, maxLength, min, required, submit } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
@@ -34,7 +34,6 @@ interface MealModel {
     Textarea,
     Message,
     ButtonDirective,
-    ButtonLabel,
     LabeledField,
   ],
   template: `
@@ -119,10 +118,10 @@ interface MealModel {
           variant="text"
           (click)="visible.set(false)"
         >
-          <span pButtonLabel>Cancelar</span>
+          Cancelar
         </button>
         <button pButton type="submit" form="meal-form" [loading]="mealForm().submitting()">
-          <span pButtonLabel>{{ editing() ? 'Guardar' : 'Añadir' }}</span>
+          {{ editing() ? 'Guardar' : 'Añadir' }}
         </button>
       </ng-template>
     </p-dialog>
@@ -193,7 +192,7 @@ export class MealDialog {
         const value = this.model();
         const current = this.meal();
         const position =
-          current && current.dayNumber === value.dayNumber
+          current?.dayNumber === value.dayNumber
             ? current.position
             : this.positionFor()(value.dayNumber);
         const body = {

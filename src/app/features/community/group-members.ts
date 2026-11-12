@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input, output } from '@angular/core';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import type { MemberResponse } from '@core/api/schema';
 import { Confirmer } from '@core/ui/confirmer';
@@ -22,7 +22,7 @@ function memberKey(member: MemberResponse): string {
  */
 @Component({
   selector: 'app-group-members',
-  imports: [NgTemplateOutlet, ButtonDirective, ButtonLabel, Skeleton, PersonAvatar],
+  imports: [NgTemplateOutlet, ButtonDirective, Skeleton, PersonAvatar],
   host: { class: 'block' },
   template: `
     <section class="card p-5" aria-labelledby="members-title">
@@ -49,7 +49,7 @@ function memberKey(member: MemberResponse): string {
                       [attr.aria-label]="'Aprobar a ' + person.name"
                       (click)="approve(person)"
                     >
-                      <span pButtonLabel>Aprobar</span>
+                      Aprobar
                     </button>
                     <button
                       pButton
@@ -60,7 +60,7 @@ function memberKey(member: MemberResponse): string {
                       [attr.aria-label]="'Rechazar a ' + person.name"
                       (click)="reject(person)"
                     >
-                      <span pButtonLabel>Rechazar</span>
+                      Rechazar
                     </button>
                   </span>
                 }
@@ -91,7 +91,7 @@ function memberKey(member: MemberResponse): string {
                   [attr.aria-label]="'Expulsar a ' + person.name"
                   (click)="kick(person)"
                 >
-                  <span pButtonLabel>Expulsar</span>
+                  Expulsar
                 </button>
               }
             </li>
@@ -110,7 +110,7 @@ function memberKey(member: MemberResponse): string {
             [loading]="members.resource.isLoading()"
             (click)="members.more()"
           >
-            <span pButtonLabel>Ver más miembros</span>
+            Ver más miembros
           </button>
         }
       } @else if (members.resource.error()) {

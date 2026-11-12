@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormField, form, maxLength, minLength, required, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { LucideLink2Off } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { toProblem } from '@core/api/problem';
@@ -23,7 +23,6 @@ import { takeFragmentToken } from '../fragment-token';
     FormField,
     InputText,
     ButtonDirective,
-    ButtonLabel,
     Message,
     LucideLink2Off,
     LabeledField,
@@ -63,7 +62,7 @@ import { takeFragmentToken } from '../fragment-token';
           </app-password-field>
         </app-field>
         <button pButton type="submit" class="w-full" [loading]="resetForm().submitting()">
-          <span pButtonLabel>Guardar la contraseña</span>
+          Guardar la contraseña
         </button>
       </form>
     } @else {

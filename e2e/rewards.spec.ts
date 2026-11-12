@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
 import { expectNoA11yViolations } from './support/a11y';
+import type { components } from '../src/app/core/api/schema';
 import { mockApi } from './support/api';
 
-function reward(id: string, overrides: Record<string, unknown> = {}) {
+type RewardResponse = components['schemas']['RewardResponse'];
+
+function reward(id: string, overrides: Partial<RewardResponse> = {}): RewardResponse {
   return {
     id,
     title: `Recompensa ${id}`,

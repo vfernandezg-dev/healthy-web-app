@@ -45,12 +45,12 @@
               variant="outlined"
               (click)="groupDialog()?.open(g)"
             >
-              <svg lucidePencil pButtonIcon></svg>
-              <span pButtonLabel>Editar</span>
+              <svg lucidePencil></svg>
+              Editar
             </button>
             <button pButton type="button" severity="danger" variant="text" (click)="deleteGroup()">
-              <svg lucideTrash2 pButtonIcon></svg>
-              <span pButtonLabel>Eliminar el grupo</span>
+              <svg lucideTrash></svg>
+              Eliminar el grupo
             </button>
           }
           @case ('member') {
@@ -62,8 +62,8 @@
               [loading]="busy()"
               (click)="leave(g)"
             >
-              <svg lucideLogOut pButtonIcon></svg>
-              <span pButtonLabel>Salir del grupo</span>
+              <svg lucideLogOut></svg>
+              Salir del grupo
             </button>
           }
           @case ('pending') {
@@ -75,13 +75,13 @@
               [loading]="busy()"
               (click)="leave(g)"
             >
-              <span pButtonLabel>Retirar la solicitud</span>
+              Retirar la solicitud
             </button>
           }
           @default {
             <button pButton type="button" [loading]="busy()" (click)="join()">
-              <svg lucideUserPlus pButtonIcon></svg>
-              <span pButtonLabel>{{ g.visibility === 'PRIVATE' ? 'Pedir entrar' : 'Unirme' }}</span>
+              <svg lucideUserPlus></svg>
+              {{ g.visibility === 'PRIVATE' ? 'Pedir entrar' : 'Unirme' }}
             </button>
           }
         }
@@ -96,8 +96,8 @@
           <h2 id="posts-title" class="text-xl font-bold">Publicaciones</h2>
           @if (viewer().member) {
             <button pButton type="button" (click)="postDialog()?.open(g.id, null)">
-              <svg lucidePlus pButtonIcon></svg>
-              <span pButtonLabel>Publicar</span>
+              <svg lucidePlus></svg>
+              Publicar
             </button>
           }
         </div>

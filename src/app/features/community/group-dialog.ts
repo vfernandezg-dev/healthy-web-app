@@ -1,6 +1,6 @@
 import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormField, form, maxLength, required, submit } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
@@ -30,7 +30,6 @@ interface GroupModel {
     SelectButton,
     Message,
     ButtonDirective,
-    ButtonLabel,
     LabeledField,
   ],
   template: `
@@ -99,10 +98,10 @@ interface GroupModel {
           variant="text"
           (click)="visible.set(false)"
         >
-          <span pButtonLabel>Cancelar</span>
+          Cancelar
         </button>
         <button pButton type="submit" form="group-form" [loading]="groupForm().submitting()">
-          <span pButtonLabel>{{ editing() ? 'Guardar' : 'Crear el grupo' }}</span>
+          {{ editing() ? 'Guardar' : 'Crear el grupo' }}
         </button>
       </ng-template>
     </p-dialog>

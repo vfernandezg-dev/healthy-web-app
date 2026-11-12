@@ -1,7 +1,7 @@
 import { DatePipe, NgTemplateOutlet, formatDate } from '@angular/common';
 import { Component, LOCALE_ID, computed, inject, signal, viewChild } from '@angular/core';
 import { LucideMailPlus } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import {
   SortIcon as TableSortIcon,
@@ -38,8 +38,6 @@ const DEFAULT_SORT = 'createdAt,desc';
     SortableColumn,
     TableSortIcon,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     LucideMailPlus,
     InviteDialog,
     SortIcon,

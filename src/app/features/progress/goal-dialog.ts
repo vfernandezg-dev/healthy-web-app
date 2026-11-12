@@ -1,6 +1,6 @@
 import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormField, form, max, maxLength, min, required, submit } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
@@ -29,7 +29,6 @@ interface GoalModel {
     Textarea,
     Message,
     ButtonDirective,
-    ButtonLabel,
     LabeledField,
   ],
   template: `
@@ -90,10 +89,10 @@ interface GoalModel {
           variant="text"
           (click)="visible.set(false)"
         >
-          <span pButtonLabel>Cancelar</span>
+          Cancelar
         </button>
         <button pButton type="submit" form="goal-form" [loading]="goalForm().submitting()">
-          <span pButtonLabel>{{ editing() ? 'Guardar' : 'Crear la meta' }}</span>
+          {{ editing() ? 'Guardar' : 'Crear la meta' }}
         </button>
       </ng-template>
     </p-dialog>

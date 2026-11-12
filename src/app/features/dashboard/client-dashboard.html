@@ -46,9 +46,7 @@
       <p class="mt-3 text-muted">
         Aún no tienes una meta. Ponte un objetivo de peso y sigue tu evolución.
       </p>
-      <a pButton routerLink="progress" size="small" class="mt-auto self-start">
-        <span pButtonLabel>Crear una meta</span>
-      </a>
+      <a pButton routerLink="progress" size="small" class="mt-auto self-start"> Crear una meta </a>
     }
   </section>
 
@@ -87,9 +85,7 @@
       <p class="mt-3 text-muted">
         Aún no has registrado los de hoy. Cada día que lo haces suma a tus rachas.
       </p>
-      <a pButton routerLink="habits" size="small" class="mt-auto self-start">
-        <span pButtonLabel>Registrar hoy</span>
-      </a>
+      <a pButton routerLink="habits" size="small" class="mt-auto self-start"> Registrar hoy </a>
     }
   </section>
 
@@ -155,7 +151,7 @@
           <app-progress-bar
             class="mt-3"
             [value]="percentOf(days, reward.requiredStreakDays)"
-            [label]="'Racha: ' + reward.title"
+            [label]="`Racha: ${reward.title}`"
           />
           <p class="mt-2 text-sm text-muted">
             {{ days }} de {{ reward.requiredStreakDays }} días · premio: {{ reward.target.title }}

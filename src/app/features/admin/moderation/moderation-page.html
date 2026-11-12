@@ -48,7 +48,7 @@
           </div>
 
           <blockquote class="mt-4 border-l-4 border-brand-200 pl-4">
-            <p [id]="'report-' + report.id + '-excerpt'" class="whitespace-pre-line">
+            <p [id]="`report-${report.id}-excerpt`" class="whitespace-pre-line">
               {{ report.excerpt }}
             </p>
             <footer class="mt-1 text-sm text-muted">
@@ -76,20 +76,20 @@
                 type="button"
                 severity="secondary"
                 variant="outlined"
-                [attr.aria-describedby]="'report-' + report.id + '-excerpt'"
+                [attr.aria-describedby]="`report-${report.id}-excerpt`"
                 (click)="dialog()?.open(report, 'DISMISS')"
               >
-                <span pButtonLabel>Descartar</span>
+                Descartar
               </button>
               <button
                 pButton
                 type="button"
                 severity="danger"
-                [attr.aria-describedby]="'report-' + report.id + '-excerpt'"
+                [attr.aria-describedby]="`report-${report.id}-excerpt`"
                 (click)="dialog()?.open(report, 'HIDE')"
               >
-                <svg lucideEyeOff pButtonIcon></svg>
-                <span pButtonLabel>Ocultar</span>
+                <svg lucideEyeOff></svg>
+                Ocultar
               </button>
             </div>
           } @else if (report.resolvedAt) {

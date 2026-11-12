@@ -8,7 +8,7 @@ import {
   LucideFlame,
   LucideLock,
 } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { toProblem } from '@core/api/problem';
 import { Toaster } from '@core/ui/toaster';
@@ -26,7 +26,6 @@ import { titleFrom } from '@core/routing/title-strategy';
     RouterLink,
     DecimalPipe,
     ButtonDirective,
-    ButtonLabel,
     Skeleton,
     LucideArrowLeft,
     LucideCalendarDays,

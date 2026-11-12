@@ -8,7 +8,7 @@ import {
   LucideUserPlus,
   LucideUsers,
 } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { NAVIGATION } from '@core/routing/navigation';
 import type { Role } from '@core/auth/roles';
@@ -33,7 +33,6 @@ const ROLES: readonly { role: Role; label: string }[] = [
     RouterLink,
     I18nPluralPipe,
     ButtonDirective,
-    ButtonLabel,
     Skeleton,
     LucideArrowRight,
     PageHeader,

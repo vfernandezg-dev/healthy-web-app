@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucidePlus, LucideUtensils } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
@@ -18,8 +18,6 @@ import { PlanCard } from '../ui/plan-card';
   imports: [
     RouterLink,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     Paginator,
     Skeleton,
     Tag,
@@ -35,8 +33,8 @@ import { PlanCard } from '../ui/plan-card';
       description="Crea planes alimenticios, organiza sus comidas día a día y publícalos para tus clientes."
     >
       <a pButton routerLink="new">
-        <svg lucidePlus pButtonIcon></svg>
-        <span pButtonLabel>Nuevo plan</span>
+        <svg lucidePlus></svg>
+        Nuevo plan
       </a>
     </app-page-header>
 
@@ -50,7 +48,7 @@ import { PlanCard } from '../ui/plan-card';
           title="Aún no has creado ningún plan"
           description="Tus planes aparecerán aquí: primero como borrador y, al publicarlos, en el catálogo."
         >
-          <a pButton routerLink="new"><span pButtonLabel>Crear mi primer plan</span></a>
+          <a pButton routerLink="new">Crear mi primer plan</a>
         </app-empty-state>
       } @else {
         <ul class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" role="list">

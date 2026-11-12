@@ -4,8 +4,8 @@
 >
   @if (goals.hasValue() && !activeGoal()) {
     <button pButton type="button" (click)="newGoal()">
-      <svg lucidePlus pButtonIcon></svg>
-      <span pButtonLabel>Nueva meta</span>
+      <svg lucidePlus></svg>
+      Nueva meta
     </button>
   }
 </app-page-header>
@@ -40,8 +40,8 @@
                 variant="text"
                 (click)="editGoal(goal)"
               >
-                <svg lucidePencil pButtonIcon></svg>
-                <span pButtonLabel>Editar</span>
+                <svg lucidePencil></svg>
+                Editar
               </button>
               <button
                 pButton
@@ -52,7 +52,7 @@
                 [disabled]="busy()"
                 (click)="abandon(goal)"
               >
-                <span pButtonLabel>Abandonar</span>
+                Abandonar
               </button>
               <button
                 pButton
@@ -61,8 +61,8 @@
                 [disabled]="busy()"
                 (click)="complete(goal)"
               >
-                <svg lucideFlag pButtonIcon></svg>
-                <span pButtonLabel>Dar por cumplida</span>
+                <svg lucideFlag></svg>
+                Dar por cumplida
               </button>
             </div>
           </div>
@@ -189,11 +189,11 @@
                   variant="text"
                   (click)="cancelEdit()"
                 >
-                  <span pButtonLabel>Cancelar</span>
+                  Cancelar
                 </button>
               }
               <button pButton type="submit" [loading]="entryForm().submitting()">
-                <span pButtonLabel>{{ editingEntry() ? 'Guardar' : 'Añadir' }}</span>
+                {{ editingEntry() ? 'Guardar' : 'Añadir' }}
               </button>
             </div>
           </form>
@@ -228,12 +228,10 @@
                           severity="secondary"
                           variant="text"
                           [iconOnly]="true"
-                          [attr.aria-label]="
-                            'Editar el pesaje del ' + (entry.measuredOn | date: 'longDate')
-                          "
+                          [attr.aria-label]="`Editar el pesaje del ${(entry.measuredOn | date: 'longDate')}`"
                           (click)="editEntry(entry)"
                         >
-                          <svg lucidePencil pButtonIcon></svg>
+                          <svg lucidePencil></svg>
                         </button>
                         <button
                           pButton
@@ -242,12 +240,10 @@
                           severity="danger"
                           variant="text"
                           [iconOnly]="true"
-                          [attr.aria-label]="
-                            'Borrar el pesaje del ' + (entry.measuredOn | date: 'longDate')
-                          "
+                          [attr.aria-label]="`Borrar el pesaje del ${(entry.measuredOn | date: 'longDate')}`"
                           (click)="deleteEntry(goal.id, entry)"
                         >
-                          <svg lucideTrash2 pButtonIcon></svg>
+                          <svg lucideTrash></svg>
                         </button>
                       </td>
                     </tr>
@@ -332,9 +328,7 @@
       title="Aún no tienes una meta activa"
       description="Marca tu peso objetivo y registra tus pesajes: verás tu evolución y una recomendación de peso saludable."
     >
-      <button pButton type="button" (click)="newGoal()">
-        <span pButtonLabel>Crear una meta</span>
-      </button>
+      <button pButton type="button" (click)="newGoal()">Crear una meta</button>
     </app-empty-state>
     @if (pastGoals().length > 0) {
       <section class="card mt-8 p-6" aria-labelledby="past-only-title">

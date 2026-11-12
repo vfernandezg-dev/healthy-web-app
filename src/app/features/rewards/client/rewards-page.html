@@ -27,7 +27,7 @@
                 <svg [lucideIcon]="prizeIcon(reward)" class="size-4 text-brand-700"></svg>
                 Premio: {{ reward.target.title }}
               </p>
-              <p class="mt-4 flex items-baseline gap-2" [id]="'streak-' + reward.id">
+              <p class="mt-4 flex items-baseline gap-2" [id]="`streak-${reward.id}`">
                 <svg lucideFlame class="size-5 self-center text-amber-700"></svg>
                 <span class="text-3xl font-bold">{{ streak.currentDays }}</span>
                 <span class="text-muted">de {{ reward.requiredStreakDays }} días</span>
@@ -35,7 +35,7 @@
               <app-progress-bar
                 class="mt-2"
                 [value]="percent(reward)"
-                [labelledBy]="'streak-' + reward.id"
+                [labelledBy]="`streak-${reward.id}`"
               />
               <p class="mt-3 flex-1 text-sm text-muted">
                 @if (streak.completed) {
@@ -48,9 +48,7 @@
               </p>
               <div class="mt-4">
                 @if (streak.completed) {
-                  <a pButton [routerLink]="prizeLink(reward)" class="w-full">
-                    <span pButtonLabel>Ver mi premio</span>
-                  </a>
+                  <a pButton [routerLink]="prizeLink(reward)" class="w-full"> Ver mi premio </a>
                 } @else {
                   <button
                     pButton
@@ -60,7 +58,7 @@
                     class="w-full"
                     (click)="abandon(reward)"
                   >
-                    <span pButtonLabel>Abandonar la racha</span>
+                    Abandonar la racha
                   </button>
                 }
               </div>
@@ -118,7 +116,7 @@
                 [loading]="starting() === reward.id"
                 (click)="start(reward)"
               >
-                <span pButtonLabel>Empezar la racha</span>
+                Empezar la racha
               </button>
             }
           </li>

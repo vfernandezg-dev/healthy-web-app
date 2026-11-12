@@ -37,7 +37,7 @@
           [loading]="canceling()"
           (click)="cancel()"
         >
-          <span pButtonLabel>Cancelar la suscripción</span>
+          Cancelar la suscripción
         </button>
       }
     </div>
@@ -86,7 +86,7 @@
               [disabled]="checkingOut() !== null"
               (click)="subscribe(plan.tier)"
             >
-              <span pButtonLabel>Suscribirme a {{ plan.name }}</span>
+              Suscribirme a {{ plan.name }}
             </button>
           }
         </li>

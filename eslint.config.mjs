@@ -62,10 +62,17 @@ export default defineConfig(
     files: ['**/*.ts'],
     extends: [
       js.configs.recommended,
-      tseslint.configs.recommended,
-      tseslint.configs.stylistic,
+      // Con tipos: promesas sin esperar, condiciones siempre ciertas, APIs deprecadas, switch incompletos...
+      tseslint.configs.recommendedTypeChecked,
+      tseslint.configs.stylisticTypeChecked,
       angular.configs.tsRecommended,
     ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.app.json', './tsconfig.spec.json', './tsconfig.e2e.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
     processor: angular.processInlineTemplates,
     rules: {
       '@angular-eslint/component-selector': [
@@ -76,18 +83,41 @@ export default defineConfig(
         'error',
         { type: 'attribute', prefix: 'app', style: 'camelCase' },
       ],
-      // Inyección con inject(), estado con signals y entradas/salidas con input()/output().
+      // Inyección con inject(), estado con signals y entradas/salidas con input()/output()/model().
       '@angular-eslint/prefer-inject': 'error',
       '@angular-eslint/prefer-signals': 'error',
+      '@angular-eslint/prefer-signal-model': 'error',
       '@angular-eslint/prefer-output-readonly': 'error',
+      '@angular-eslint/prefer-output-emitter-ref': 'error',
+      '@angular-eslint/no-uncalled-signals': 'error',
+      '@angular-eslint/computed-must-return': 'error',
+      '@angular-eslint/no-implicit-take-until-destroyed': 'error',
+      '@angular-eslint/no-duplicates-in-metadata-arrays': 'error',
       '@angular-eslint/no-async-lifecycle-method': 'error',
       '@typescript-eslint/consistent-type-imports': ['error', { fixStyle: 'inline-type-imports' }],
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', ignoreRestSiblings: true },
       ],
+      '@typescript-eslint/no-deprecated': 'error',
+      '@typescript-eslint/no-unnecessary-condition': 'error',
+      '@typescript-eslint/switch-exhaustiveness-check': [
+        'error',
+        { considerDefaultExhaustiveForUnions: true },
+      ],
+      '@typescript-eslint/return-await': ['error', 'in-try-catch'],
+      // Con textos, || es a propósito: una cadena vacía cuenta como «sin valor».
+      '@typescript-eslint/prefer-nullish-coalescing': [
+        'error',
+        { ignorePrimitives: { string: true } },
+      ],
       'no-console': ['error', { allow: ['warn', 'error'] }],
     },
+  },
+  {
+    // Scripts de Node en JavaScript: sin tsconfig, sin reglas con tipos.
+    files: ['**/*.{js,mjs}'],
+    extends: [tseslint.configs.disableTypeChecked],
   },
   ...Object.entries(LAYERS).map(([files, forbidden]) => boundaries(files, forbidden)),
   {
@@ -103,10 +133,22 @@ export default defineConfig(
         { allowNgStyle: false, allowBindToStyle: true },
       ],
       '@angular-eslint/template/button-has-type': 'error',
+      '@angular-eslint/template/prefer-at-empty': 'error',
+      '@angular-eslint/template/prefer-at-else': 'error',
+      '@angular-eslint/template/prefer-contextual-for-variables': 'error',
+      '@angular-eslint/template/prefer-template-literal': 'error',
+      '@angular-eslint/template/no-empty-control-flow': 'error',
+      // class="fijas" junto a [class]="variables" es la precedencia de estilos de Angular, no un duplicado.
+      '@angular-eslint/template/no-duplicate-attributes': [
+        'error',
+        { allowStylePrecedenceDuplicates: true },
+      ],
+      '@angular-eslint/template/no-any': 'error',
+      '@angular-eslint/template/conditional-complexity': ['error', { maxComplexity: 4 }],
     },
   },
   {
-    files: ['scripts/**/*.mjs', '*.config.{js,mjs,ts}', 'e2e/**/*.ts'],
+    files: ['scripts/**/*.mjs', '*.config.{js,mjs,ts}', 'e2e/**/*.ts', 'e2e-fullstack/**/*.ts'],
     languageOptions: {
       globals: { ...globals.node },
     },

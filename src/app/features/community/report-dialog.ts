@@ -1,6 +1,6 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { FormField, form, maxLength, required, submit } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
@@ -12,7 +12,7 @@ import { CommunityApi } from './data/community-api';
 /** Denunciar una publicación o un comentario (lo revisa un ADMIN). Se abre con {@link ReportDialog.open}. */
 @Component({
   selector: 'app-report-dialog',
-  imports: [FormField, Dialog, Textarea, Message, ButtonDirective, ButtonLabel, LabeledField],
+  imports: [FormField, Dialog, Textarea, Message, ButtonDirective, LabeledField],
   template: `
     <p-dialog
       [(visible)]="visible"
@@ -49,7 +49,7 @@ import { CommunityApi } from './data/community-api';
           variant="text"
           (click)="visible.set(false)"
         >
-          <span pButtonLabel>Cancelar</span>
+          Cancelar
         </button>
         <button
           pButton
@@ -58,7 +58,7 @@ import { CommunityApi } from './data/community-api';
           severity="danger"
           [loading]="reportForm().submitting()"
         >
-          <span pButtonLabel>Enviar la denuncia</span>
+          Enviar la denuncia
         </button>
       </ng-template>
     </p-dialog>

@@ -3,7 +3,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LucidePlus, LucideSearch, LucideUsers } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
@@ -30,8 +30,6 @@ import { GroupCard } from './ui/group-card';
     Paginator,
     Skeleton,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     LucidePlus,
     LucideSearch,
     GroupCard,
@@ -46,8 +44,8 @@ import { GroupCard } from './ui/group-card';
       description="Grupos para compartir avances, dudas y recetas. En los públicos entra quien quiera; en los privados, quien los creó aprueba cada solicitud."
     >
       <button pButton type="button" (click)="dialog()?.open(null)">
-        <svg lucidePlus pButtonIcon></svg>
-        <span pButtonLabel>Nuevo grupo</span>
+        <svg lucidePlus></svg>
+        Nuevo grupo
       </button>
     </app-page-header>
 
@@ -83,8 +81,8 @@ import { GroupCard } from './ui/group-card';
               description="Crea el primero e invita a la comunidad a participar."
             >
               <button pButton type="button" (click)="dialog()?.open(null)">
-                <svg lucidePlus pButtonIcon></svg>
-                <span pButtonLabel>Crear un grupo</span>
+                <svg lucidePlus></svg>
+                Crear un grupo
               </button>
             </app-empty-state>
           }

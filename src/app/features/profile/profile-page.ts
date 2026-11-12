@@ -10,7 +10,7 @@ import {
   submit,
   validate,
 } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { SelectButton } from 'primeng/selectbutton';
@@ -66,7 +66,6 @@ function toModel(me: MeResponse | undefined): ProfileModel {
     Textarea,
     Skeleton,
     ButtonDirective,
-    ButtonLabel,
     LabeledField,
     PasswordField,
     PasswordInput,

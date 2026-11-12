@@ -2,7 +2,7 @@ import { Component, inject, resource, signal } from '@angular/core';
 import { FormField, form, maxLength, minLength, required, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { LucideLink2Off } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Skeleton } from 'primeng/skeleton';
@@ -26,7 +26,6 @@ import { takeFragmentToken } from '../fragment-token';
     InputText,
     Textarea,
     ButtonDirective,
-    ButtonLabel,
     Message,
     Skeleton,
     LucideLink2Off,

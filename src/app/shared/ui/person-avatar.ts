@@ -2,12 +2,12 @@ import { Component, computed, input } from '@angular/core';
 
 /** Iniciales de un nombre: la primera letra de la primera y de la última palabra («María López» → «ML»). */
 export function initialsOf(name: string | null | undefined): string {
-  const words = (name ?? '').trim().split(/\s+/).filter(Boolean);
-  if (words.length === 0) {
+  const [first, ...rest] = (name ?? '').trim().split(/\s+/).filter(Boolean);
+  if (!first) {
     return '?';
   }
-  const last = words.length > 1 ? words[words.length - 1].charAt(0) : '';
-  return `${words[0].charAt(0)}${last}`.toLocaleUpperCase('es');
+  const last = rest.at(-1)?.charAt(0) ?? '';
+  return `${first.charAt(0)}${last}`.toLocaleUpperCase('es');
 }
 
 /** Círculo con las iniciales de una persona. Es decorativo: el nombre ya va escrito al lado. */

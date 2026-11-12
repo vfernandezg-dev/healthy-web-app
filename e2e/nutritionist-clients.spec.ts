@@ -136,7 +136,7 @@ test.describe('clientes del nutricionista', () => {
           const params = Object.fromEntries(new URL(route.request().url()).searchParams);
           queries.push(params);
           if (params['q']) {
-            return route.fulfill({ json: paged([many[0]]) });
+            return route.fulfill({ json: paged(many.slice(0, 1)) });
           }
           const number = Number(params['page']);
           return route.fulfill({

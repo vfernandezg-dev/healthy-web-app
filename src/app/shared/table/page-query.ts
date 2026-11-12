@@ -13,7 +13,7 @@ export function samePageQuery(a: PageQuery, b: PageQuery): boolean {
 
 /** Página de la API (desde 0) que pide el evento de p-table en modo lazy (`first`, `rows`). */
 export function pageOf(event: TableLazyLoadEvent, pageSize: number): number {
-  const rows = event.rows || pageSize;
+  const rows = event.rows && event.rows > 0 ? event.rows : pageSize;
   return Math.floor((event.first ?? 0) / rows);
 }
 

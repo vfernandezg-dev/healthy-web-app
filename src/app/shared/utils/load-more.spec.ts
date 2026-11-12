@@ -31,13 +31,13 @@ function setup(resetOn?: () => unknown) {
       return true;
     },
   };
-  const list = loadMore({
+  const list = loadMore<Item>({
     resource: (requested) => {
       page = requested;
       return resource;
     },
     key: (entry) => entry.id,
-    resetOn,
+    ...(resetOn ? { resetOn } : {}),
   });
   return { list, value, reloads, page: () => page() };
 }

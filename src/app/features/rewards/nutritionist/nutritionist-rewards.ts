@@ -8,7 +8,7 @@ import {
   LucideTrophy,
   LucideUtensils,
 } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
@@ -27,8 +27,6 @@ import { RewardDialog } from './reward-dialog';
   selector: 'app-nutritionist-rewards',
   imports: [
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     Paginator,
     Skeleton,
     Tag,
@@ -47,8 +45,8 @@ import { RewardDialog } from './reward-dialog';
       description="Premia la constancia: cuando un cliente registra sus hábitos los días que pidas, desbloquea un contenido o un plan tuyo."
     >
       <button pButton type="button" (click)="dialog()?.open(null)">
-        <svg lucidePlus pButtonIcon></svg>
-        <span pButtonLabel>Nueva recompensa</span>
+        <svg lucidePlus></svg>
+        Nueva recompensa
       </button>
     </app-page-header>
 
@@ -96,7 +94,7 @@ import { RewardDialog } from './reward-dialog';
                     variant="text"
                     (click)="deactivate(reward)"
                   >
-                    <span pButtonLabel>Retirar</span>
+                    Retirar
                   </button>
                   <button
                     pButton
@@ -105,8 +103,8 @@ import { RewardDialog } from './reward-dialog';
                     severity="secondary"
                     (click)="dialog()?.open(reward)"
                   >
-                    <svg lucidePencil pButtonIcon></svg>
-                    <span pButtonLabel>Editar</span>
+                    <svg lucidePencil></svg>
+                    Editar
                   </button>
                 </div>
               }

@@ -4,7 +4,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { LucideSearch, LucideUsers } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
@@ -69,7 +69,6 @@ function toRow(client: NutritionistClientResponse): ClientRow {
     InputIcon,
     Skeleton,
     ButtonDirective,
-    ButtonLabel,
     LucideSearch,
     PersonAvatar,
     RowTemplate,
@@ -91,9 +90,7 @@ function toRow(client: NutritionistClientResponse): ClientRow {
         title="Aún no tienes clientes"
         description="Cuando alguien se inscriba en uno de tus planes publicados, aparecerá aquí."
       >
-        <a pButton routerLink="/nutritionist/meal-plans"
-          ><span pButtonLabel>Ver tus planes</span></a
-        >
+        <a pButton routerLink="/nutritionist/meal-plans">Ver tus planes</a>
       </app-empty-state>
     } @else if (result()) {
       <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormField, email, form, required, submit } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { LucideMailCheck } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { toProblem } from '@core/api/problem';
@@ -19,7 +19,6 @@ import { MESSAGES } from '@shared/forms/validation';
     FormField,
     InputText,
     ButtonDirective,
-    ButtonLabel,
     Message,
     LucideMailCheck,
     LabeledField,
@@ -65,7 +64,7 @@ import { MESSAGES } from '@shared/forms/validation';
           />
         </app-field>
         <button pButton type="submit" class="w-full" [loading]="forgotForm().submitting()">
-          <span pButtonLabel>Enviar el enlace</span>
+          Enviar el enlace
         </button>
         <p class="text-center">
           <a routerLink="/auth/login" class="text-sm font-semibold text-brand-700 hover:underline"

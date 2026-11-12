@@ -1,6 +1,6 @@
 import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormField, form, maxLength, required, submit } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
@@ -15,7 +15,7 @@ type Action = ResolveRequest['action'];
 /** Resolver una denuncia: ocultar lo denunciado o descartarla, con una nota para el registro. */
 @Component({
   selector: 'app-resolve-dialog',
-  imports: [FormField, Dialog, Textarea, Message, ButtonDirective, ButtonLabel, LabeledField],
+  imports: [FormField, Dialog, Textarea, Message, ButtonDirective, LabeledField],
   template: `
     <p-dialog
       [(visible)]="visible"
@@ -60,7 +60,7 @@ type Action = ResolveRequest['action'];
           variant="text"
           (click)="visible.set(false)"
         >
-          <span pButtonLabel>Cancelar</span>
+          Cancelar
         </button>
         <button
           pButton
@@ -69,7 +69,7 @@ type Action = ResolveRequest['action'];
           [severity]="hiding() ? 'danger' : 'primary'"
           [loading]="resolveForm().submitting()"
         >
-          <span pButtonLabel>{{ hiding() ? 'Ocultar' : 'Descartar' }}</span>
+          {{ hiding() ? 'Ocultar' : 'Descartar' }}
         </button>
       </ng-template>
     </p-dialog>

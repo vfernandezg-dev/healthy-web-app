@@ -67,14 +67,10 @@ export class NutritionistDashboard {
   protected readonly draftPlans = this.dashboard.draftPlans();
   protected readonly draftContent = this.dashboard.draftContent();
 
-  protected readonly failed = computed(
-    () =>
-      !!(
-        this.clients.error() ||
-        this.rewards.error() ||
-        this.planSummary.error() ||
-        this.contentSummary.error()
-      ),
+  protected readonly failed = computed(() =>
+    [this.clients, this.rewards, this.planSummary, this.contentSummary].some(
+      (source) => source.error() !== undefined,
+    ),
   );
 
   protected readonly stats = computed(() => {

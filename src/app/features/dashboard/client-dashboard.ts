@@ -8,7 +8,7 @@ import {
   LucideFlame,
   LucideTarget,
 } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { AuthStore } from '@core/auth/auth-store';
 import { NAVIGATION } from '@core/routing/navigation';
@@ -32,7 +32,6 @@ import { Shortcuts } from '@shared/ui/shortcuts';
     DatePipe,
     DecimalPipe,
     ButtonDirective,
-    ButtonLabel,
     Skeleton,
     LucideArrowRight,
     LucideTarget,

@@ -158,7 +158,7 @@ test.describe.serial('recorridos contra la API real', () => {
     await expect(page.getByText('Invitación enviada')).toBeVisible();
 
     const mail = await lastMailTo(request, email);
-    const link = mail.match(/https?:\/\/[^\s]+\/auth\/accept-invitation#token=[\w-]+/)?.[0];
+    const link = /https?:\/\/[^\s]+\/auth\/accept-invitation#token=[\w-]+/.exec(mail)?.[0];
     expect(link, 'enlace de la invitación en el correo').toBeTruthy();
 
     const lucia = await freshPage(browser);

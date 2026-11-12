@@ -13,7 +13,7 @@ export function activeSubscriptions(summary: BillingSummaryResponse): {
     total: entries.reduce((sum, [, count]) => sum + count, 0),
     detail:
       entries.length > 0
-        ? entries.map(([tier, count]) => `${TIER_LABELS[tier] ?? tier}: ${count}`).join(' · ')
+        ? entries.map(([tier, count]) => `${TIER_LABELS[tier]}: ${count}`).join(' · ')
         : null,
   };
 }

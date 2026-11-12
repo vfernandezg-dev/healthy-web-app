@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, inject, linkedSignal, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LucideEyeOff, LucideShieldCheck } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { SelectButton } from 'primeng/selectbutton';
 import { Skeleton } from 'primeng/skeleton';
@@ -29,8 +29,6 @@ import { ResolveDialog } from './resolve-dialog';
     Paginator,
     Skeleton,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     LucideEyeOff,
     ResolveDialog,
     EmptyState,

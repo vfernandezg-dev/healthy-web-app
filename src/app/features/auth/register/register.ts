@@ -10,7 +10,7 @@ import {
 } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { LucideCheck, LucideCircle } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { toProblem } from '@core/api/problem';
@@ -29,7 +29,6 @@ import { MESSAGES, PASSWORD_MAX, PASSWORD_MIN } from '@shared/forms/validation';
     FormField,
     InputText,
     ButtonDirective,
-    ButtonLabel,
     Message,
     LucideCheck,
     LucideCircle,

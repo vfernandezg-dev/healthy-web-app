@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LucideDynamicIcon, LucideLogOut, LucideMenu } from '@lucide/angular';
 import { Avatar } from 'primeng/avatar';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Drawer } from 'primeng/drawer';
 import { filter, skip } from 'rxjs';
 import { AuthStore } from '@core/auth/auth-store';
@@ -29,8 +29,6 @@ import { NAVIGATION } from '@core/routing/navigation';
     LucideLogOut,
     Avatar,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     Drawer,
     BrandLogo,
   ],

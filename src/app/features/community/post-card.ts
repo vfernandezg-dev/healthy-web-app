@@ -1,8 +1,8 @@
 import { DatePipe, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormField, form, maxLength, required, submit } from '@angular/forms/signals';
-import { LucideFlag, LucideMessageCircle, LucidePencil, LucideTrash2 } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { LucideFlag, LucideMessageCircle, LucidePencil, LucideTrash } from '@lucide/angular';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Textarea } from 'primeng/textarea';
 import type { CommentResponse, PostResponse } from '@core/api/schema';
@@ -38,14 +38,12 @@ type Author = PostResponse['author'];
     FormField,
     Textarea,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     Skeleton,
     LabeledField,
     PersonAvatar,
     LucideMessageCircle,
     LucidePencil,
-    LucideTrash2,
+    LucideTrash,
     LucideFlag,
   ],
   host: { class: 'block' },
@@ -94,8 +92,8 @@ type Author = PostResponse['author'];
           [attr.aria-describedby]="titleId()"
           (click)="toggleComments()"
         >
-          <svg lucideMessageCircle pButtonIcon></svg>
-          <span pButtonLabel>{{ expanded() ? 'Ocultar los comentarios' : 'Comentarios' }}</span>
+          <svg lucideMessageCircle></svg>
+          {{ expanded() ? 'Ocultar los comentarios' : 'Comentarios' }}
         </button>
         <div class="flex flex-wrap gap-1">
           @if (mine()) {
@@ -108,8 +106,8 @@ type Author = PostResponse['author'];
               [attr.aria-describedby]="titleId()"
               (click)="edit.emit()"
             >
-              <svg lucidePencil pButtonIcon></svg>
-              <span pButtonLabel>Editar</span>
+              <svg lucidePencil></svg>
+              Editar
             </button>
           }
           @if (mine() || viewer().owner) {
@@ -122,8 +120,8 @@ type Author = PostResponse['author'];
               [attr.aria-describedby]="titleId()"
               (click)="remove.emit()"
             >
-              <svg lucideTrash2 pButtonIcon></svg>
-              <span pButtonLabel>Eliminar</span>
+              <svg lucideTrash></svg>
+              Eliminar
             </button>
           }
           @if (!mine()) {
@@ -136,8 +134,8 @@ type Author = PostResponse['author'];
               [attr.aria-describedby]="titleId()"
               (click)="report.emit({ kind: 'posts', id: post().id })"
             >
-              <svg lucideFlag pButtonIcon></svg>
-              <span pButtonLabel>Denunciar</span>
+              <svg lucideFlag></svg>
+              Denunciar
             </button>
           }
         </div>
@@ -177,7 +175,7 @@ type Author = PostResponse['author'];
                             "
                             (click)="deleteComment(comment)"
                           >
-                            <span pButtonLabel>Eliminar</span>
+                            Eliminar
                           </button>
                         }
                         @if (!isMine(comment.author)) {
@@ -192,7 +190,7 @@ type Author = PostResponse['author'];
                             "
                             (click)="report.emit({ kind: 'comments', id: comment.id })"
                           >
-                            <span pButtonLabel>Denunciar</span>
+                            Denunciar
                           </button>
                         }
                       </span>
@@ -216,7 +214,7 @@ type Author = PostResponse['author'];
                 [loading]="comments.resource.isLoading()"
                 (click)="comments.more()"
               >
-                <span pButtonLabel>Ver más comentarios</span>
+                Ver más comentarios
               </button>
             }
           } @else if (comments.resource.error()) {
@@ -243,7 +241,7 @@ type Author = PostResponse['author'];
               </app-field>
               <div class="flex justify-end">
                 <button pButton type="submit" size="small" [loading]="commentForm().submitting()">
-                  <span pButtonLabel>Comentar</span>
+                  Comentar
                 </button>
               </div>
             </form>

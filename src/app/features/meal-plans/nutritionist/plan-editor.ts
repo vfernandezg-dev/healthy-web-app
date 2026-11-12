@@ -8,9 +8,9 @@ import {
   LucidePencil,
   LucidePlus,
   LucideSend,
-  LucideTrash2,
+  LucideTrash,
 } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
 import { toProblem } from '@core/api/problem';
@@ -36,14 +36,12 @@ import { PlanFields, emptyPlan, planModelOf, planSchema, toPlanRequest } from '.
     RouterLink,
     DecimalPipe,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     Skeleton,
     Tag,
     LucideArrowLeft,
     LucidePlus,
     LucidePencil,
-    LucideTrash2,
+    LucideTrash,
     LucideSend,
     LucideArchive,
     PlanFields,

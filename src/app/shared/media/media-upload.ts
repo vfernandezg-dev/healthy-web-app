@@ -1,8 +1,8 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component, DestroyRef, computed, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { LucideFile, LucideImage, LucideTrash2, LucideUpload } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { LucideFile, LucideImage, LucideTrash, LucideUpload } from '@lucide/angular';
+import { ButtonDirective } from 'primeng/button';
 import { toProblem } from '@core/api/problem';
 import type { UploadResponse } from '@core/api/schema';
 import { MediaUrlPipe } from '../pipes/media-url.pipe';
@@ -20,10 +20,8 @@ import { MediaApi, type MediaPurpose } from './media-api';
     MediaUrlPipe,
     ProgressBar,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     LucideUpload,
-    LucideTrash2,
+    LucideTrash,
     LucideImage,
     LucideFile,
   ],
@@ -89,8 +87,8 @@ import { MediaApi, type MediaPurpose } from './media-api';
           [attr.aria-describedby]="inputId() + '-label ' + inputId() + '-status'"
           (click)="picker.click()"
         >
-          <svg lucideUpload pButtonIcon></svg>
-          <span pButtonLabel>{{ hasFile() ? 'Cambiar' : 'Subir' }}</span>
+          <svg lucideUpload></svg>
+          {{ hasFile() ? 'Cambiar' : 'Subir' }}
         </button>
         @if (hasFile()) {
           <button
@@ -103,7 +101,7 @@ import { MediaApi, type MediaPurpose } from './media-api';
             [attr.aria-label]="'Quitar ' + label().toLowerCase()"
             (click)="remove()"
           >
-            <svg lucideTrash2 pButtonIcon></svg>
+            <svg lucideTrash></svg>
           </button>
         }
       </div>

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { expectNoA11yViolations } from './support/a11y';
-import { mockApi, problem } from './support/api';
+import { mockApi, problem, requestBody } from './support/api';
 
 const CLIENT_ME = {
   id: '00000000-0000-7000-8000-000000000005',
@@ -20,7 +20,7 @@ test.describe('perfil', () => {
       routes: {
         '/me': (route) => route.fulfill({ json: CLIENT_ME }),
         '/me/profile': (route) => {
-          saved = route.request().postDataJSON();
+          saved = requestBody<Record<string, unknown>>(route);
           return route.fulfill({
             json: {
               ...CLIENT_ME,
@@ -131,7 +131,7 @@ test.describe('perfil', () => {
       routes: {
         '/me': (route) => route.fulfill({ json: me }),
         '/me/profile': (route) => {
-          saved = route.request().postDataJSON();
+          saved = requestBody<Record<string, unknown>>(route);
           return route.fulfill({ json: me });
         },
       },

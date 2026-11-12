@@ -1,6 +1,6 @@
 import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormField, form, maxLength, required, submit } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
@@ -33,7 +33,6 @@ function mediaIdOf(path: string | null | undefined): string | null {
     Textarea,
     Message,
     ButtonDirective,
-    ButtonLabel,
     LabeledField,
     MediaUpload,
   ],
@@ -89,10 +88,10 @@ function mediaIdOf(path: string | null | undefined): string | null {
           variant="text"
           (click)="visible.set(false)"
         >
-          <span pButtonLabel>Cancelar</span>
+          Cancelar
         </button>
         <button pButton type="submit" form="post-form" [loading]="postForm().submitting()">
-          <span pButtonLabel>{{ editing() ? 'Guardar' : 'Publicar' }}</span>
+          {{ editing() ? 'Guardar' : 'Publicar' }}
         </button>
       </ng-template>
     </p-dialog>

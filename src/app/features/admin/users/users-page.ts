@@ -3,7 +3,7 @@ import { Component, computed, inject, linkedSignal, signal } from '@angular/core
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { LucideSearch } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
@@ -57,7 +57,6 @@ const DEFAULT_SORT = 'createdAt,desc';
     SortableColumn,
     TableSortIcon,
     ButtonDirective,
-    ButtonLabel,
     LucideSearch,
     PersonAvatar,
     SortIcon,

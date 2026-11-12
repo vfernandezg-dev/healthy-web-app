@@ -1,8 +1,8 @@
 import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { form, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
-import { LucideArchive, LucideArrowLeft, LucideSend, LucideTrash2 } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { LucideArchive, LucideArrowLeft, LucideSend, LucideTrash } from '@lucide/angular';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
 import { toProblem } from '@core/api/problem';
@@ -26,14 +26,12 @@ import {
   imports: [
     RouterLink,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     Skeleton,
     Tag,
     LucideArrowLeft,
     LucideSend,
     LucideArchive,
-    LucideTrash2,
+    LucideTrash,
     ContentFields,
     LoadError,
   ],
@@ -70,12 +68,12 @@ import {
               [disabled]="busy()"
               (click)="remove()"
             >
-              <svg lucideTrash2 pButtonIcon></svg>
-              <span pButtonLabel>Eliminar</span>
+              <svg lucideTrash></svg>
+              Eliminar
             </button>
             <button pButton type="button" [loading]="busy()" (click)="publish()">
-              <svg lucideSend pButtonIcon></svg>
-              <span pButtonLabel>Publicar</span>
+              <svg lucideSend></svg>
+              Publicar
             </button>
           } @else if (status === 'PUBLISHED') {
             <button
@@ -86,8 +84,8 @@ import {
               [loading]="busy()"
               (click)="archive()"
             >
-              <svg lucideArchive pButtonIcon></svg>
-              <span pButtonLabel>Archivar</span>
+              <svg lucideArchive></svg>
+              Archivar
             </button>
           }
         </div>
@@ -97,7 +95,7 @@ import {
         <app-content-fields [form]="contentForm" [coverPath]="current.item.coverPath ?? null" />
         <div class="mt-6 flex justify-end">
           <button pButton type="submit" [loading]="contentForm().submitting()">
-            <span pButtonLabel>Guardar los cambios</span>
+            Guardar los cambios
           </button>
         </div>
       </form>

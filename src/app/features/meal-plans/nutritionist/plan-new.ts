@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { form, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { LucideArrowLeft } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { toProblem } from '@core/api/problem';
 import { Toaster } from '@core/ui/toaster';
 import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
@@ -13,7 +13,7 @@ import { PlanFields, emptyPlan, planSchema, toPlanRequest } from '../ui/plan-fie
 /** Nuevo plan: se crea como borrador y se pasa a su editor para añadir las comidas. */
 @Component({
   selector: 'app-plan-new',
-  imports: [RouterLink, ButtonDirective, ButtonLabel, LucideArrowLeft, PlanFields, PageHeader],
+  imports: [RouterLink, ButtonDirective, LucideArrowLeft, PlanFields, PageHeader],
   template: `
     <a
       routerLink=".."
@@ -30,7 +30,7 @@ import { PlanFields, emptyPlan, planSchema, toPlanRequest } from '../ui/plan-fie
       <app-plan-fields [form]="planForm" />
       <div class="mt-6 flex justify-end">
         <button pButton type="submit" [loading]="planForm().submitting()">
-          <span pButtonLabel>Crear y añadir comidas</span>
+          Crear y añadir comidas
         </button>
       </div>
     </form>

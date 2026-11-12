@@ -17,11 +17,13 @@ export function goalProgress(
   entries: readonly WeightEntryResponse[],
   targetKg: number,
 ): GoalProgress {
-  if (entries.length === 0) {
+  const first = entries.at(0);
+  const last = entries.at(-1);
+  if (!first || !last) {
     return { currentKg: null, remainingKg: 0, losing: true, reached: false, percent: 0 };
   }
-  const start = entries[0].weightKg;
-  const current = entries[entries.length - 1].weightKg;
+  const start = first.weightKg;
+  const current = last.weightKg;
   const losing = start >= targetKg;
   const reached = losing ? current <= targetKg : current >= targetKg;
   const total = Math.abs(start - targetKg);

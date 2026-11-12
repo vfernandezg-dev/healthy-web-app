@@ -24,26 +24,31 @@ export class MediaApi {
     return this.http
       .post<UploadResponse>(this.url, body, {
         params: { purpose },
-        reportProgress: true,
+        // Avance de la subida: necesita el backend XHR (withXhr() en app.config.ts).
+        reportUploadProgress: true,
         observe: 'events',
         context: silentErrors(),
       })
       .pipe(
-        filter(
-          (event: HttpEvent<UploadResponse>) =>
-            event.type === HttpEventType.UploadProgress || event.type === HttpEventType.Response,
-        ),
-        map((event): UploadProgress => {
-          if (event.type === HttpEventType.Response) {
-            return { state: 'done', file: event.body as UploadResponse };
-          }
-          const total = event.type === HttpEventType.UploadProgress ? (event.total ?? 0) : 0;
-          const loaded = event.type === HttpEventType.UploadProgress ? event.loaded : 0;
-          return {
-            state: 'uploading',
-            percent: total > 0 ? Math.round((loaded / total) * 100) : 0,
-          };
-        }),
+        map(toProgress),
+        filter((progress) => progress !== null),
       );
+  }
+}
+
+function toProgress(event: HttpEvent<UploadResponse>): UploadProgress | null {
+  switch (event.type) {
+    case HttpEventType.UploadProgress:
+      return {
+        state: 'uploading',
+        percent: event.total ? Math.round((event.loaded / event.total) * 100) : 0,
+      };
+    case HttpEventType.Response:
+      if (!event.body) {
+        throw new Error('La API no ha devuelto el fichero subido.');
+      }
+      return { state: 'done', file: event.body };
+    default:
+      return null;
   }
 }

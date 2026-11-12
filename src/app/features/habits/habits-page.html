@@ -43,21 +43,21 @@
           @for (score of scores; track score.key) {
             <div>
               <div class="flex items-baseline justify-between gap-3">
-                <span [id]="'habit-' + score.key" class="text-sm font-semibold text-ink">{{
+                <span [id]="`habit-${score.key}`" class="text-sm font-semibold text-ink">{{
                   score.label
                 }}</span>
                 <span class="text-lg font-bold text-brand-800" aria-hidden="true"
                   >{{ model()[score.key] }}/10</span
                 >
               </div>
-              <p [id]="'habit-' + score.key + '-hint'" class="mb-3 text-sm text-muted">
+              <p [id]="`habit-${score.key}-hint`" class="mb-3 text-sm text-muted">
                 {{ score.hint }}
               </p>
               <p-slider
                 [min]="0"
                 [max]="10"
                 [step]="1"
-                [ariaLabelledBy]="'habit-' + score.key"
+                [ariaLabelledBy]="`habit-${score.key}`"
                 [formField]="habitForm[score.key]"
               />
             </div>
@@ -78,11 +78,11 @@
           <div class="flex justify-end gap-2">
             @if (editing() || todayLog()) {
               <button pButton type="button" severity="secondary" variant="text" (click)="cancel()">
-                <span pButtonLabel>Cancelar</span>
+                Cancelar
               </button>
             }
             <button pButton type="submit" [loading]="habitForm().submitting()">
-              <span pButtonLabel>{{ editing() ? 'Guardar' : 'Registrar el día' }}</span>
+              {{ editing() ? 'Guardar' : 'Registrar el día' }}
             </button>
           </div>
         </form>
@@ -109,12 +109,12 @@
               variant="outlined"
               (click)="registerYesterday()"
             >
-              <span pButtonLabel>Registrar ayer</span>
+              Registrar ayer
             </button>
           }
           <button pButton type="button" severity="secondary" (click)="edit(log)">
-            <svg lucidePencil pButtonIcon></svg>
-            <span pButtonLabel>Editar hoy</span>
+            <svg lucidePencil></svg>
+            Editar hoy
           </button>
         </div>
       }
@@ -146,10 +146,10 @@
                   severity="secondary"
                   variant="text"
                   [iconOnly]="true"
-                  [attr.aria-label]="'Editar el registro del ' + (log.loggedOn | date: 'longDate')"
+                  [attr.aria-label]="`Editar el registro del ${(log.loggedOn | date: 'longDate')}`"
                   (click)="edit(log)"
                 >
-                  <svg lucidePencil pButtonIcon></svg>
+                  <svg lucidePencil></svg>
                 </button>
                 <button
                   pButton
@@ -158,10 +158,10 @@
                   severity="danger"
                   variant="text"
                   [iconOnly]="true"
-                  [attr.aria-label]="'Borrar el registro del ' + (log.loggedOn | date: 'longDate')"
+                  [attr.aria-label]="`Borrar el registro del ${(log.loggedOn | date: 'longDate')}`"
                   (click)="remove(log)"
                 >
-                  <svg lucideTrash2 pButtonIcon></svg>
+                  <svg lucideTrash></svg>
                 </button>
               </span>
             </li>

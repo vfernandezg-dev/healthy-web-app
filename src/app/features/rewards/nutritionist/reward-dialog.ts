@@ -1,6 +1,6 @@
 import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormField, form, max, maxLength, min, required, submit } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
@@ -42,7 +42,6 @@ function optionsFor(prizes: readonly { id: string; title: string }[]) {
     SelectButton,
     Message,
     ButtonDirective,
-    ButtonLabel,
     LabeledField,
   ],
   template: `
@@ -136,10 +135,10 @@ function optionsFor(prizes: readonly { id: string; title: string }[]) {
           variant="text"
           (click)="visible.set(false)"
         >
-          <span pButtonLabel>Cancelar</span>
+          Cancelar
         </button>
         <button pButton type="submit" form="reward-form" [loading]="rewardForm().submitting()">
-          <span pButtonLabel>{{ editing() ? 'Guardar' : 'Crear la recompensa' }}</span>
+          {{ editing() ? 'Guardar' : 'Crear la recompensa' }}
         </button>
       </ng-template>
     </p-dialog>
@@ -196,9 +195,10 @@ export class RewardDialog {
     {
       equal: (a, b) =>
         a.length === b.length &&
-        a.every(
-          (option, index) => option.value === b[index].value && option.label === b[index].label,
-        ),
+        a.every((option, index) => {
+          const other = b.at(index);
+          return option.value === other?.value && option.label === other.label;
+        }),
     },
   );
 

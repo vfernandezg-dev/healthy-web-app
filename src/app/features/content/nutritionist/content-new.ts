@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { form, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { LucideArrowLeft } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { toProblem } from '@core/api/problem';
 import { Toaster } from '@core/ui/toaster';
 import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
@@ -13,7 +13,7 @@ import { ContentFields, contentSchema, emptyContent, toContentRequest } from '..
 /** Nuevo contenido: se guarda como borrador y se pasa a su editor. */
 @Component({
   selector: 'app-content-new',
-  imports: [RouterLink, ButtonDirective, ButtonLabel, LucideArrowLeft, ContentFields, PageHeader],
+  imports: [RouterLink, ButtonDirective, LucideArrowLeft, ContentFields, PageHeader],
   template: `
     <a
       routerLink=".."
@@ -30,7 +30,7 @@ import { ContentFields, contentSchema, emptyContent, toContentRequest } from '..
       <app-content-fields [form]="contentForm" />
       <div class="mt-6 flex justify-end">
         <button pButton type="submit" [loading]="contentForm().submitting()">
-          <span pButtonLabel>Guardar el borrador</span>
+          Guardar el borrador
         </button>
       </div>
     </form>

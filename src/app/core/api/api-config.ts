@@ -23,7 +23,8 @@ export function normalizeBaseUrl(value: string | undefined, fallback: string): s
 
 /** @ngx-env/builder sustituye import.meta.env al compilar; en los tests (builder oficial) no existe. */
 function environment(): Partial<Env> {
-  return import.meta.env ?? {};
+  const meta: { readonly env?: Partial<Env> } = import.meta;
+  return meta.env ?? {};
 }
 
 export function readAppConfig(env: Partial<Env> = environment()): AppConfig {

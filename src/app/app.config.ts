@@ -1,4 +1,4 @@
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import {
   type ApplicationConfig,
   inject,
@@ -34,8 +34,9 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ scrollPositionRestoration: 'top' }),
     ),
     { provide: TitleStrategy, useClass: AppTitleStrategy },
-    // El de errores va fuera: ve el resultado final, después de que la sesión reintente tras un 401.
-    provideHttpClient(withFetch(), withInterceptors([errorInterceptor, authInterceptor])),
+    // XHR y no Fetch (el backend por defecto): FetchBackend no informa del avance de las subidas.
+    // El interceptor de errores va fuera: ve el resultado final, después de que la sesión reintente tras un 401.
+    provideHttpClient(withXhr(), withInterceptors([errorInterceptor, authInterceptor])),
     // Al recargar, el access token en memoria se pierde: se recupera con la cookie antes de la primera navegación.
     provideAppInitializer(() => inject(AuthStore).refresh()),
     provideUi(config.primengLicenseKey),

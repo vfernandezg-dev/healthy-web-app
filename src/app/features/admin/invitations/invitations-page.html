@@ -3,8 +3,8 @@
   description="Los nutricionistas se dan de alta por invitación: reciben un enlace por correo para crear su cuenta."
 >
   <button pButton type="button" (click)="dialog()?.open()">
-    <svg lucideMailPlus pButtonIcon></svg>
-    <span pButtonLabel>Invitar</span>
+    <svg lucideMailPlus></svg>
+    Invitar
   </button>
 </app-page-header>
 
@@ -17,9 +17,7 @@
       title="Aún no has invitado a nadie"
       description="Invita a un nutricionista para que pueda publicar planes y contenido."
     >
-      <button pButton type="button" (click)="dialog()?.open()">
-        <span pButtonLabel>Invitar a un nutricionista</span>
-      </button>
+      <button pButton type="button" (click)="dialog()?.open()">Invitar a un nutricionista</button>
     </app-empty-state>
   } @else {
     <div class="card overflow-hidden">
@@ -133,12 +131,10 @@
       size="small"
       severity="secondary"
       variant="outlined"
-      [attr.aria-label]="
-        'Reenviar la invitación de ' + invitation.firstName + ' ' + invitation.lastName
-      "
+      [attr.aria-label]="`Reenviar la invitación de ${invitation.firstName} ${invitation.lastName}`"
       (click)="resend(invitation)"
     >
-      <span pButtonLabel>Reenviar</span>
+      Reenviar
     </button>
   }
   @if (invitation.status === 'PENDING') {
@@ -148,12 +144,10 @@
       size="small"
       severity="danger"
       variant="text"
-      [attr.aria-label]="
-        'Revocar la invitación de ' + invitation.firstName + ' ' + invitation.lastName
-      "
+      [attr.aria-label]="`Revocar la invitación de ${invitation.firstName} ${invitation.lastName}`"
       (click)="revoke(invitation)"
     >
-      <span pButtonLabel>Revocar</span>
+      Revocar
     </button>
   }
 </ng-template>
