@@ -25,6 +25,11 @@ export const routes: Routes = [
     children: [
       { path: '', title: 'Inicio', loadComponent: roleHome },
       { path: 'profile', title: 'Tu perfil', loadComponent: profile },
+      {
+        path: 'subscription',
+        loadChildren: () =>
+          import('./features/subscription/subscription.routes').then((m) => m.SUBSCRIPTION_ROUTES),
+      },
     ],
   },
   {

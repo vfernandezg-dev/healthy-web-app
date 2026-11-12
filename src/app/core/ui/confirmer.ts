@@ -27,6 +27,8 @@ export class Confirmer {
         rejectButtonProps: { severity: 'secondary', variant: 'text' },
         defaultFocus: 'reject',
         closeOnEscape: true,
+        // Sin la X: ya está «Cancelar» y Escape. (PrimeNG 22 no da nombre accesible a esa X en p-confirmdialog.)
+        closable: false,
         accept: () => resolve(true),
         reject: () => resolve(false),
       });

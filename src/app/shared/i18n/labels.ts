@@ -9,6 +9,32 @@ export const SEX_LABELS: Readonly<Record<NonNullable<Schemas['ClientData']['sex'
   OTHER: 'Otro',
 };
 
+export type Tier = Schemas['PlanResponse']['tier'];
+
+export const TIER_LABELS: Readonly<Record<Tier, string>> = {
+  BASIC: 'Básico',
+  PREMIUM: 'Premium',
+  VIP: 'VIP',
+};
+
+export const PAYMENT_STATUS_LABELS: Readonly<Record<Schemas['PaymentResponse']['status'], string>> =
+  {
+    CREATED: 'Pendiente',
+    CAPTURED: 'Pagado',
+    FAILED: 'Fallido',
+    CANCELED: 'Cancelado',
+  };
+
+/** Severidad de p-tag para cada estado de pago. */
+export const PAYMENT_STATUS_SEVERITY: Readonly<
+  Record<Schemas['PaymentResponse']['status'], 'success' | 'warn' | 'danger' | 'secondary'>
+> = {
+  CREATED: 'warn',
+  CAPTURED: 'success',
+  FAILED: 'danger',
+  CANCELED: 'secondary',
+};
+
 /** Opciones para un p-select o p-selectbutton a partir de un mapa de etiquetas. */
 export function optionsOf<T extends string>(
   labels: Readonly<Record<T, string>>,

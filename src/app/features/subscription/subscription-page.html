@@ -1,0 +1,154 @@
+<app-page-header
+  title="Suscripción"
+  description="Elige cómo quieres usar Healthy Bites. Pagas con PayPal, por períodos y sin renovaciones automáticas."
+/>
+
+<section class="card mb-10 p-6 sm:p-8" aria-labelledby="current-plan-title">
+  <h2 id="current-plan-title" class="text-sm font-semibold tracking-wide text-muted uppercase">
+    Tu plan
+  </h2>
+  @if (current.error()) {
+    <app-load-error class="mt-4" [error]="current.error()" (retry)="current.reload()" />
+  } @else if (subscription(); as plan) {
+    <div class="mt-2 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="text-3xl font-bold">{{ tierLabels[plan.tier] }}</p>
+        <p class="mt-1 text-muted">
+          @switch (plan.status) {
+            @case ('ACTIVE') {
+              Activa: tienes acceso hasta el {{ plan.currentPeriodEnd | date: 'longDate' }}.
+            }
+            @case ('CANCELED') {
+              Cancelada: mantienes el acceso hasta el
+              {{ plan.currentPeriodEnd | date: 'longDate' }}.
+            }
+            @default {
+              El plan gratuito: metas, hábitos, rachas, comunidad y el contenido básico.
+            }
+          }
+        </p>
+      </div>
+      @if (plan.status === 'ACTIVE') {
+        <button
+          pButton
+          type="button"
+          severity="secondary"
+          variant="outlined"
+          [loading]="canceling()"
+          (click)="cancel()"
+        >
+          <span pButtonLabel>Cancelar la suscripción</span>
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="mt-3 space-y-2" aria-busy="true">
+      <p-skeleton height="2.25rem" width="10rem" />
+      <p-skeleton height="1.25rem" width="60%" />
+    </div>
+  }
+</section>
+
+<section aria-labelledby="plans-title">
+  <h2 id="plans-title" class="mb-4 text-xl font-bold">Planes</h2>
+  @if (plans.error()) {
+    <app-load-error [error]="plans.error()" (retry)="plans.reload()" />
+  } @else if (plans.hasValue()) {
+    <ul class="grid gap-5 md:grid-cols-3" role="list">
+      @for (plan of plans.value(); track plan.id) {
+        @let isCurrent = plan.tier === currentTier();
+        <li
+          class="card flex flex-col p-6"
+          [class.ring-2]="isCurrent"
+          [class.ring-brand-600]="isCurrent"
+        >
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="text-xl font-bold">{{ plan.name }}</h3>
+            @if (isCurrent) {
+              <p-tag value="Tu plan" severity="success" />
+            }
+          </div>
+          <p class="mt-3">
+            @if (isFree(plan)) {
+              <span class="text-4xl font-bold tracking-tight">Gratis</span>
+            } @else {
+              <span class="text-4xl font-bold tracking-tight">{{ plan.price | money }}</span>
+              <span class="text-muted"> / {{ plan.periodDays }} días</span>
+            }
+          </p>
+          <p class="mt-3 flex-1 text-muted">{{ plan.description }}</p>
+          @if (isUpgrade(plan.tier)) {
+            <button
+              pButton
+              type="button"
+              class="mt-6 w-full"
+              [loading]="checkingOut() === plan.tier"
+              [disabled]="checkingOut() !== null"
+              (click)="subscribe(plan.tier)"
+            >
+              <span pButtonLabel>Suscribirme a {{ plan.name }}</span>
+            </button>
+          }
+        </li>
+      }
+    </ul>
+    <p class="mt-4 text-sm text-muted">
+      El pago se hace en la web de PayPal. Al volver, activamos tu plan al momento.
+    </p>
+  } @else {
+    <div class="grid gap-5 md:grid-cols-3" aria-busy="true">
+      @for (placeholder of [1, 2, 3]; track placeholder) {
+        <p-skeleton height="16rem" borderRadius="1.5rem" />
+      }
+    </div>
+  }
+</section>
+
+<section class="mt-12" aria-labelledby="payments-title">
+  <h2 id="payments-title" class="mb-4 text-xl font-bold">Tus pagos</h2>
+  @if (payments.error()) {
+    <app-load-error [error]="payments.error()" (retry)="payments.reload()" />
+  } @else if (payments.hasValue()) {
+    @let list = payments.value().content;
+    @if (list.length === 0) {
+      <app-empty-state
+        [icon]="receiptIcon"
+        title="Aún no has hecho ningún pago"
+        description="Cuando te suscribas a Premium o VIP, verás aquí tus pagos."
+      />
+    } @else {
+      <div class="card overflow-x-auto">
+        <table class="w-full text-left">
+          <caption class="sr-only">
+            Tus últimos pagos
+          </caption>
+          <thead class="border-b border-brand-100 text-sm text-muted">
+            <tr>
+              <th scope="col" class="px-6 py-3 font-semibold">Fecha</th>
+              <th scope="col" class="px-6 py-3 font-semibold">Importe</th>
+              <th scope="col" class="px-6 py-3 font-semibold">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (payment of list; track payment.id) {
+              <tr class="border-b border-brand-50 last:border-0">
+                <td class="px-6 py-4">
+                  {{ payment.capturedAt ?? payment.createdAt | date: 'mediumDate' }}
+                </td>
+                <td class="px-6 py-4 font-semibold">{{ payment.amount | money }}</td>
+                <td class="px-6 py-4">
+                  <p-tag
+                    [value]="paymentLabels[payment.status]"
+                    [severity]="paymentSeverity[payment.status]"
+                  />
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  } @else {
+    <p-skeleton height="10rem" borderRadius="1.5rem" />
+  }
+</section>
