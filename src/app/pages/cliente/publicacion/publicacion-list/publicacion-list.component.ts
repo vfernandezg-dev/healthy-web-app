@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PublicacionService } from '../../../../core/services/publicacion.service';
 import { PublicacionResponse } from '../../../../shared/models/publicacion-response.model';
-import { CommonModule } from '@angular/common';
+
 import { ApiImgPipe } from '../../../../core/pipes/api-img.pipe';
 import { ComentarioResponse } from '../../../../shared/models/comentario-response.model';
 import { ComentarioService } from '../../../../core/services/comentario.service';
@@ -18,19 +18,18 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-publicacion-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule, 
+    selector: 'app-publicacion-list',
+    imports: [
+    MatCardModule,
     MatButtonModule,
     ApiImgPipe,
     FormsModule,
     MatMenuModule,
-    MatIconModule,
-  ],
-  templateUrl: './publicacion-list.component.html',
-  styleUrl: './publicacion-list.component.css'
+    MatIconModule
+],
+    templateUrl: './publicacion-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './publicacion-list.component.css'
 })
 export class PublicacionListComponent {
   publicaciones: PublicacionResponse[] = [];

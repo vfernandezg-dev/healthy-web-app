@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -6,22 +6,21 @@ import { PasswordResetService } from '../../../../core/services/password-reset.s
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
-import { NgIf } from '@angular/common';
+
 
 @Component({
-  selector: 'app-reset-password',
-  standalone: true,
-  imports: [
+    selector: 'app-reset-password',
+    imports: [
     ReactiveFormsModule,
     MatFormField,
     MatLabel,
     MatInput,
     MatError,
-    MatButton,
-    NgIf
-  ],
-  templateUrl: './reset-password.component.html',
-  styleUrl: './reset-password.component.css'
+    MatButton
+],
+    templateUrl: './reset-password.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './reset-password.component.css'
 })
 export class ResetPasswordComponent implements OnInit {
   resetForm: FormGroup;

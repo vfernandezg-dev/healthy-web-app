@@ -1,91 +1,93 @@
 <main class="p-3">
-    <div class="container-fluid">
-        <div class="wa">
-            <div class="form-container">
-                <form [formGroup]="habitosForm" (ngSubmit)="onSubmit()" class="form-section">
-                    <h2 class="text-center"><strong>{{titulo}}</strong></h2>
-            
-                    <div>
-                        <mat-form-field class="form-field">
-                            <mat-label>Nombre de Habito</mat-label>
-                            <input
-                                matInput
-                                formControlName="nombre"
-                                type="text"
-                                placeholder="Ingrese el nombre del habito"
-                            >
-                            <mat-error *ngIf="controlHasError('nombre', 'required')">
-                                Este campo es obligatorio
-                            </mat-error>
+  <div class="container-fluid">
+    <div class="wa">
+      <div class="form-container">
+        <form [formGroup]="habitosForm" (ngSubmit)="onSubmit()" class="form-section">
+          <h2 class="text-center"><strong>{{titulo}}</strong></h2>
+
+          <div>
+            <mat-form-field class="form-field">
+              <mat-label>Nombre de Habito</mat-label>
+              <input
+                matInput
+                formControlName="nombre"
+                type="text"
+                placeholder="Ingrese el nombre del habito"
+                >
+                @if (controlHasError('nombre', 'required')) {
+                  <mat-error>
+                    Este campo es obligatorio
+                  </mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field class="form-field">
+                <mat-label>Fecha de Registro</mat-label>
+                <input
+                  matInput
+                  formControlName="fechaRegistro"
+                  type="date"
+                  placeholder="Ingrese la fecha de registro"
+                  aria-label="fechaRegistro"
+                  >
+                </mat-form-field>
+              </div>
+
+              <div>
+                <mat-form-field class="form-field">
+                  <mat-label>Sueño en horas</mat-label>
+                  <input
+                    matInput
+                    formControlName="calidadDeSueno"
+                    type="number"
+                    placeholder="Ingrese la cantidad de horas de sueño"
+                    >
+                  </mat-form-field>
+
+                  <mat-form-field class="form-field">
+                    <mat-label>Alimentacion en kcal</mat-label>
+                    <input
+                      matInput
+                      formControlName="alimentacion"
+                      type="number"
+                      placeholder="Ingrese la cantidad de comida en gramos"
+                      >
+                    </mat-form-field>
+                  </div>
+
+                  <div>
+                    <mat-form-field class="form-field">
+                      <mat-label>Hidratacion en L</mat-label>
+                      <input
+                        matInput
+                        formControlName="hidratacion"
+                        type="number"
+                        placeholder="Ingrese la cantidad de agua en Litros"
+                        >
+                      </mat-form-field>
+
+                      <mat-form-field class="form-field">
+                        <mat-label>Ejercicio en horas</mat-label>
+                        <input
+                          matInput
+                          formControlName="ejercicio"
+                          type="number"
+                          placeholder="Ingrese el tipo de ejercicio en horas"
+                          >
                         </mat-form-field>
-        
-                        <mat-form-field class="form-field">
-                            <mat-label>Fecha de Registro</mat-label>
-                            <input
-                                matInput
-                                formControlName="fechaRegistro"
-                                type="date"
-                                placeholder="Ingrese la fecha de registro"
-                                aria-label="fechaRegistro"
-                            >
-                        </mat-form-field>
-                    </div>
-                    
-                    <div>
-                        <mat-form-field class="form-field">
-                            <mat-label>Sueño en horas</mat-label>
-                            <input
-                                matInput
-                                formControlName="calidadDeSueno"
-                                type="number"
-                                placeholder="Ingrese la cantidad de horas de sueño"
-                            >
-                        </mat-form-field>
-            
-                        <mat-form-field class="form-field">
-                            <mat-label>Alimentacion en kcal</mat-label>
-                            <input
-                                matInput
-                                formControlName="alimentacion"
-                                type="number"
-                                placeholder="Ingrese la cantidad de comida en gramos"
-                            >
-                        </mat-form-field>
-                    </div>
-            
-                    <div>
-                        <mat-form-field class="form-field">
-                            <mat-label>Hidratacion en L</mat-label>
-                            <input
-                                matInput
-                                formControlName="hidratacion"
-                                type="number"
-                                placeholder="Ingrese la cantidad de agua en Litros"
-                            >
-                        </mat-form-field>
-            
-                        <mat-form-field class="form-field">
-                            <mat-label>Ejercicio en horas</mat-label>
-                            <input
-                                matInput
-                                formControlName="ejercicio"
-                                type="number"
-                                placeholder="Ingrese el tipo de ejercicio en horas"
-                            >
-                        </mat-form-field>
-                    </div>
-            
-                    <button 
-                        mat-raised-button 
-                        color="primary" 
-                        type="submit" 
+                      </div>
+
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        type="submit"
                         class="btn btn-primary"
                         [disabled]="habitosForm.invalid"
-                    >
+                        >
                         {{textoBoton}}
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</main>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </main>

@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,19 +13,18 @@ import { RecompensaResponse } from '../../../shared/models/recompensa-response.m
 import { RachaService } from '../../../core/services/racha.service';
 
 @Component({
-  selector: 'app-seguimiento',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-seguimiento',
+    imports: [
     ReactiveFormsModule,
     RouterModule,
     RouterLink,
     MatFormFieldModule,
     MatInputModule,
-    MatCardModule,
-  ],
-  templateUrl: './seguimiento.component.html',
-  styleUrls: ['./seguimiento.component.css']
+    MatCardModule
+],
+    templateUrl: './seguimiento.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./seguimiento.component.css']
 })
 export class SeguimientoComponent implements OnInit {
 

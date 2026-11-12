@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,18 +12,17 @@ import { UnirseService } from '../../../core/services/unirse.service';
 import { GrupoListComponent } from "./grupo-list/grupo-list.component";
 
 @Component({
-  selector: 'app-grupo',
-  standalone: true,
-  imports: [
+    selector: 'app-grupo',
+    imports: [
     RouterLink,
     MatListModule,
     MatMenuModule,
     MatIconModule,
-    CommonModule,
     GrupoListComponent
-  ],
-  templateUrl: './grupo.component.html',
-  styleUrl: './grupo.component.css'
+],
+    templateUrl: './grupo.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './grupo.component.css'
 })
 export class GrupoComponent {
   grupo: GrupoResponse[] = [];

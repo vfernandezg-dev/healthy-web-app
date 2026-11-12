@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -12,10 +12,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 
 @Component({
-  selector: 'app-comida-form',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-comida-form',
+    imports: [
     MatInputModule,
     MatCardModule,
     FormsModule,
@@ -24,10 +22,11 @@ import { MatSelectModule } from '@angular/material/select';
     MatOptionModule,
     MatRadioModule,
     MatSelectModule,
-    ReactiveFormsModule, 
-  ],
-  templateUrl: './comida-form.component.html',
-  styleUrls: ['./comida-form.component.css'],
+    ReactiveFormsModule
+],
+    templateUrl: './comida-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./comida-form.component.css']
 })
 export class ComidaFormComponent implements OnInit {
   comidaForm!: FormGroup;

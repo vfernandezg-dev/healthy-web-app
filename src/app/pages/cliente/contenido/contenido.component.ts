@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ContenidoResponse } from '../../../shared/models/contenido-response.model';
 import { PlanAlimenticioResponse } from '../../../shared/models/plan-alimenticio-response.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ContenidoService } from '../../../core/services/contenido.service';
 import { PlanAlimenticioService } from '../../../core/services/plan-alimenticio.service';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,18 +16,17 @@ import { AuthService } from '../../../core/services/auth.service';
 import { AccesoPlanService } from '../../../core/services/acceso-plan.service';
 
 @Component({
-  selector: 'app-contenido',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-contenido',
+    imports: [
     MatCardModule,
     MatButtonModule,
     MatSelectModule,
     ApiImgPipe,
     FormatPlanObjetivoPipe
-  ],
-  templateUrl: './contenido.component.html',
-  styleUrl: './contenido.component.css'
+],
+    templateUrl: './contenido.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './contenido.component.css'
 })
 export class ContenidoComponent {
   contenido: ContenidoResponse[] = [];

@@ -1,55 +1,57 @@
 <div class="d-flex">
-    <main class="p-3">
-        <div class="container-fluid">
-            <app-grupo-list></app-grupo-list>
-        </div>
-    </main>
-    <section id="sidebar">
-        <ul class="sidebar-grupo-nav">
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-grupo-link">
-                    <span>Grupos </span>
-                    <i class="fa-solid fa-users"></i>
-                </a>
-                <button class="btn btn-primary" routerLink="create">Crear</button>
-            </li>
-        </ul>
+  <main class="p-3">
+    <div class="container-fluid">
+      <app-grupo-list></app-grupo-list>
+    </div>
+  </main>
+  <section id="sidebar">
+    <ul class="sidebar-grupo-nav">
+      <li class="sidebar-item">
+        <a href="#" class="sidebar-grupo-link">
+          <span>Grupos </span>
+          <i class="fa-solid fa-users"></i>
+        </a>
+        <button class="btn btn-primary" routerLink="create">Crear</button>
+      </li>
+    </ul>
 
-        <div class="grupo-list-container">
-            <mat-list *ngFor="let grupo of filteredGrupo">
-                <mat-list-item>
-                    <div class="d-flex align-items-center justify-content-between w-100">
-                        <span>{{grupo.nombre}}</span>
-                        <button mat-icon-button [matMenuTriggerFor]="menu">
-                            <mat-icon>more_vert</mat-icon>
-                        </button>
-                    </div>
-                    <mat-menu #menu="matMenu">
-                        <button mat-menu-item (click)="editGroup(grupo.id)">
-                            <mat-icon>edit</mat-icon>
-                            <span>Editar</span>
-                        </button>
-                        <button mat-menu-item (click)="deleteGroup(grupo.id)">
-                            <mat-icon>delete</mat-icon>
-                            <span>Eliminar</span>
-                        </button>
-                        <button mat-menu-item (click)="joinGroup(grupo.id)">
-                            <mat-icon><i class="fa-solid fa-heart"></i></mat-icon>
-                            Unirse
-                        </button>
-                        <button mat-menu-item (click)="leaveGroup(grupo.id)">
-                            <mat-icon><i class="fa-solid fa-door-open"></i></mat-icon>
-                            Salir
-                        </button>
-                    </mat-menu>
-                </mat-list-item>
-                <button 
-                    class="btn btn-secondary" 
-                    mat-button 
-                    [routerLink]="['/cliente/grupo', grupo.id]">
-                    Ver publicaciones
-                </button>
-            </mat-list>
-        </div>
-    </section>
+    <div class="grupo-list-container">
+      @for (grupo of filteredGrupo; track grupo) {
+        <mat-list>
+          <mat-list-item>
+            <div class="d-flex align-items-center justify-content-between w-100">
+              <span>{{grupo.nombre}}</span>
+              <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="editGroup(grupo.id)">
+                <mat-icon>edit</mat-icon>
+                <span>Editar</span>
+              </button>
+              <button mat-menu-item (click)="deleteGroup(grupo.id)">
+                <mat-icon>delete</mat-icon>
+                <span>Eliminar</span>
+              </button>
+              <button mat-menu-item (click)="joinGroup(grupo.id)">
+                <mat-icon><i class="fa-solid fa-heart"></i></mat-icon>
+                Unirse
+              </button>
+              <button mat-menu-item (click)="leaveGroup(grupo.id)">
+                <mat-icon><i class="fa-solid fa-door-open"></i></mat-icon>
+                Salir
+              </button>
+            </mat-menu>
+          </mat-list-item>
+          <button
+            class="btn btn-secondary"
+            mat-button
+            [routerLink]="['/cliente/grupo', grupo.id]">
+            Ver publicaciones
+          </button>
+        </mat-list>
+      }
+    </div>
+  </section>
 </div>

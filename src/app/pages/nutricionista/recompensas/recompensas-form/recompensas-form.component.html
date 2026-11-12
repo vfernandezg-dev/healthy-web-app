@@ -1,59 +1,62 @@
 <div class="container-form">
-    <form [formGroup]="recompensaForm" (ngSubmit)="onSubmit()" class="form-section">
-        <h2 class="text-center"><strong>{{ titulo }}</strong></h2>
-  
-        <div>
-            <mat-form-field class="form-field">
-            <mat-label>Nombre de Recompensa</mat-label>
-            <input matInput formControlName="nombre" type="text" placeholder="Ingrese el nombre de la recompensa" />
-            </mat-form-field>
-        </div>
-    
-        <div>
-            <mat-form-field class="form-field">
-            <mat-label>Descripción</mat-label>
-            <textarea
-                matInput
-                formControlName="descripcion"
-                placeholder="Ingrese la descripción de la recompensa"
-            ></textarea>
-            </mat-form-field>
-        </div>
-  
-        <div>
-            <mat-form-field class="form-field">
-            <mat-label>Días Requeridos</mat-label>
-            <input matInput formControlName="diasRequeridos" type="number" placeholder="Ingrese los días requeridos" />
-            </mat-form-field>
-        </div>
-    
-        <div>
-            <mat-form-field class="form-field">
-            <mat-label>Seleccionar Contenido</mat-label>
-            <mat-select formControlName="contenidoId">
-                <mat-option [value]="null">Ninguno</mat-option>
-                <mat-option *ngFor="let contenido of contenidoOptions" [value]="contenido.id">
-                    {{ contenido.titulo }}
-                </mat-option>
-            </mat-select>
-            </mat-form-field>
-        </div>
-    
-        <div>
-            <mat-form-field class="form-field">
-            <mat-label>Seleccionar Plan Alimenticio</mat-label>
-            <mat-select formControlName="planAlimenticioId">
-                <mat-option [value]="null">Ninguno</mat-option>
-                <mat-option *ngFor="let plan of planAlimenticioOptions" [value]="plan.id">
-                    {{ plan.planObjetivo }}
-                </mat-option>
-            </mat-select>
-            </mat-form-field>
-        </div>
-  
-      <button mat-raised-button color="primary" type="submit" class="btn btn-primary">
-        {{ textoBoton }}
-      </button>
-    </form>
-  </div>
-  
+  <form [formGroup]="recompensaForm" (ngSubmit)="onSubmit()" class="form-section">
+    <h2 class="text-center"><strong>{{ titulo }}</strong></h2>
+
+    <div>
+      <mat-form-field class="form-field">
+        <mat-label>Nombre de Recompensa</mat-label>
+        <input matInput formControlName="nombre" type="text" placeholder="Ingrese el nombre de la recompensa" />
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field class="form-field">
+        <mat-label>Descripción</mat-label>
+        <textarea
+          matInput
+          formControlName="descripcion"
+          placeholder="Ingrese la descripción de la recompensa"
+        ></textarea>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field class="form-field">
+        <mat-label>Días Requeridos</mat-label>
+        <input matInput formControlName="diasRequeridos" type="number" placeholder="Ingrese los días requeridos" />
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field class="form-field">
+        <mat-label>Seleccionar Contenido</mat-label>
+        <mat-select formControlName="contenidoId">
+          <mat-option [value]="null">Ninguno</mat-option>
+          @for (contenido of contenidoOptions; track contenido) {
+            <mat-option [value]="contenido.id">
+              {{ contenido.titulo }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field class="form-field">
+        <mat-label>Seleccionar Plan Alimenticio</mat-label>
+        <mat-select formControlName="planAlimenticioId">
+          <mat-option [value]="null">Ninguno</mat-option>
+          @for (plan of planAlimenticioOptions; track plan) {
+            <mat-option [value]="plan.id">
+              {{ plan.planObjetivo }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <button mat-raised-button color="primary" type="submit" class="btn btn-primary">
+      {{ textoBoton }}
+    </button>
+  </form>
+</div>

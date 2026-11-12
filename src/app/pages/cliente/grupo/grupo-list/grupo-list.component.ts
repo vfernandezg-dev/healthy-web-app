@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -15,19 +15,18 @@ import { ComentarioService } from '../../../../core/services/comentario.service'
 import { PublicacionService } from '../../../../core/services/publicacion.service';
 
 @Component({
-  selector: 'app-grupo-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule, 
+    selector: 'app-grupo-list',
+    imports: [
+    MatCardModule,
     MatButtonModule,
     ApiImgPipe,
     FormsModule,
     MatMenuModule,
-    MatIconModule,
-  ],
-  templateUrl: './grupo-list.component.html',
-  styleUrl: './grupo-list.component.css'
+    MatIconModule
+],
+    templateUrl: './grupo-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './grupo-list.component.css'
 })
 export class GrupoListComponent {
   publicaciones: PublicacionResponse[] = [];

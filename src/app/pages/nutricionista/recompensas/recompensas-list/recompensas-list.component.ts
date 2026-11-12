@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -13,19 +13,18 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { RecompensaService } from '../../../../core/services/recompensa.service';
 
 @Component({
-  selector: 'app-recompensas-list',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-recompensas-list',
+    imports: [
     MatTableModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
     FormsModule,
-    FormatPlanObjetivoPipe,
-  ],
-  templateUrl: './recompensas-list.component.html',
-  styleUrl: './recompensas-list.component.css'
+    FormatPlanObjetivoPipe
+],
+    templateUrl: './recompensas-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './recompensas-list.component.css'
 })
 export class RecompensasListComponent {
   recompensa: RecompensaResponse[] = [];

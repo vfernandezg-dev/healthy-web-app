@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -13,20 +13,20 @@ import { MatSelectModule } from '@angular/material/select';
 import { PlanAlimenticioResponse } from '../../../../shared/models/plan-alimenticio-response.model';
 
 @Component({
-  selector: 'app-plan-alimenticio-form-create-update',
-  standalone: true,
-  imports: [
-    MatInputModule,
-    MatCardModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatSnackBarModule,
-    MatOptionModule,
-    MatRadioModule,
-    MatSelectModule
-  ],
-  templateUrl: './plan-alimenticio-form.component.html',
-  styleUrls: ['./plan-alimenticio-form.component.css'],
+    selector: 'app-plan-alimenticio-form-create-update',
+    imports: [
+        MatInputModule,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatSnackBarModule,
+        MatOptionModule,
+        MatRadioModule,
+        MatSelectModule
+    ],
+    templateUrl: './plan-alimenticio-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./plan-alimenticio-form.component.css']
 })
 export class PlanAlimenticioFormComponent {
   planAlimenticioForm: FormGroup;

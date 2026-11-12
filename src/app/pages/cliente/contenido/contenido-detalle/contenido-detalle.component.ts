@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { ContenidoService } from '../../../../core/services/contenido.service';
@@ -13,11 +13,11 @@ import { ApiImgPipe } from '../../../../core/pipes/api-img.pipe';
 import { FormatPlanObjetivoPipe } from '../../../../core/pipes/format-plan-objetivo.pipe';
 
 @Component({
-  selector: 'app-contenido-detalle',
-  standalone: true,
-  imports: [CommonModule, MatCardModule, MatTableModule, ApiImgPipe, FormatPlanObjetivoPipe],
-  templateUrl: './contenido-detalle.component.html',
-  styleUrls: ['./contenido-detalle.component.css']
+    selector: 'app-contenido-detalle',
+    imports: [MatCardModule, MatTableModule, ApiImgPipe, FormatPlanObjetivoPipe],
+    templateUrl: './contenido-detalle.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./contenido-detalle.component.css']
 })
 export class ContenidoDetalleComponent {
   contenido: ContenidoResponse | undefined;

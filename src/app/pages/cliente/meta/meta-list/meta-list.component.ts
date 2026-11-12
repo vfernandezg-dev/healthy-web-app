@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -15,14 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { PageableResponse } from '../../../../shared/models/pageable-response.model';
-import {
-  ChartComponent,
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexXAxis,
-  ApexTitleSubtitle,
-  NgApexchartsModule
-} from 'ng-apexcharts';
+import { ApexChartComponent } from '../../../../shared/components/apex-chart/apex-chart.component';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -32,18 +25,17 @@ export type ChartOptions = {
 };
 
 @Component({
-  selector: 'app-meta-list',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-meta-list',
+    imports: [
     MatTableModule,
     MatFormFieldModule,
     FormatTimePipe,
     MatPaginatorModule,
-    NgApexchartsModule
-  ],
-  templateUrl: './meta-list.component.html',
-  styleUrls: ['./meta-list.component.css']
+    ApexChartComponent
+],
+    templateUrl: './meta-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./meta-list.component.css']
 })
 export class MetaListComponent implements OnInit {
 
@@ -57,7 +49,6 @@ export class MetaListComponent implements OnInit {
   pageSize = 5;
   pageIndex = 0;
 
-  @ViewChild('chart') chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
   private userProfileService = inject(UserProfileService);

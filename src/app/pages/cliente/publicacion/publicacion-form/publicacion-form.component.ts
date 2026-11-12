@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -9,7 +9,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ApiImgPipe } from '../../../../core/pipes/api-img.pipe';
+
 import { AuthService } from '../../../../core/services/auth.service';
 import { MediaService } from '../../../../core/services/media.service';
 import { PublicacionService } from '../../../../core/services/publicacion.service';
@@ -18,25 +18,24 @@ import { PublicacionCreateRequest } from '../../../../shared/models/publicacion-
 import { GrupoService } from '../../../../core/services/grupo.service';
 
 @Component({
-  selector: 'app-publicacion-form',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    ApiImgPipe,
-    RouterModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    FormsModule,
-    MatOptionModule,
-    MatRadioModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatSnackBarModule,
-  ],
-  templateUrl: './publicacion-form.component.html',
-  styleUrl: './publicacion-form.component.css'
+    selector: 'app-publicacion-form',
+    imports: [
+        ReactiveFormsModule,
+        RouterModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCardModule,
+        FormsModule,
+        MatOptionModule,
+        MatRadioModule,
+        MatSelectModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatSnackBarModule,
+    ],
+    templateUrl: './publicacion-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './publicacion-form.component.css'
 })
 export class PublicacionFormComponent implements OnInit {
   private publicacionService = inject(PublicacionService);

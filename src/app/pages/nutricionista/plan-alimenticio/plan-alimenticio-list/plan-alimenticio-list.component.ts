@@ -1,9 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { PlanAlimenticioResponse } from '../../../../shared/models/plan-alimenticio-response.model';
 import { PlanAlimenticioService } from '../../../../core/services/plan-alimenticio.service';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { CommonModule } from '@angular/common';
+
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -15,20 +15,19 @@ import { FormatPlanObjetivoPipe } from '../../../../core/pipes/format-plan-objet
 import { ComidaService } from '../../../../core/services/comida.service';
 
 @Component({
-  selector: 'app-plan-alimenticio-list',
-  standalone: true,
-  imports: [
-    CommonModule, 
-    MatTableModule, 
-    MatCardModule, 
-    MatSnackBarModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
+    selector: 'app-plan-alimenticio-list',
+    imports: [
+    MatTableModule,
+    MatCardModule,
+    MatSnackBarModule,
+    MatFormFieldModule,
+    MatInputModule,
     FormsModule,
-    FormatPlanObjetivoPipe 
-  ],
-  templateUrl: './plan-alimenticio-list.component.html',
-  styleUrl: './plan-alimenticio-list.component.css'
+    FormatPlanObjetivoPipe
+],
+    templateUrl: './plan-alimenticio-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './plan-alimenticio-list.component.css'
 })
 export class PlanAlimenticioListComponent {
   planAlimenticio: PlanAlimenticioResponse[] = [];

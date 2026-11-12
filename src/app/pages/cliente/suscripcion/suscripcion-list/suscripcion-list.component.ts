@@ -1,6 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { Router, ActivatedRoute } from '@angular/router';
 import { SuscripcionService } from '../../../../core/services/suscripcion.service';
 import { CheckoutService } from '../../../../core/services/checkout.service';
@@ -9,11 +9,11 @@ import { SuscripcionCreateRequest, TipoSuscripcion } from '../../../../shared/mo
 import { SuscripcionResponse } from '../../../../shared/models/suscripcion-response.model';
 
 @Component({
-  selector: 'app-suscripcion-list',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './suscripcion-list.component.html',
-  styleUrls: ['./suscripcion-list.component.css']
+    selector: 'app-suscripcion-list',
+    imports: [ReactiveFormsModule],
+    templateUrl: './suscripcion-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./suscripcion-list.component.css']
 })
 export class SuscripcionListComponent implements OnInit {
   total: number = 0;

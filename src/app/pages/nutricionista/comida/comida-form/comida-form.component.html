@@ -1,34 +1,36 @@
 <div class="container-form">
-    <form [formGroup]="comidaForm" (ngSubmit)="onSubmit()" class="form-section">
-      <h2 class="text-center"><strong>{{ titulo }}</strong></h2>
-  
-      <div>
-        <mat-form-field class="form-field">
-          <mat-label>Categoria de Comida</mat-label>
-          <mat-select formControlName="categoria">
-            <mat-option value="DESAYUNO">Desayuno</mat-option>
-            <mat-option value="ALMUERZO">Almuerzo</mat-option>
-            <mat-option value="CENA">Cena</mat-option>
-            <mat-option value="SNACK">Snack</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-  
-      <div>
-        <mat-form-field class="form-field">
-          <mat-label>Nombre de Comida</mat-label>
-          <input
-            matInput
-            formControlName="nombreComida"
-            type="text"
-            placeholder="Ingrese el nombre de la comida"
+  <form [formGroup]="comidaForm" (ngSubmit)="onSubmit()" class="form-section">
+    <h2 class="text-center"><strong>{{ titulo }}</strong></h2>
+
+    <div>
+      <mat-form-field class="form-field">
+        <mat-label>Categoria de Comida</mat-label>
+        <mat-select formControlName="categoria">
+          <mat-option value="DESAYUNO">Desayuno</mat-option>
+          <mat-option value="ALMUERZO">Almuerzo</mat-option>
+          <mat-option value="CENA">Cena</mat-option>
+          <mat-option value="SNACK">Snack</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field class="form-field">
+        <mat-label>Nombre de Comida</mat-label>
+        <input
+          matInput
+          formControlName="nombreComida"
+          type="text"
+          placeholder="Ingrese el nombre de la comida"
           />
-          <mat-error *ngIf="controlHasError('nombreComida', 'required')">
-            Este campo es obligatorio
-          </mat-error>
+          @if (controlHasError('nombreComida', 'required')) {
+            <mat-error>
+              Este campo es obligatorio
+            </mat-error>
+          }
         </mat-form-field>
       </div>
-  
+
       <div>
         <mat-form-field class="form-field">
           <mat-label>Calorías</mat-label>
@@ -37,19 +39,22 @@
             formControlName="calorias"
             type="number"
             placeholder="Ingrese las calorías"
-          />
-          <mat-error *ngIf="controlHasError('calorias', 'required')">
-            Este campo es obligatorio
-          </mat-error>
-          <mat-error *ngIf="controlHasError('calorias', 'min')">
-            Introduzca un número válido.
-          </mat-error>
-        </mat-form-field>
-      </div>
-  
-      <button mat-raised-button color="primary" type="submit" class="btn btn-primary">
-        {{ textoBoton }}
-      </button>
-    </form>
-  </div>
-  
+            />
+            @if (controlHasError('calorias', 'required')) {
+              <mat-error>
+                Este campo es obligatorio
+              </mat-error>
+            }
+            @if (controlHasError('calorias', 'min')) {
+              <mat-error>
+                Introduzca un número válido.
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <button mat-raised-button color="primary" type="submit" class="btn btn-primary">
+          {{ textoBoton }}
+        </button>
+      </form>
+    </div>

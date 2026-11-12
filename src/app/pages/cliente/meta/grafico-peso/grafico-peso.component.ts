@@ -1,15 +1,7 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
-import { NgApexchartsModule } from 'ng-apexcharts';
-
-import {
-  ChartComponent,
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexXAxis,
-  ApexTitleSubtitle
-} from "ng-apexcharts";
+import { ActivatedRoute } from '@angular/router';
+import { ApexChartComponent } from '../../../../shared/components/apex-chart/apex-chart.component';
 import { SeguimientoResponse } from '../../../../shared/models/seguimiento-response.model';
 import { SeguimientoService } from '../../../../core/services/seguimiento.service';
 import { MetaResponseModel } from '../../../../shared/models/meta-response.model';
@@ -22,22 +14,19 @@ export type ChartOptions = {
 };
 
 @Component({
-  selector: 'app-grafico-peso',
-  standalone: true,
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    FormsModule,
-    ReactiveFormsModule,
-    NgApexchartsModule
-  ],
-  templateUrl: './grafico-peso.component.html',
-  styleUrl: './grafico-peso.component.css'
+    selector: 'app-grafico-peso',
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        ApexChartComponent
+    ],
+    templateUrl: './grafico-peso.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './grafico-peso.component.css'
 })
 
 
 export class GraficoPesoComponent implements OnInit {
-  @ViewChild("chart") chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
   meta: MetaResponseModel[] = [];

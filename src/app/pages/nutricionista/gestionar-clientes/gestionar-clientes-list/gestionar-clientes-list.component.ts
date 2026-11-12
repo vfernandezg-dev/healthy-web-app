@@ -1,9 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { GestionarPerfilService } from '../../../../core/services/gestionar-perfil.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { ClienteResponse } from '../../../../shared/models/cliente-response.model';
@@ -11,19 +11,18 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'app-gestionar-clientes-list',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-gestionar-clientes-list',
+    imports: [
     MatTableModule,
     MatCardModule,
     MatFormFieldModule,
     MatSnackBarModule,
     MatInputModule,
     FormsModule
-  ],
-  templateUrl: './gestionar-clientes-list.component.html',
-  styleUrl: './gestionar-clientes-list.component.css'
+],
+    templateUrl: './gestionar-clientes-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './gestionar-clientes-list.component.css'
 })
 export class GestionarClientesListComponent {
 

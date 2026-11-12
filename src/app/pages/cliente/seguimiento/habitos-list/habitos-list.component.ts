@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,19 +12,19 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 
 @Component({
-  selector: 'app-habitos-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    MatTableModule
-  ],
-  templateUrl: './habitos-list.component.html',
-  styleUrl: './habitos-list.component.css'
+    selector: 'app-habitos-list',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCardModule,
+        MatTableModule
+    ],
+    templateUrl: './habitos-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './habitos-list.component.css'
 })
 export class HabitosListComponent {
   habito: HabitoResponse[] = [];

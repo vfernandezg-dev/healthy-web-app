@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
 import { ContenidoService } from '../../../../core/services/contenido.service';
@@ -11,14 +11,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ApiImgPipe } from '../../../../core/pipes/api-img.pipe';
 import { MatCardModule } from '@angular/material/card';
-import { CommonModule } from '@angular/common';
+
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-contenido-list',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-contenido-list',
+    imports: [
     ReactiveFormsModule,
     ApiImgPipe,
     RouterModule,
@@ -28,9 +26,10 @@ import { AuthService } from '../../../../core/services/auth.service';
     MatSelectModule,
     MatSnackBarModule,
     MatCardModule
-  ],
-  templateUrl: './contenido-list.component.html',
-  styleUrl: './contenido-list.component.css'
+],
+    templateUrl: './contenido-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './contenido-list.component.css'
 })
 export class ContenidoListComponent {
   contenido: ContenidoResponse[] = [];

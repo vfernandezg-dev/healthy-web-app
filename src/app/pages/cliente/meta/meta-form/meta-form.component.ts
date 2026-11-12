@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -9,18 +9,17 @@ import { MetaService } from '../../../../core/services/meta.service';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-meta-form',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-meta-form',
+    imports: [
     MatInputModule,
     MatCardModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSnackBarModule,
-  ],
-  templateUrl: './meta-form.component.html',
-  styleUrl: './meta-form.component.css',
+    MatSnackBarModule
+],
+    templateUrl: './meta-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './meta-form.component.css'
 })
 export class MetaFormComponent {
   metaForm!: FormGroup;

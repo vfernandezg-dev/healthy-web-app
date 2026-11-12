@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
@@ -11,19 +11,18 @@ import { HabitoService } from '../../../../core/services/habito.service';
 import { FormatTimePipe } from '../../../../core/pipes/format-time.pipe';
 
 @Component({
-  selector: 'app-habitos-form',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-habitos-form',
+    imports: [
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
     MatSnackBarModule,
     MatOptionModule,
-    MatSelectModule,
-  ],
-  templateUrl: './habitos-form.component.html',
-  styleUrl: './habitos-form.component.css'
+    MatSelectModule
+],
+    templateUrl: './habitos-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './habitos-form.component.css'
 })
 export class HabitosFormComponent {
   habitosForm!: FormGroup;

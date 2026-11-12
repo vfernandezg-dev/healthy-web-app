@@ -1,8 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,18 +13,17 @@ import { RecompensaResponse } from '../../../../shared/models/recompensa-respons
 import { RecompensaService } from '../../../../core/services/recompensa.service';
 
 @Component({
-  selector: 'app-racha-form',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-racha-form',
+    imports: [
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatCardModule
-  ],
-  templateUrl: './racha-form.component.html',
-  styleUrls: ['./racha-form.component.css']
+],
+    templateUrl: './racha-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./racha-form.component.css']
 })
 export class RachaFormComponent implements OnInit {
 

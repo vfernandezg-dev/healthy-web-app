@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -8,18 +8,18 @@ import {MatInput} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
 
 @Component({
-  selector: 'app-reset-password',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatError,
-    MatButton
-  ],
-  templateUrl: './request-password-reset.component.html',
-  styleUrl: './request-password-reset.component.css'
+    selector: 'app-reset-password',
+    imports: [
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        MatError,
+        MatButton
+    ],
+    templateUrl: './request-password-reset.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './request-password-reset.component.css'
 })
 export class RequestPasswordResetComponent {
   resetForm: FormGroup;

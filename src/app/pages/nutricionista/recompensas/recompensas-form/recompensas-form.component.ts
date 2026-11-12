@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -15,20 +15,19 @@ import { PlanAlimenticioService } from '../../../../core/services/plan-alimentic
 import { ContenidoService } from '../../../../core/services/contenido.service';
 
 @Component({
-  selector: 'app-recompensas-form',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-recompensas-form',
+    imports: [
     MatInputModule,
     MatCardModule,
     FormsModule,
     ReactiveFormsModule,
     MatSnackBarModule,
     MatOptionModule,
-    MatSelectModule,
-  ],
-  templateUrl: './recompensas-form.component.html',
-  styleUrl: './recompensas-form.component.css'
+    MatSelectModule
+],
+    templateUrl: './recompensas-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './recompensas-form.component.css'
 })
 export class RecompensasFormComponent implements OnInit {
   recompensaForm!: FormGroup;

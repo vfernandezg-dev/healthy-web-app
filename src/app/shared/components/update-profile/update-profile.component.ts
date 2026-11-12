@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserProfile } from '../../models/user-profile.model';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -12,12 +12,12 @@ import { StorageService } from '../../../core/services/storage.service';
 import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
 
 @Component({
-  selector: 'app-update-profile',
-  standalone: true,
-  imports: [MatRadioModule, MatButtonModule, MatInputModule, MatCardModule, MatSnackBarModule,
-    FormsModule, ReactiveFormsModule],
-  templateUrl: './update-profile.component.html',
-  styleUrl: './update-profile.component.css'
+    selector: 'app-update-profile',
+    imports: [MatRadioModule, MatButtonModule, MatInputModule, MatCardModule, MatSnackBarModule,
+        FormsModule, ReactiveFormsModule],
+    templateUrl: './update-profile.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './update-profile.component.css'
 })
 export class UpdateProfileComponent {
 
