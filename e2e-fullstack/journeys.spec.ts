@@ -1,5 +1,5 @@
 import { expect, test } from '../e2e/support/test';
-import { freshPage, lastMailTo, login, logout } from './support';
+import { freshPage, lastMailTo, login, logout, randomPng } from './support';
 
 /**
  * Recorridos contra la API real con los datos de demostración. Comparten la base de datos, así que van en orden:
@@ -170,6 +170,45 @@ test.describe.serial('recorridos contra la API real', () => {
     await expect(lucia.getByRole('heading', { level: 1, name: 'Hola, Lucía' })).toBeVisible();
     await lucia.context().close();
 
+    await logout(page);
+  });
+
+  test('nutricionista: la subida de una portada informa de su avance', async ({ page }) => {
+    await login(page, 'carlos.garcia@healthybites.com');
+    await expect(page.getByRole('heading', { level: 1, name: 'Hola, Carlos' })).toBeVisible();
+    await page.goto('/nutritionist/content/new');
+    await expect(page.getByRole('heading', { level: 1, name: 'Nuevo contenido' })).toBeVisible();
+
+    // La subida limitada a 256 KB/s: una imagen de ~1,5 MB tarda unos segundos en subir.
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Network.enable');
+    await cdp.send('Network.emulateNetworkConditions', {
+      offline: false,
+      latency: 20,
+      downloadThroughput: -1,
+      uploadThroughput: 256 * 1024,
+    });
+    await page.locator('#content-cover').setInputFiles({
+      name: 'portada.png',
+      mimeType: 'image/png',
+      buffer: randomPng(700, 700),
+    });
+
+    // La barra avanza mientras sube (con el backend Fetch se quedaba en 0 % hasta el final).
+    const bar = page.getByRole('progressbar', { name: 'Subiendo portada' });
+    await expect
+      .poll(async () => Number((await bar.getAttribute('aria-valuenow')) ?? 0), { timeout: 15_000 })
+      .toBeGreaterThan(0);
+    await expect(page.locator('#content-cover-status')).toContainText('Fichero subido', {
+      timeout: 30_000,
+    });
+
+    await cdp.send('Network.emulateNetworkConditions', {
+      offline: false,
+      latency: 0,
+      downloadThroughput: -1,
+      uploadThroughput: -1,
+    });
     await logout(page);
   });
 

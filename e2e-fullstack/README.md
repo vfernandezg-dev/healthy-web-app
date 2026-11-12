@@ -6,7 +6,10 @@ se ejecutan antes de cada release. Cubren lo que un simulacro no puede comprobar
 - la cookie de sesión a través del mismo origen y la sesión que vuelve al recargar;
 - que los parámetros que envía la app (orden, filtros, páginas) son los que la API acepta;
 - los correos reales: el enlace de invitación llega a Mailpit y crea la cuenta;
+- que una subida informa de su avance: con la red limitada (CDP), la barra pasa de 0 % antes de terminar;
 - el contrato con la landing (`POST /api/v1/contact` responde 204).
+
+También corren con las cabeceras de `vercel.json`: una violación de la CSP hace fallar el recorrido.
 
 ## Cómo ejecutarlos
 
