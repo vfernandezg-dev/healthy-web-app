@@ -9,7 +9,7 @@ export interface paths {
             cookie?: never;
         };
         /** Suscripciones vigentes por nivel, ingreso mensual recurrente e ingresos de 30 días */
-        get: operations["summary_1"];
+        get: operations["summary_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -163,7 +163,7 @@ export interface paths {
             cookie?: never;
         };
         /** Totales por rol y estado y altas de los últimos 30 días */
-        get: operations["summary"];
+        get: operations["summary_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1034,7 +1034,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Clientes que siguen alguno de mis planes */
+        /**
+         * Clientes que siguen alguno de mis planes, los más recientes primero
+         * @description q busca por nombre, apellidos o correo sin distinguir mayúsculas ni tildes.
+         */
         get: operations["clients"];
         put?: never;
         post?: never;
@@ -1051,11 +1054,28 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Mi contenido (todos los estados) */
+        /** Mi contenido (todos los estados, o solo uno con ?status=) */
         get: operations["mine_2"];
         put?: never;
         /** Crea un borrador (portada y fichero: ids subidos antes con POST /media) */
         post: operations["create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/nutritionist/content-items/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Cuántos contenidos tengo en cada estado */
+        get: operations["summary_1"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1072,7 +1092,10 @@ export interface paths {
         get: operations["get_1"];
         put: operations["update_2"];
         post?: never;
-        /** Borra un borrador (lo publicado se archiva) */
+        /**
+         * Borra un borrador
+         * @description Lo publicado no se borra (409): se retira con POST /{id}/archive.
+         */
         delete: operations["delete_1"];
         options?: never;
         head?: never;
@@ -1118,11 +1141,28 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Mis planes (todos los estados) */
+        /** Mis planes (todos los estados, o solo uno con ?status=) */
         get: operations["mine_1"];
         put?: never;
         /** Crea un plan en borrador */
         post: operations["create_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/nutritionist/meal-plans/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Cuántos planes tengo en cada estado */
+        get: operations["summary"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1139,7 +1179,10 @@ export interface paths {
         get: operations["get"];
         put: operations["update_1"];
         post?: never;
-        /** Borra un borrador (un plan publicado se archiva) */
+        /**
+         * Borra un borrador
+         * @description Un plan publicado no se borra (409 plan-not-draft): se retira con POST /{id}/archive.
+         */
         delete: operations["delete"];
         options?: never;
         head?: never;
@@ -1219,6 +1262,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Mis recompensas (todas, o solo activas o retiradas con ?active=) */
         get: operations["mine"];
         put?: never;
         /** Crea una recompensa que desbloquea un contenido o un plan propio y publicado */
@@ -1269,6 +1313,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Comentarios de una publicación, del más antiguo al más reciente */
         get: operations["comments"];
         put?: never;
         post: operations["comment"];
@@ -1389,11 +1434,6 @@ export interface components {
             /** @enum {string} */
             status: "ACTIVE" | "DEACTIVATED";
         };
-        AuthorResponse: {
-            /** Format: uuid */
-            id: string;
-            name: string;
-        };
         BillingSummaryResponse: {
             activeByTier: {
                 [key: string]: number;
@@ -1474,7 +1514,7 @@ export interface components {
             type: "ARTICLE" | "VIDEO" | "GUIDE";
         };
         ContentSummaryResponse: {
-            author?: components["schemas"]["AuthorResponse"] | null;
+            author?: components["schemas"]["PersonResponse"] | null;
             /** @enum {string} */
             category: "NUTRITION" | "EXERCISE" | "MENTAL_HEALTH";
             coverPath?: string | null;
@@ -1672,7 +1712,7 @@ export interface components {
             title: string;
         };
         MealPlanSummaryResponse: {
-            author?: components["schemas"]["AuthorResponse"] | null;
+            author?: components["schemas"]["PersonResponse"] | null;
             /** Format: int32 */
             averageDailyCalories: number;
             description: string;
@@ -1765,13 +1805,6 @@ export interface components {
             /** Format: int64 */
             totalPages: number;
         };
-        Pageable: {
-            /** Format: int32 */
-            page?: number;
-            /** Format: int32 */
-            size?: number;
-            sort?: string[];
-        };
         PagedModelAdminPaymentResponse: {
             content: components["schemas"]["AdminPaymentResponse"][];
             page: components["schemas"]["PageMetadata"];
@@ -1782,6 +1815,10 @@ export interface components {
         };
         PagedModelAdminUserResponse: {
             content: components["schemas"]["AdminUserResponse"][];
+            page: components["schemas"]["PageMetadata"];
+        };
+        PagedModelCommentResponse: {
+            content: components["schemas"]["CommentResponse"][];
             page: components["schemas"]["PageMetadata"];
         };
         PagedModelContentSummaryResponse: {
@@ -1800,6 +1837,14 @@ export interface components {
             content: components["schemas"]["MealPlanSummaryResponse"][];
             page: components["schemas"]["PageMetadata"];
         };
+        PagedModelMemberResponse: {
+            content: components["schemas"]["MemberResponse"][];
+            page: components["schemas"]["PageMetadata"];
+        };
+        PagedModelNutritionistClientResponse: {
+            content: components["schemas"]["NutritionistClientResponse"][];
+            page: components["schemas"]["PageMetadata"];
+        };
         PagedModelPaymentResponse: {
             content: components["schemas"]["PaymentResponse"][];
             page: components["schemas"]["PageMetadata"];
@@ -1810,6 +1855,10 @@ export interface components {
         };
         PagedModelReportResponse: {
             content: components["schemas"]["ReportResponse"][];
+            page: components["schemas"]["PageMetadata"];
+        };
+        PagedModelRewardResponse: {
+            content: components["schemas"]["RewardResponse"][];
             page: components["schemas"]["PageMetadata"];
         };
         PaymentResponse: {
@@ -1860,6 +1909,14 @@ export interface components {
             title: string;
             /** Format: date-time */
             updatedAt?: string | null;
+        };
+        PublicationSummaryResponse: {
+            /** Format: int64 */
+            archived: number;
+            /** Format: int64 */
+            draft: number;
+            /** Format: int64 */
+            published: number;
         };
         RecommendationResponse: {
             currentBmi?: number | null;
@@ -2033,7 +2090,6 @@ export type AcceptInvitationRequest = components['schemas']['AcceptInvitationReq
 export type AdminPaymentResponse = components['schemas']['AdminPaymentResponse'];
 export type AdminSubscriptionResponse = components['schemas']['AdminSubscriptionResponse'];
 export type AdminUserResponse = components['schemas']['AdminUserResponse'];
-export type AuthorResponse = components['schemas']['AuthorResponse'];
 export type BillingSummaryResponse = components['schemas']['BillingSummaryResponse'];
 export type CaptureRequest = components['schemas']['CaptureRequest'];
 export type ChangePasswordRequest = components['schemas']['ChangePasswordRequest'];
@@ -2077,22 +2133,26 @@ export type Money = components['schemas']['Money'];
 export type NutritionistClientResponse = components['schemas']['NutritionistClientResponse'];
 export type NutritionistProfileResponse = components['schemas']['NutritionistProfileResponse'];
 export type PageMetadata = components['schemas']['PageMetadata'];
-export type Pageable = components['schemas']['Pageable'];
 export type PagedModelAdminPaymentResponse = components['schemas']['PagedModelAdminPaymentResponse'];
 export type PagedModelAdminSubscriptionResponse = components['schemas']['PagedModelAdminSubscriptionResponse'];
 export type PagedModelAdminUserResponse = components['schemas']['PagedModelAdminUserResponse'];
+export type PagedModelCommentResponse = components['schemas']['PagedModelCommentResponse'];
 export type PagedModelContentSummaryResponse = components['schemas']['PagedModelContentSummaryResponse'];
 export type PagedModelGroupResponse = components['schemas']['PagedModelGroupResponse'];
 export type PagedModelInvitationResponse = components['schemas']['PagedModelInvitationResponse'];
 export type PagedModelMealPlanSummaryResponse = components['schemas']['PagedModelMealPlanSummaryResponse'];
+export type PagedModelMemberResponse = components['schemas']['PagedModelMemberResponse'];
+export type PagedModelNutritionistClientResponse = components['schemas']['PagedModelNutritionistClientResponse'];
 export type PagedModelPaymentResponse = components['schemas']['PagedModelPaymentResponse'];
 export type PagedModelPostResponse = components['schemas']['PagedModelPostResponse'];
 export type PagedModelReportResponse = components['schemas']['PagedModelReportResponse'];
+export type PagedModelRewardResponse = components['schemas']['PagedModelRewardResponse'];
 export type PaymentResponse = components['schemas']['PaymentResponse'];
 export type PersonResponse = components['schemas']['PersonResponse'];
 export type PlanResponse = components['schemas']['PlanResponse'];
 export type PostRequest = components['schemas']['PostRequest'];
 export type PostResponse = components['schemas']['PostResponse'];
+export type PublicationSummaryResponse = components['schemas']['PublicationSummaryResponse'];
 export type RecommendationResponse = components['schemas']['RecommendationResponse'];
 export type RegisterRequest = components['schemas']['RegisterRequest'];
 export type ReportRequest = components['schemas']['ReportRequest'];
@@ -2114,7 +2174,7 @@ export type WeightEntryRequest = components['schemas']['WeightEntryRequest'];
 export type WeightEntryResponse = components['schemas']['WeightEntryResponse'];
 export type $defs = Record<string, never>;
 export interface operations {
-    summary_1: {
+    summary_3: {
         parameters: {
             query?: never;
             header?: never;
@@ -2136,9 +2196,14 @@ export interface operations {
     };
     reports: {
         parameters: {
-            query: {
+            query?: {
                 status?: "OPEN" | "RESOLVED" | "DISMISSED";
-                pageable: components["schemas"]["Pageable"];
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -2185,8 +2250,13 @@ export interface operations {
     };
     list: {
         parameters: {
-            query: {
-                pageable: components["schemas"]["Pageable"];
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -2273,9 +2343,14 @@ export interface operations {
     };
     payments_1: {
         parameters: {
-            query: {
+            query?: {
                 status?: "CREATED" | "CAPTURED" | "FAILED" | "CANCELED" | null;
-                pageable: components["schemas"]["Pageable"];
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -2296,10 +2371,15 @@ export interface operations {
     };
     subscriptions: {
         parameters: {
-            query: {
+            query?: {
                 status?: "PENDING_PAYMENT" | "ACTIVE" | "CANCELED" | "EXPIRED" | null;
                 tier?: "BASIC" | "PREMIUM" | "VIP" | null;
-                pageable: components["schemas"]["Pageable"];
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -2320,11 +2400,16 @@ export interface operations {
     };
     search: {
         parameters: {
-            query: {
+            query?: {
                 role?: "ADMIN" | "CLIENT" | "NUTRITIONIST" | null;
                 status?: "ACTIVE" | "DEACTIVATED" | null;
                 q?: string | null;
-                pageable: components["schemas"]["Pageable"];
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -2343,7 +2428,7 @@ export interface operations {
             };
         };
     };
-    summary: {
+    summary_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -2653,11 +2738,16 @@ export interface operations {
     };
     catalog_2: {
         parameters: {
-            query: {
+            query?: {
                 type?: "ARTICLE" | "VIDEO" | "GUIDE" | null;
                 category?: "NUTRITION" | "EXERCISE" | "MENTAL_HEALTH" | null;
                 q?: string | null;
-                pageable: components["schemas"]["Pageable"];
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -2722,9 +2812,14 @@ export interface operations {
     };
     directory: {
         parameters: {
-            query: {
+            query?: {
                 q?: string | null;
-                pageable: components["schemas"]["Pageable"];
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -2837,7 +2932,14 @@ export interface operations {
     };
     members: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
             header?: never;
             path: {
                 id: string;
@@ -2852,7 +2954,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["MemberResponse"][];
+                    "*/*": components["schemas"]["PagedModelMemberResponse"];
                 };
             };
         };
@@ -2943,8 +3045,13 @@ export interface operations {
     };
     posts: {
         parameters: {
-            query: {
-                pageable: components["schemas"]["Pageable"];
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path: {
@@ -3493,8 +3600,13 @@ export interface operations {
     };
     payments: {
         parameters: {
-            query: {
-                pageable: components["schemas"]["Pageable"];
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -3691,9 +3803,14 @@ export interface operations {
     };
     catalog_1: {
         parameters: {
-            query: {
+            query?: {
                 goal?: "WEIGHT_LOSS" | "MAINTENANCE" | "MUSCLE_GAIN" | null;
-                pageable: components["schemas"]["Pageable"];
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -3790,7 +3907,15 @@ export interface operations {
     };
     clients: {
         parameters: {
-            query?: never;
+            query?: {
+                q?: string | null;
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -3803,15 +3928,21 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["NutritionistClientResponse"][];
+                    "*/*": components["schemas"]["PagedModelNutritionistClientResponse"];
                 };
             };
         };
     };
     mine_2: {
         parameters: {
-            query: {
-                pageable: components["schemas"]["Pageable"];
+            query?: {
+                status?: "DRAFT" | "PUBLISHED" | "ARCHIVED" | null;
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -3850,6 +3981,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["EditableContentResponse"];
+                };
+            };
+        };
+    };
+    summary_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PublicationSummaryResponse"];
                 };
             };
         };
@@ -3968,8 +4119,14 @@ export interface operations {
     };
     mine_1: {
         parameters: {
-            query: {
-                pageable: components["schemas"]["Pageable"];
+            query?: {
+                status?: "DRAFT" | "PUBLISHED" | "ARCHIVED" | null;
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
             };
             header?: never;
             path?: never;
@@ -4008,6 +4165,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["MealPlanDetailResponse"];
+                };
+            };
+        };
+    };
+    summary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PublicationSummaryResponse"];
                 };
             };
         };
@@ -4200,7 +4377,15 @@ export interface operations {
     };
     mine: {
         parameters: {
-            query?: never;
+            query?: {
+                active?: boolean | null;
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -4213,7 +4398,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["RewardResponse"][];
+                    "*/*": components["schemas"]["PagedModelRewardResponse"];
                 };
             };
         };
@@ -4358,7 +4543,14 @@ export interface operations {
     };
     comments: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
             header?: never;
             path: {
                 id: string;
@@ -4373,7 +4565,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["CommentResponse"][];
+                    "*/*": components["schemas"]["PagedModelCommentResponse"];
                 };
             };
         };
@@ -4430,7 +4622,14 @@ export interface operations {
     };
     catalog: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -4443,7 +4642,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["RewardResponse"][];
+                    "*/*": components["schemas"]["PagedModelRewardResponse"];
                 };
             };
         };

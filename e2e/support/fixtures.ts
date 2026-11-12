@@ -11,7 +11,7 @@ export function paged<T>(content: T[], size = 20) {
   };
 }
 
-const CARLOS: S['AuthorResponse'] = {
+const CARLOS: S['PersonResponse'] = {
   id: sessionFor('NUTRITIONIST').user.id,
   name: 'Carlos García',
 };
