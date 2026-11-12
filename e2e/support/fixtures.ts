@@ -94,6 +94,8 @@ const REWARD: S['RewardResponse'] = {
   streak: null,
 };
 
+const SUMMARY: S['PublicationSummaryResponse'] = { draft: 0, published: 1, archived: 0 };
+
 const SUBSCRIPTION: S['CurrentSubscriptionResponse'] = {
   tier: 'BASIC',
   status: null,
@@ -196,17 +198,19 @@ export function readsFor(role: Role): Record<string, unknown> {
       { person: CARLOS, role: 'OWNER', status: 'ACTIVE', since: '2026-10-01T10:00:00Z' },
     ] satisfies S['MemberResponse'][],
     // Nutricionista
-    '/nutritionist/meal-plans': paged([PLAN], 100),
+    '/nutritionist/meal-plans': paged([PLAN]),
+    '/nutritionist/meal-plans/summary': SUMMARY,
     '/nutritionist/meal-plans/plan-1': PLAN_DETAIL,
-    '/nutritionist/content-items': paged([CONTENT], 100),
+    '/nutritionist/content-items': paged([CONTENT]),
+    '/nutritionist/content-items/summary': SUMMARY,
     '/nutritionist/content-items/content-1': {
       item: CONTENT,
       body: 'Texto del artículo.',
       coverMediaId: null,
       fileMediaId: null,
     } satisfies S['EditableContentResponse'],
-    '/nutritionist/rewards': [REWARD],
-    '/nutritionist/clients': [],
+    '/nutritionist/rewards': paged([REWARD]),
+    '/nutritionist/clients': paged([]),
     // Administración
     '/admin/users/summary': {
       total: 3,

@@ -5,11 +5,17 @@ import { mockApi } from './support/api';
 /** Hoy en la zona de las pruebas (playwright.config: America/Lima), como YYYY-MM-DD. */
 const TODAY = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima' }).format(new Date());
 
-function paged<T>(content: T[]) {
+/** Primera página de un listado de la API, con `totalElements` elementos en total. */
+function paged<T>(content: T[], size: number, totalElements = content.length) {
   return {
     content,
-    page: { size: 100, number: 0, totalElements: content.length, totalPages: 1 },
+    page: { size, number: 0, totalElements, totalPages: Math.ceil(totalElements / size) },
   };
+}
+
+/** Parámetros de la petición, para comprobar qué pidió la página. */
+function paramsOf(url: string): Record<string, string> {
+  return Object.fromEntries(new URL(url).searchParams);
 }
 
 test.describe('inicio del cliente', () => {
@@ -174,7 +180,9 @@ test.describe('inicio del cliente', () => {
 });
 
 test.describe('inicio del nutricionista', () => {
-  test('muestra sus cifras, sus clientes recientes y sus borradores', async ({ page }) => {
+  test('cuenta con los resúmenes y pide solo los clientes recientes y los borradores', async ({
+    page,
+  }) => {
     const client = (id: string, firstName: string, since: string) => ({
       id,
       firstName,
@@ -185,55 +193,62 @@ test.describe('inicio del nutricionista', () => {
       plans: ['Semana ligera'],
       since,
     });
+    const queries: Record<string, Record<string, string>> = {};
     await mockApi(page, {
       session: 'NUTRITIONIST',
       routes: {
-        '/nutritionist/clients': (route) =>
-          route.fulfill({
-            json: [
-              client('a', 'Ana', '2026-09-01T10:00:00Z'),
-              client('b', 'Bea', '2026-11-01T10:00:00Z'),
-              client('c', 'Carla', '2026-10-01T10:00:00Z'),
-            ],
-          }),
-        '/nutritionist/rewards': (route) =>
-          route.fulfill({
-            json: [
-              { id: 'r1', active: true },
-              { id: 'r2', active: false },
-            ],
-          }),
-        '/nutritionist/meal-plans?*': (route) =>
-          route.fulfill({
-            json: paged([
-              { id: 'p1', title: 'Semana ligera', status: 'PUBLISHED' },
-              { id: 'p2', title: 'Volumen limpio', status: 'PUBLISHED' },
-              { id: 'p3', title: 'Plan sin terminar', status: 'DRAFT' },
-            ]),
-          }),
-        '/nutritionist/content-items?*': (route) =>
-          route.fulfill({
-            json: paged([
-              { id: 'c1', title: 'Guía de la compra', status: 'PUBLISHED' },
-              { id: 'c2', title: 'Artículo a medias', status: 'DRAFT' },
-            ]),
-          }),
+        '/nutritionist/clients?*': (route) => {
+          queries['clients'] = paramsOf(route.request().url());
+          // La API los manda de más reciente a más antiguo.
+          return route.fulfill({
+            json: paged(
+              [
+                client('b', 'Bea', '2026-11-01T10:00:00Z'),
+                client('c', 'Carla', '2026-10-01T10:00:00Z'),
+                client('a', 'Ana', '2026-09-01T10:00:00Z'),
+              ],
+              4,
+              7,
+            ),
+          });
+        },
+        '/nutritionist/rewards?*': (route) => {
+          queries['rewards'] = paramsOf(route.request().url());
+          return route.fulfill({ json: paged([{ id: 'r1', active: true }], 1, 3) });
+        },
+        '/nutritionist/meal-plans/summary': (route) =>
+          route.fulfill({ json: { draft: 1, published: 2, archived: 0 } }),
+        '/nutritionist/content-items/summary': (route) =>
+          route.fulfill({ json: { draft: 1, published: 1, archived: 1 } }),
+        '/nutritionist/meal-plans?*': (route) => {
+          queries['plans'] = paramsOf(route.request().url());
+          return route.fulfill({
+            json: paged([{ id: 'p3', title: 'Plan sin terminar', status: 'DRAFT' }], 5),
+          });
+        },
+        '/nutritionist/content-items?*': (route) => {
+          queries['content'] = paramsOf(route.request().url());
+          return route.fulfill({
+            json: paged([{ id: 'c2', title: 'Artículo a medias', status: 'DRAFT' }], 5),
+          });
+        },
       },
     });
 
     await page.goto('/nutritionist');
     await expect(page.getByRole('heading', { level: 1, name: 'Hola, Carlos' })).toBeVisible();
     const stats = page.getByRole('region', { name: 'Cifras' });
-    await expect(stats).toContainText('Clientes3');
+    await expect(stats).toContainText('Clientes7');
     await expect(stats).toContainText('Planes publicados21 sin publicar');
-    await expect(stats).toContainText('Contenidos publicados11 sin publicar');
-    await expect(stats).toContainText('Recompensas activas1');
+    await expect(stats).toContainText('Contenidos publicados12 sin publicar');
+    await expect(stats).toContainText('Recompensas activas3');
 
     const recent = page.getByRole('region', { name: 'Clientes recientes' }).getByRole('listitem');
     await expect(recent).toHaveCount(3);
     await expect(recent.first()).toContainText('Bea Ruiz');
 
     const drafts = page.getByRole('region', { name: 'Borradores por publicar' });
+    await expect(drafts.getByRole('link')).toHaveCount(2);
     await expect(drafts.getByRole('link', { name: /Plan sin terminar/ })).toHaveAttribute(
       'href',
       '/nutritionist/meal-plans/p3',
@@ -243,6 +258,35 @@ test.describe('inicio del nutricionista', () => {
       '/nutritionist/content/c2',
     );
     await expectNoA11yViolations(page);
+
+    expect(queries).toEqual({
+      clients: { size: '4' },
+      rewards: { active: 'true', size: '1' },
+      plans: { status: 'DRAFT', size: '5', sort: 'updatedAt,desc' },
+      content: { status: 'DRAFT', size: '5', sort: 'updatedAt,desc' },
+    });
+  });
+
+  test('sin borradores ni clientes, lo dice', async ({ page }) => {
+    const empty = { draft: 0, published: 3, archived: 0 };
+    await mockApi(page, {
+      session: 'NUTRITIONIST',
+      routes: {
+        '/nutritionist/clients?*': (route) => route.fulfill({ json: paged([], 4) }),
+        '/nutritionist/rewards?*': (route) => route.fulfill({ json: paged([], 1) }),
+        '/nutritionist/meal-plans/summary': (route) => route.fulfill({ json: empty }),
+        '/nutritionist/content-items/summary': (route) => route.fulfill({ json: empty }),
+        '/nutritionist/meal-plans?*': (route) => route.fulfill({ json: paged([], 5) }),
+        '/nutritionist/content-items?*': (route) => route.fulfill({ json: paged([], 5) }),
+      },
+    });
+
+    await page.goto('/nutritionist');
+    const stats = page.getByRole('region', { name: 'Cifras' });
+    await expect(stats).toContainText('Clientes0');
+    await expect(stats).toContainText('Planes publicados3Todo publicado');
+    await expect(page.getByText('Aún no tienes clientes.')).toBeVisible();
+    await expect(page.getByText('No tienes borradores: todo está publicado.')).toBeVisible();
   });
 });
 
