@@ -34,70 +34,7 @@ import { debouncedSearch } from '@shared/utils/debounced';
     EmptyState,
     PageHeader,
   ],
-  template: `
-    <app-page-header
-      title="Contenido"
-      description="Artículos, vídeos y guías de nuestros nutricionistas para aprender a comer mejor."
-    />
-
-    @if (unlocked().length > 0) {
-      <section class="mb-10" aria-labelledby="unlocked-title">
-        <h2 id="unlocked-title" class="mb-4 text-xl font-bold">Desbloqueado con tus rachas</h2>
-        <ul class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" role="list">
-          @for (item of unlocked(); track item.id) {
-            <li><app-content-card [item]="item" [link]="item.slug" /></li>
-          }
-        </ul>
-      </section>
-    }
-
-    <section aria-labelledby="library-title">
-      <h2 id="library-title" class="sr-only">Biblioteca</h2>
-      <div class="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <p-iconfield class="lg:w-80">
-          <p-inputicon><svg lucideSearch class="size-4.5"></svg></p-inputicon>
-          <input
-            pInputText
-            type="search"
-            class="w-full"
-            placeholder="Buscar por título"
-            aria-label="Buscar contenido por título"
-            [formField]="filters.q"
-          />
-        </p-iconfield>
-        <div class="flex flex-wrap items-center gap-3">
-          <p-selectbutton
-            [options]="typeOptions"
-            optionLabel="label"
-            optionValue="value"
-            [allowEmpty]="false"
-            ariaLabelledBy="library-title"
-            [formField]="filters.type"
-          />
-          <p-select
-            [options]="categoryOptions"
-            optionLabel="label"
-            optionValue="value"
-            ariaLabel="Categoría"
-            [formField]="filters.category"
-          />
-        </div>
-      </div>
-
-      <app-paged-grid [query]="catalog" skeletonHeight="18rem">
-        <ng-template [appRow]="catalog.items()" let-item>
-          <app-content-card [item]="item" [link]="item.slug" />
-        </ng-template>
-        <div empty>
-          <app-empty-state
-            [icon]="emptyIcon"
-            title="No hay contenido con esos filtros"
-            description="Prueba con otra búsqueda o quita algún filtro."
-          />
-        </div>
-      </app-paged-grid>
-    </section>
-  `,
+  templateUrl: './content-catalog.html',
 })
 export class ContentCatalog {
   private readonly api = inject(ContentApi);

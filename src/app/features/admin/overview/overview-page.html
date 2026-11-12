@@ -28,7 +28,11 @@
       </li>
     </ul>
   } @else if (users.error() || billing.error()) {
-    <p class="text-red-700" role="alert">No se han podido cargar las cifras. Recarga la página.</p>
+    <app-load-error
+      [compact]="true"
+      title="No se han podido cargar las cifras"
+      (retry)="users.reload(); billing.reload()"
+    />
   } @else {
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-busy="true">
       @for (placeholder of [1, 2, 3, 4]; track placeholder) {
@@ -60,7 +64,12 @@
         <a pButton routerLink="moderation" size="small" class="mt-5"> Revisar las denuncias </a>
       }
     } @else if (reports.error()) {
-      <p class="mt-3 text-sm text-red-700">No se han podido cargar las denuncias.</p>
+      <app-load-error
+        class="mt-3 block"
+        [compact]="true"
+        title="No se han podido cargar las denuncias"
+        (retry)="reports.reload()"
+      />
     } @else {
       <div class="mt-4 space-y-3" aria-busy="true">
         <p-skeleton height="3.5rem" borderRadius="1rem" />

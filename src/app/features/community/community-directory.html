@@ -1,0 +1,60 @@
+<app-page-header
+  title="Comunidad"
+  description="Grupos para compartir avances, dudas y recetas. En los públicos entra quien quiera; en los privados, quien los creó aprueba cada solicitud."
+>
+  <button pButton type="button" (click)="groupDialog.open(null)">
+    <svg lucidePlus></svg>
+    Nuevo grupo
+  </button>
+</app-page-header>
+
+<section aria-labelledby="groups-title">
+  <h2 id="groups-title" class="sr-only">Grupos</h2>
+  <p-iconfield class="mb-5 block sm:w-80">
+    <p-inputicon><svg lucideSearch class="size-4.5"></svg></p-inputicon>
+    <input
+      pInputText
+      type="search"
+      class="w-full"
+      placeholder="Buscar grupos"
+      aria-label="Buscar grupos por nombre"
+      [formField]="filters.q"
+    />
+  </p-iconfield>
+
+  <app-paged-grid [query]="directory" label="Grupos" skeletonHeight="12rem">
+    <ng-template [appRow]="directory.items()" let-group>
+      <app-group-card [group]="group" />
+    </ng-template>
+    <div empty>
+      @if (filterModel().q.trim()) {
+        <app-empty-state
+          [icon]="usersIcon"
+          title="Ningún grupo coincide con la búsqueda"
+          description="Prueba con otra palabra o crea tú el grupo."
+        />
+      } @else {
+        <app-empty-state
+          [icon]="usersIcon"
+          title="Aún no hay grupos"
+          description="Crea el primero e invita a la comunidad a participar."
+        >
+          <button pButton type="button" (click)="groupDialog.open(null)">
+            <svg lucidePlus></svg>
+            Crear un grupo
+          </button>
+        </app-empty-state>
+      }
+    </div>
+  </app-paged-grid>
+</section>
+
+@defer (when groupDialog.isOpen(); prefetch on idle) {
+  @if (groupDialog.data(); as dialog) {
+    <app-group-dialog
+      [group]="dialog.value"
+      (saved)="created($event)"
+      (closed)="groupDialog.close()"
+    />
+  }
+}

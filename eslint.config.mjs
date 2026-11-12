@@ -94,6 +94,11 @@ export default defineConfig(
       '@angular-eslint/no-implicit-take-until-destroyed': 'error',
       '@angular-eslint/no-duplicates-in-metadata-arrays': 'error',
       '@angular-eslint/no-async-lifecycle-method': 'error',
+      // Plantillas en línea solo si son cortas; las demás, en su .html (docs/frontend-guidelines.md).
+      '@angular-eslint/component-max-inline-declarations': [
+        'error',
+        { template: 40, styles: 0, animations: 0 },
+      ],
       '@typescript-eslint/consistent-type-imports': ['error', { fixStyle: 'inline-type-imports' }],
       '@typescript-eslint/no-unused-vars': [
         'error',

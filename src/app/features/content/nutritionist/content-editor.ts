@@ -1,7 +1,6 @@
 import { Component, computed, inject, input, linkedSignal } from '@angular/core';
 import { form } from '@angular/forms/signals';
-import { Router, RouterLink } from '@angular/router';
-import { LucideArrowLeft } from '@lucide/angular';
+import { Router } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
@@ -19,67 +18,13 @@ import {
 import { formSubmitter } from '@shared/forms/form-submitter';
 import { mutation } from '@shared/utils/mutation';
 import { PublicationActions } from '@shared/publishing/publication-actions';
+import { BackLink } from '@shared/ui/back-link';
 
 /** Editor de un contenido del nutricionista: texto, portada, fichero y publicación. */
 @Component({
   selector: 'app-content-editor',
-  imports: [
-    PublicationActions,
-    RouterLink,
-    ButtonDirective,
-    Skeleton,
-    Tag,
-    LucideArrowLeft,
-    ContentFields,
-    LoadError,
-  ],
-  template: `
-    <a
-      routerLink=".."
-      class="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline"
-    >
-      <svg lucideArrowLeft class="size-4"></svg>
-      Tu contenido
-    </a>
-
-    @if (content.error()) {
-      <app-load-error [error]="content.error()" (retry)="content.reload()" />
-    } @else if (current(); as current) {
-      @let status = current.item.status;
-      <header class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p-tag [value]="statusLabels[status]" [severity]="statusSeverity[status]" />
-          <h1 class="mt-2 text-3xl font-bold tracking-tight text-balance">
-            {{ current.item.title }}
-          </h1>
-          @if (status === 'PUBLISHED') {
-            <p class="mt-1 text-muted">Publicado en el catálogo como «{{ current.item.slug }}».</p>
-          }
-        </div>
-        <app-publication-actions
-          [status]="status"
-          [pending]="pending()"
-          (publish)="publish.run()"
-          (archive)="archive.run()"
-          (remove)="remove.run()"
-        />
-      </header>
-
-      <form class="card max-w-4xl p-6 sm:p-8" novalidate (submit)="save($event)">
-        <app-content-fields [form]="contentForm" [coverPath]="current.item.coverPath ?? null" />
-        <div class="mt-6 flex justify-end">
-          <button pButton type="submit" [loading]="contentForm().submitting()">
-            Guardar los cambios
-          </button>
-        </div>
-      </form>
-    } @else {
-      <div class="max-w-4xl space-y-4" aria-busy="true">
-        <p-skeleton height="2.5rem" width="50%" />
-        <p-skeleton height="24rem" borderRadius="1.5rem" />
-      </div>
-    }
-  `,
+  imports: [BackLink, PublicationActions, ButtonDirective, Skeleton, Tag, ContentFields, LoadError],
+  templateUrl: './content-editor.html',
 })
 export class ContentEditor {
   private readonly submitForm = formSubmitter();

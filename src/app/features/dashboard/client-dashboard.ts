@@ -24,11 +24,13 @@ import { TierBadge } from '@shared/ui/tier-badge';
 import { todayIso } from '@shared/utils/date';
 import { Shortcuts } from '@shared/ui/shortcuts';
 import { streakPercent } from '@features/rewards/data/streaks';
+import { LoadError } from '@shared/ui/load-error';
 
 /** Inicio del cliente: su meta, los hábitos de hoy, su plan de suscripción y las rachas en curso. */
 @Component({
   selector: 'app-client-dashboard',
   imports: [
+    LoadError,
     RouterLink,
     DatePipe,
     DecimalPipe,

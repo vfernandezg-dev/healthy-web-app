@@ -1,7 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { LucideArrowLeft, LucideCalendarDays, LucideCheck, LucideFlame } from '@lucide/angular';
+import { LucideCalendarDays, LucideCheck, LucideFlame } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { GOAL_LABELS, MEAL_CATEGORY_LABELS } from '@shared/i18n/labels';
@@ -12,17 +11,17 @@ import { mealsByDay } from '../data/meals-by-day';
 import { titleFrom } from '@core/routing/title-strategy';
 import { mutation } from '@shared/utils/mutation';
 import { Paywall, requiredTierOf } from '@shared/ui/paywall';
+import { BackLink } from '@shared/ui/back-link';
 
 /** Un plan con sus comidas por día. Si es de pago y el cliente no tiene acceso, explica cómo conseguirlo. */
 @Component({
   selector: 'app-meal-plan-detail',
   imports: [
+    BackLink,
     Paywall,
-    RouterLink,
     DecimalPipe,
     ButtonDirective,
     Skeleton,
-    LucideArrowLeft,
     LucideCalendarDays,
     LucideFlame,
     LucideCheck,

@@ -21,6 +21,7 @@ import { MealPlansApi } from '@features/meal-plans/data/meal-plans-api';
 import { ContentApi } from '@features/content/data/content-api';
 import { ClientsApi } from '@features/nutritionist-clients/data/clients-api';
 import { RewardsApi } from '@features/rewards/data/rewards-api';
+import { LoadError } from '@shared/ui/load-error';
 
 /** Todos sus planes o contenidos, en cualquier estado. */
 function totalOf(summary: PublicationSummaryResponse): number {
@@ -48,6 +49,7 @@ const DRAFTS = {
 @Component({
   selector: 'app-nutritionist-dashboard',
   imports: [
+    LoadError,
     RouterLink,
     DatePipe,
     Skeleton,
@@ -140,5 +142,11 @@ export class NutritionistDashboard {
 
   protected publishedDetail(published: number, total: number): string {
     return total === published ? 'Todo publicado' : `${total - published} sin publicar`;
+  }
+
+  protected reloadFigures(): void {
+    for (const source of [this.clients, this.rewards, this.planSummary, this.contentSummary]) {
+      source.reload();
+    }
   }
 }

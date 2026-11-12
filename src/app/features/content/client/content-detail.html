@@ -1,10 +1,4 @@
-<a
-  routerLink=".."
-  class="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline"
->
-  <svg lucideArrowLeft class="size-4"></svg>
-  Contenido
-</a>
+<app-back-link link=".." label="Contenido" />
 
 @if (requiredTier(); as tier) {
   <app-paywall [tier]="tier" subject="Este contenido" benefit="leerlo" />

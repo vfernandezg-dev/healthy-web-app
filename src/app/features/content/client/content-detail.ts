@@ -1,7 +1,6 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { LucideArrowLeft, LucideDownload, LucidePlay } from '@lucide/angular';
+import { LucideDownload, LucidePlay } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { toProblem } from '@core/api/problem';
@@ -13,18 +12,18 @@ import { TierBadge } from '@shared/ui/tier-badge';
 import { ContentApi } from '../data/content-api';
 import { titleFrom } from '@core/routing/title-strategy';
 import { Paywall, requiredTierOf } from '@shared/ui/paywall';
+import { BackLink } from '@shared/ui/back-link';
 
 /** Un contenido: portada, texto y su fichero (vídeo o descarga) con enlace firmado. */
 @Component({
   selector: 'app-content-detail',
   imports: [
+    BackLink,
     Paywall,
-    RouterLink,
     NgOptimizedImage,
     MediaUrlPipe,
     ButtonDirective,
     Skeleton,
-    LucideArrowLeft,
     LucidePlay,
     LucideDownload,
     TierBadge,

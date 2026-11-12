@@ -1,10 +1,4 @@
-<a
-  routerLink=".."
-  class="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline"
->
-  <svg lucideArrowLeft class="size-4"></svg>
-  Planes alimenticios
-</a>
+<app-back-link link=".." label="Planes alimenticios" />
 
 @if (requiredTier(); as tier) {
   <app-paywall [tier]="tier" subject="Este plan" benefit="ver sus comidas y seguirlo" />

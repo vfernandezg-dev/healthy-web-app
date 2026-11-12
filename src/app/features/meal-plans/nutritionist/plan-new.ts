@@ -1,26 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
 import { form } from '@angular/forms/signals';
-import { Router, RouterLink } from '@angular/router';
-import { LucideArrowLeft } from '@lucide/angular';
+import { Router } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 import { Toaster } from '@core/ui/toaster';
 import { PageHeader } from '@shared/ui/page-header';
 import { MealPlansApi } from '../data/meal-plans-api';
 import { PlanFields, emptyPlan, planSchema, toPlanRequest } from '../ui/plan-fields';
 import { formSubmitter } from '@shared/forms/form-submitter';
+import { BackLink } from '@shared/ui/back-link';
 
 /** Nuevo plan: se crea como borrador y se pasa a su editor para añadir las comidas. */
 @Component({
   selector: 'app-plan-new',
-  imports: [RouterLink, ButtonDirective, LucideArrowLeft, PlanFields, PageHeader],
+  imports: [BackLink, ButtonDirective, PlanFields, PageHeader],
   template: `
-    <a
-      routerLink=".."
-      class="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline"
-    >
-      <svg lucideArrowLeft class="size-4"></svg>
-      Tus planes
-    </a>
+    <app-back-link link=".." label="Tus planes" />
     <app-page-header
       title="Nuevo plan"
       description="Empieza por los datos generales. Después añadirás las comidas de cada día y lo publicarás."

@@ -1,26 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
 import { form } from '@angular/forms/signals';
-import { Router, RouterLink } from '@angular/router';
-import { LucideArrowLeft } from '@lucide/angular';
+import { Router } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 import { Toaster } from '@core/ui/toaster';
 import { PageHeader } from '@shared/ui/page-header';
 import { ContentApi } from '../data/content-api';
 import { ContentFields, contentSchema, emptyContent, toContentRequest } from '../ui/content-fields';
 import { formSubmitter } from '@shared/forms/form-submitter';
+import { BackLink } from '@shared/ui/back-link';
 
 /** Nuevo contenido: se guarda como borrador y se pasa a su editor. */
 @Component({
   selector: 'app-content-new',
-  imports: [RouterLink, ButtonDirective, LucideArrowLeft, ContentFields, PageHeader],
+  imports: [BackLink, ButtonDirective, ContentFields, PageHeader],
   template: `
-    <a
-      routerLink=".."
-      class="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline"
-    >
-      <svg lucideArrowLeft class="size-4"></svg>
-      Tu contenido
-    </a>
+    <app-back-link link=".." label="Tu contenido" />
     <app-page-header
       title="Nuevo contenido"
       description="Se guarda como borrador: revísalo y publícalo cuando esté listo."

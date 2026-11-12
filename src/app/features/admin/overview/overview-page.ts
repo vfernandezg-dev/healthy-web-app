@@ -19,6 +19,7 @@ import { StatCard } from '@shared/ui/stat-card';
 import { Shortcuts } from '@shared/ui/shortcuts';
 import { activeSubscriptions, formatAmounts } from '../data/billing-summary';
 import { AdminApi } from '../data/admin-api';
+import { LoadError } from '@shared/ui/load-error';
 
 const ROLES: readonly { role: Role; label: string }[] = (
   Object.keys(ROLE_PLURAL_LABELS) as Role[]
@@ -30,6 +31,7 @@ const OLDEST_REPORTS = 3;
 @Component({
   selector: 'app-overview-page',
   imports: [
+    LoadError,
     RouterLink,
     I18nPluralPipe,
     ButtonDirective,

@@ -68,69 +68,7 @@ export function toPlanRequest(model: PlanModel): MealPlanRequest {
   imports: [FormField, InputText, Textarea, Select, InputNumber, LabeledField],
   // Contenedor de consulta: en el lateral estrecho del editor, los tres selectores se apilan.
   host: { class: '@container block space-y-5' },
-  template: `
-    <app-field label="Título" inputId="plan-title" [field]="form().title">
-      <input
-        pInputText
-        id="plan-title"
-        class="w-full"
-        [formField]="form().title"
-        [attr.aria-describedby]="describe('plan-title', form().title)"
-      />
-    </app-field>
-
-    <app-field
-      label="Descripción"
-      inputId="plan-description"
-      [field]="form().description"
-      hint="Para quién es, qué consigue y cómo se sigue."
-    >
-      <textarea
-        pTextarea
-        id="plan-description"
-        rows="4"
-        class="w-full"
-        [formField]="form().description"
-        [attr.aria-describedby]="describe('plan-description', form().description, true)"
-      ></textarea>
-    </app-field>
-
-    <div class="grid gap-5 @xl:grid-cols-3">
-      <app-field label="Objetivo" inputId="plan-goal" [field]="form().goal">
-        <p-select
-          inputId="plan-goal"
-          ariaLabelledBy="plan-goal-label"
-          [options]="goalOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Elige uno"
-          [fluid]="true"
-          [formField]="form().goal"
-        />
-      </app-field>
-      <app-field label="Acceso" inputId="plan-tier" [field]="form().requiredTier">
-        <p-select
-          inputId="plan-tier"
-          ariaLabelledBy="plan-tier-label"
-          [options]="tierOptions"
-          optionLabel="label"
-          optionValue="value"
-          [fluid]="true"
-          [formField]="form().requiredTier"
-        />
-      </app-field>
-      <app-field label="Duración" inputId="plan-days" [field]="form().durationDays">
-        <p-inputnumber
-          inputId="plan-days"
-          suffix=" días"
-          [useGrouping]="false"
-          [fluid]="true"
-          [formField]="form().durationDays"
-          [ariaDescribedBy]="describe('plan-days', form().durationDays) ?? undefined"
-        />
-      </app-field>
-    </div>
-  `,
+  templateUrl: './plan-fields.html',
 })
 export class PlanFields {
   readonly form = input.required<FieldTree<PlanModel>>();

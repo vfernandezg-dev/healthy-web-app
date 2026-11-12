@@ -1,8 +1,8 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, computed, inject, input, linkedSignal } from '@angular/core';
 import { form } from '@angular/forms/signals';
-import { Router, RouterLink } from '@angular/router';
-import { LucideArrowLeft, LucidePencil, LucidePlus, LucideTrash } from '@lucide/angular';
+import { Router } from '@angular/router';
+import { LucidePencil, LucidePlus, LucideTrash } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
@@ -22,18 +22,18 @@ import { dialogState } from '@shared/ui/dialog-state';
 import { formSubmitter } from '@shared/forms/form-submitter';
 import { mutation } from '@shared/utils/mutation';
 import { PublicationActions } from '@shared/publishing/publication-actions';
+import { BackLink } from '@shared/ui/back-link';
 
 /** Editor de un plan del nutricionista: datos, comidas por día y publicación. */
 @Component({
   selector: 'app-plan-editor',
   imports: [
+    BackLink,
     PublicationActions,
-    RouterLink,
     DecimalPipe,
     ButtonDirective,
     Skeleton,
     Tag,
-    LucideArrowLeft,
     LucidePlus,
     LucidePencil,
     LucideTrash,
