@@ -3,10 +3,10 @@ import { Component, DestroyRef, computed, inject, input, output, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LucideFile, LucideImage, LucideTrash2, LucideUpload } from '@lucide/angular';
 import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
-import { ProgressBar } from 'primeng/progressbar';
 import { toProblem } from '../../core/api/problem';
 import type { UploadResponse } from '../../core/api/schema';
 import { MediaUrlPipe } from '../pipes/media-url.pipe';
+import { ProgressBar } from '../ui/progress-bar';
 import { MediaApi, type MediaPurpose } from './media-api';
 
 /**
@@ -58,11 +58,10 @@ import { MediaApi, type MediaPurpose } from './media-api';
         <p class="truncate font-medium" [id]="inputId() + '-status'">{{ status() }}</p>
         <p class="text-sm text-muted">{{ hint() }}</p>
         @if (progress() !== null) {
-          <p-progressbar
+          <app-progress-bar
+            class="mt-2"
             [value]="progress() ?? 0"
-            [showValue]="false"
-            class="mt-2 block"
-            [attr.aria-label]="'Subiendo ' + label()"
+            [label]="'Subiendo ' + label().toLowerCase()"
           />
         }
         @if (failure(); as message) {

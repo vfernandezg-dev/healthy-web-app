@@ -37,6 +37,11 @@ export const routes: Routes = [
         loadChildren: () => mealPlans().then((m) => m.CLIENT_MEAL_PLAN_ROUTES),
       },
       { path: 'content', loadChildren: () => content().then((m) => m.CLIENT_CONTENT_ROUTES) },
+      {
+        path: 'progress',
+        loadChildren: () =>
+          import('./features/progress/progress.routes').then((m) => m.PROGRESS_ROUTES),
+      },
     ],
   },
   {

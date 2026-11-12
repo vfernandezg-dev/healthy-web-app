@@ -82,6 +82,21 @@ export const CONTENT_CATEGORY_LABELS: Readonly<Record<ContentCategory, string>> 
   MENTAL_HEALTH: 'Salud mental',
 };
 
+export type GoalStatus = Schemas['GoalResponse']['status'];
+
+export const GOAL_STATUS_LABELS: Readonly<Record<GoalStatus, string>> = {
+  ACTIVE: 'En curso',
+  COMPLETED: 'Cumplida',
+  ABANDONED: 'Abandonada',
+};
+
+export const GOAL_STATUS_SEVERITY: Readonly<Record<GoalStatus, 'info' | 'success' | 'secondary'>> =
+  {
+    ACTIVE: 'info',
+    COMPLETED: 'success',
+    ABANDONED: 'secondary',
+  };
+
 /** Opciones para un p-select o p-selectbutton a partir de un mapa de etiquetas. */
 export function optionsOf<T extends string>(
   labels: Readonly<Record<T, string>>,

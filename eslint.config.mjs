@@ -57,7 +57,11 @@ export default defineConfig(
       '@angular-eslint/template/prefer-control-flow': 'error',
       '@angular-eslint/template/prefer-self-closing-tags': 'error',
       '@angular-eslint/template/prefer-ngsrc': 'error',
-      '@angular-eslint/template/no-inline-styles': ['error', { allowNgStyle: false }],
+      // Sin style="" estático (para eso, clases); sí enlaces a valores dinámicos como [style.width.%].
+      '@angular-eslint/template/no-inline-styles': [
+        'error',
+        { allowNgStyle: false, allowBindToStyle: true },
+      ],
       '@angular-eslint/template/button-has-type': 'error',
     },
   },
