@@ -1,15 +1,20 @@
 {
   "name": "healthybites-app",
   "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.22.3",
+    "pnpm": ">=12"
+  },
   "scripts": {
+    "preinstall": "node scripts/only-pnpm.mjs",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "analyze": "ng build --stats-json && webpack-bundle-analyzer dist/healthybites-app/stats.json"
+    "test": "ng test --watch=false --browsers=ChromeHeadless",
+    "test:watch": "ng test"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^18.2.0",
     "@angular/cdk": "^18.2.12",
@@ -38,7 +43,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.5.2",
-    "webpack-bundle-analyzer": "^4.10.2"
-  }
+    "typescript": "~5.5.2"
+  },
+  "packageManager": "pnpm@12.18.0"
 }

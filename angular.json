@@ -23,18 +23,15 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
-                "glob": "_redirects",
-                "input": "src",
-                "output": "/"
+                "glob": "**/*",
+                "input": "public"
               }
             ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.css"
             ],
-            "scripts": [
-              "node_modules/apexcharts/dist/apexcharts.min.js"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -109,6 +106,7 @@
     }
   },
   "cli": {
-    "analytics": "3c210d67-84ef-4662-9303-98e86d8c7e92"
+    "analytics": false,
+    "packageManager": "pnpm"
   }
 }

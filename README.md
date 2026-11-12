@@ -1,27 +1,37 @@
-# HealthybitesApp
+# Healthy Bites · Web app
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.9.
+Aplicación web de [Healthy Bites](https://healthybites.vfernandezg.dev), la plataforma de nutrición y
+hábitos saludables. Es una SPA en Angular con áreas para clientes y nutricionistas, y consume la API
+REST de [`healthy-bites-api`](https://github.com/vfernandezg-dev/healthy-bites-api).
 
-## Development server
+> El proyecto está en plena modernización: Angular 22, sesión segura y una interfaz nueva con
+> PrimeNG. Este README se ampliará al terminar.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Requisitos
 
-## Code scaffolding
+- **Node** 22.23 o superior. La versión exacta está en [`.nvmrc`](.nvmrc); con
+  [fnm](https://github.com/Schniz/fnm) basta con `fnm use`.
+- **pnpm 12**. La versión se fija en `packageManager` (`package.json`). Este proyecto no se instala
+  con npm ni con yarn.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Desarrollo local
 
-## Build
+```bash
+pnpm install
+pnpm start      # http://localhost:4210
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+La app espera la API en `http://localhost:8090/api/v1`. Para levantarla, sigue el README de
+[`healthy-bites-api`](https://github.com/vfernandezg-dev/healthy-bites-api).
 
-## Running unit tests
+## Scripts
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+| Script            | Qué hace                                       |
+| ----------------- | ---------------------------------------------- |
+| `pnpm start`      | Servidor de desarrollo en el puerto 4210       |
+| `pnpm build`      | Build de producción en `dist/`                 |
+| `pnpm test`       | Tests unitarios una vez, en Chrome headless    |
+| `pnpm test:watch` | Tests unitarios en modo observación            |
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+CI ejecuta `pnpm install --frozen-lockfile`, `pnpm test` y `pnpm build` en cada pull request
+([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
