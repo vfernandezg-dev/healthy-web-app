@@ -81,6 +81,12 @@ export const routes: Routes = [
             (m) => m.NutritionistRewards,
           ),
       },
+      {
+        path: 'clients',
+        title: 'Tus clientes',
+        loadComponent: () =>
+          import('./features/nutritionist-clients/clients-page').then((m) => m.ClientsPage),
+      },
       { path: 'community', loadChildren: community },
     ],
   },
