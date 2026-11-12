@@ -1,0 +1,122 @@
+<app-page-header
+  title="Moderación"
+  description="Denuncias de publicaciones y comentarios. Ocultar retira el contenido para todos y cierra sus denuncias; descartar solo cierra la denuncia."
+/>
+
+<p-selectbutton
+  class="mb-6"
+  [options]="statusOptions"
+  optionLabel="label"
+  optionValue="value"
+  [allowEmpty]="false"
+  ariaLabel="Estado de las denuncias"
+  [(ngModel)]="status"
+/>
+
+@if (reports.error()) {
+  <app-load-error [error]="reports.error()" (retry)="reports.reload()" />
+} @else if (reports.hasValue()) {
+  @let result = reports.value();
+  @if (result.content.length === 0) {
+    <app-empty-state
+      [icon]="doneIcon"
+      [title]="status() === 'OPEN' ? 'No hay denuncias pendientes' : 'No hay denuncias aquí'"
+      [description]="
+        status() === 'OPEN'
+          ? 'Todo en orden: cuando alguien denuncie una publicación o un comentario, aparecerá aquí.'
+          : 'Las denuncias cerradas con esta resolución aparecerán aquí.'
+      "
+    />
+  } @else {
+    <ul class="space-y-5" role="list">
+      @for (report of result.content; track report.id) {
+        <li class="card p-5 sm:p-6">
+          <div class="flex flex-wrap items-center gap-2 text-sm">
+            <span
+              class="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-800"
+            >
+              {{ targets[report.targetType] }}
+            </span>
+            @if (report.targetHidden) {
+              <span class="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-800">
+                Oculto
+              </span>
+            }
+            <span class="text-muted">
+              Denunciada el {{ report.createdAt | date: 'd MMM y, HH:mm' }}
+            </span>
+          </div>
+
+          <blockquote class="mt-4 border-l-4 border-brand-200 pl-4">
+            <p [id]="'report-' + report.id + '-excerpt'" class="whitespace-pre-line">
+              {{ report.excerpt }}
+            </p>
+            <footer class="mt-1 text-sm text-muted">
+              De {{ report.targetAuthor?.name ?? 'una cuenta eliminada' }}
+            </footer>
+          </blockquote>
+
+          <dl class="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+            <div>
+              <dt class="font-semibold">Motivo</dt>
+              <dd class="mt-0.5 text-muted">{{ report.reason }}</dd>
+            </div>
+            <div>
+              <dt class="font-semibold">Denunciada por</dt>
+              <dd class="mt-0.5 text-muted">
+                {{ report.reporter?.name ?? 'Una cuenta eliminada' }}
+              </dd>
+            </div>
+          </dl>
+
+          @if (report.status === 'OPEN') {
+            <div class="mt-5 flex flex-wrap justify-end gap-2">
+              <button
+                pButton
+                type="button"
+                severity="secondary"
+                variant="outlined"
+                [attr.aria-describedby]="'report-' + report.id + '-excerpt'"
+                (click)="dialog()?.open(report, 'DISMISS')"
+              >
+                <span pButtonLabel>Descartar</span>
+              </button>
+              <button
+                pButton
+                type="button"
+                severity="danger"
+                [attr.aria-describedby]="'report-' + report.id + '-excerpt'"
+                (click)="dialog()?.open(report, 'HIDE')"
+              >
+                <svg lucideEyeOff pButtonIcon></svg>
+                <span pButtonLabel>Ocultar</span>
+              </button>
+            </div>
+          } @else if (report.resolvedAt) {
+            <p class="mt-4 text-sm text-muted">
+              {{ report.status === 'RESOLVED' ? 'Contenido ocultado' : 'Denuncia descartada' }}
+              el {{ report.resolvedAt | date: 'd MMM y, HH:mm' }}.
+            </p>
+          }
+        </li>
+      }
+    </ul>
+    @if (result.page.totalPages > 1) {
+      <p-paginator
+        class="mt-6 block"
+        [first]="result.page.number * pageSize"
+        [rows]="pageSize"
+        [totalRecords]="result.page.totalElements"
+        (onPageChange)="changePage($event)"
+      />
+    }
+  }
+} @else {
+  <div class="space-y-5" aria-busy="true">
+    @for (placeholder of [1, 2]; track placeholder) {
+      <p-skeleton height="14rem" borderRadius="1.5rem" />
+    }
+  </div>
+}
+
+<app-resolve-dialog (resolved)="resolved($event)" />

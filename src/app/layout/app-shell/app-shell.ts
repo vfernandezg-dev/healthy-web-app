@@ -10,7 +10,8 @@ import { filter, skip } from 'rxjs';
 import { AuthStore } from '../../core/auth/auth-store';
 import { SIGNAL_FORMS_PROVIDERS } from '../../shared/forms/forms.config';
 import { BrandLogo } from '../../shared/ui/brand-logo';
-import { NAVIGATION, ROLE_LABELS } from './nav-config';
+import { ROLE_LABELS } from '../../shared/i18n/labels';
+import { NAVIGATION } from './nav-config';
 
 /**
  * Marco de la aplicación con sesión: menú lateral en escritorio y cajón en móvil, según el rol. Tras cada

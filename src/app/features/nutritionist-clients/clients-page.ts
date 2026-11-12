@@ -18,6 +18,7 @@ import { SortIcon } from '../../shared/ui/sort-icon';
 import { matches } from '../../shared/utils/text';
 import { bmiCategory, bmiOf } from './bmi';
 import { ClientsApi } from './data/clients-api';
+import { RowTemplate } from '../../shared/table/row-template';
 
 /** Fila de la tabla: los datos de la API más los que se calculan para ordenar y buscar. */
 interface ClientRow {
@@ -71,6 +72,7 @@ const PAGE_SIZE = 10;
     LucideSearch,
     PersonAvatar,
     SortIcon,
+    RowTemplate,
     EmptyState,
     LoadError,
     PageHeader,
@@ -146,7 +148,7 @@ const PAGE_SIZE = 10;
                 </th>
               </tr>
             </ng-template>
-            <ng-template #body let-client>
+            <ng-template #body let-client [appRow]="rows()">
               <tr>
                 <td class="md:hidden" colspan="6">
                   <ng-container *ngTemplateOutlet="person; context: { $implicit: client }" />
@@ -229,7 +231,7 @@ const PAGE_SIZE = 10;
       </div>
     }
 
-    <ng-template #person let-client>
+    <ng-template #person let-client [appRow]="rows()">
       <div class="flex items-center gap-3">
         <app-person-avatar [name]="client.fullName" />
         <div class="min-w-0">
@@ -261,7 +263,7 @@ const PAGE_SIZE = 10;
       }
     </ng-template>
 
-    <ng-template #bmi let-client>
+    <ng-template #bmi let-client [appRow]="rows()">
       @if (client.bmi !== null) {
         <span class="font-semibold tabular-nums">{{ client.bmi | number: '1.1-1' }}</span>
         <span class="block text-xs text-muted">{{ client.bmiLabel }}</span>

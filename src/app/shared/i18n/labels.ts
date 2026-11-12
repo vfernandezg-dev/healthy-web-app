@@ -104,6 +104,78 @@ export const GROUP_VISIBILITY_LABELS: Readonly<Record<GroupVisibility, string>> 
   PRIVATE: 'Privado',
 };
 
+export type Role = Schemas['AdminUserResponse']['role'];
+
+export const ROLE_LABELS: Readonly<Record<Role, string>> = {
+  CLIENT: 'Cliente',
+  NUTRITIONIST: 'Nutricionista',
+  ADMIN: 'Administración',
+};
+
+export const ROLE_SEVERITY: Readonly<Record<Role, 'info' | 'success' | 'warn'>> = {
+  CLIENT: 'info',
+  NUTRITIONIST: 'success',
+  ADMIN: 'warn',
+};
+
+export type UserStatus = Schemas['AdminUserResponse']['status'];
+
+export const USER_STATUS_LABELS: Readonly<Record<UserStatus, string>> = {
+  ACTIVE: 'Activa',
+  DEACTIVATED: 'Desactivada',
+};
+
+export type SubscriptionStatus = Schemas['AdminSubscriptionResponse']['status'];
+
+export const SUBSCRIPTION_STATUS_LABELS: Readonly<Record<SubscriptionStatus, string>> = {
+  PENDING_PAYMENT: 'Pendiente de pago',
+  ACTIVE: 'Activa',
+  CANCELED: 'Cancelada',
+  EXPIRED: 'Caducada',
+};
+
+export const SUBSCRIPTION_STATUS_SEVERITY: Readonly<
+  Record<SubscriptionStatus, 'success' | 'warn' | 'info' | 'secondary'>
+> = {
+  PENDING_PAYMENT: 'warn',
+  ACTIVE: 'success',
+  CANCELED: 'info',
+  EXPIRED: 'secondary',
+};
+
+export type InvitationStatus = Schemas['InvitationResponse']['status'];
+
+export const INVITATION_STATUS_LABELS: Readonly<Record<InvitationStatus, string>> = {
+  PENDING: 'Pendiente',
+  ACCEPTED: 'Aceptada',
+  EXPIRED: 'Caducada',
+  REVOKED: 'Revocada',
+};
+
+export const INVITATION_STATUS_SEVERITY: Readonly<
+  Record<InvitationStatus, 'success' | 'warn' | 'secondary' | 'danger'>
+> = {
+  PENDING: 'warn',
+  ACCEPTED: 'success',
+  EXPIRED: 'secondary',
+  REVOKED: 'danger',
+};
+
+export type ReportStatus = Schemas['ReportResponse']['status'];
+
+export const REPORT_STATUS_LABELS: Readonly<Record<ReportStatus, string>> = {
+  OPEN: 'Abiertas',
+  RESOLVED: 'Resueltas',
+  DISMISSED: 'Descartadas',
+};
+
+export const REPORT_TARGET_LABELS: Readonly<
+  Record<Schemas['ReportResponse']['targetType'], string>
+> = {
+  POST: 'Publicación',
+  COMMENT: 'Comentario',
+};
+
 /** Opciones para un p-select o p-selectbutton a partir de un mapa de etiquetas. */
 export function optionsOf<T extends string>(
   labels: Readonly<Record<T, string>>,

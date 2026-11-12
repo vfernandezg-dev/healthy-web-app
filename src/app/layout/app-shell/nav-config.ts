@@ -134,9 +134,3 @@ export const NAVIGATION: Readonly<Record<Role, readonly NavItem[]>> = {
     },
   ],
 };
-
-export const ROLE_LABELS: Readonly<Record<Role, string>> = {
-  CLIENT: 'Cliente',
-  NUTRITIONIST: 'Nutricionista',
-  ADMIN: 'Administración',
-};

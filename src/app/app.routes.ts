@@ -94,7 +94,13 @@ export const routes: Routes = [
     path: 'admin',
     canMatch: [roleGuard('ADMIN')],
     loadComponent: shell,
-    children: [{ path: '', title: 'Resumen', loadComponent: roleHome }],
+    children: [
+      { path: '', title: 'Resumen', loadComponent: roleHome },
+      {
+        path: '',
+        loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
+      },
+    ],
   },
   {
     path: '**',

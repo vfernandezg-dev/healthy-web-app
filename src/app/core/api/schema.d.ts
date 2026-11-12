@@ -1344,6 +1344,7 @@ export interface components {
             capturedAt?: string | null;
             /** Format: date-time */
             createdAt?: string | null;
+            customer?: components["schemas"]["CustomerResponse"] | null;
             /** Format: uuid */
             id: string;
             providerOrderId: string;
@@ -1363,6 +1364,7 @@ export interface components {
             currentPeriodEnd?: string | null;
             /** Format: date-time */
             currentPeriodStart?: string | null;
+            customer?: components["schemas"]["CustomerResponse"] | null;
             /** Format: uuid */
             id: string;
             /** @enum {string} */
@@ -1502,6 +1504,12 @@ export interface components {
             subscriptionId?: string | null;
             /** @enum {string} */
             tier: "BASIC" | "PREMIUM" | "VIP";
+        };
+        CustomerResponse: {
+            email: string;
+            /** Format: uuid */
+            id: string;
+            name: string;
         };
         EditableContentResponse: {
             body?: string | null;
@@ -2040,6 +2048,7 @@ export type ContentDetailResponse = components['schemas']['ContentDetailResponse
 export type ContentRequest = components['schemas']['ContentRequest'];
 export type ContentSummaryResponse = components['schemas']['ContentSummaryResponse'];
 export type CurrentSubscriptionResponse = components['schemas']['CurrentSubscriptionResponse'];
+export type CustomerResponse = components['schemas']['CustomerResponse'];
 export type EditableContentResponse = components['schemas']['EditableContentResponse'];
 export type EnrollRequest = components['schemas']['EnrollRequest'];
 export type EnrollmentResponse = components['schemas']['EnrollmentResponse'];
