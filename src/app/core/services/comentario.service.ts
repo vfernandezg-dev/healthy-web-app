@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { Observable } from 'rxjs';
 import { ComentarioRequest } from '../../shared/models/comentario-request.model';
 import { ComentarioResponse } from '../../shared/models/comentario-response.model';
@@ -10,7 +10,7 @@ import { ComentarioResponse } from '../../shared/models/comentario-response.mode
 })
 export class ComentarioService {
 
-    private baseUrl = `${environment.baseUrl}/publicacion`;
+    private baseUrl = `${inject(APP_CONFIG).apiUrl}/publicacion`;
     private http = inject(HttpClient);
 
     crearComentario(publicacionId: number, comentario: ComentarioRequest): Observable<ComentarioResponse> {

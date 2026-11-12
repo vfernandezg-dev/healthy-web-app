@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HabitoCreateRequest } from '../../shared/models/habito-create-request.model';
@@ -10,7 +10,7 @@ import { HabitoResponse } from '../../shared/models/habito-response.model';
 })
 export class HabitoService {
 
-    private baseURL = `${environment.baseUrl}/habito`;
+    private baseURL = `${inject(APP_CONFIG).apiUrl}/habito`;
     private http = inject(HttpClient);
 
     crearHabito(habito: HabitoCreateRequest): Observable<HabitoResponse> {

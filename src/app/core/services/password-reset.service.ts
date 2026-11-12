@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { HttpClient } from '@angular/common/http';
 import {Observable} from 'rxjs';
 
@@ -8,7 +8,7 @@ import {Observable} from 'rxjs';
   providedIn: 'root',
 })
 export class PasswordResetService {
-  private baseURL = `${environment.baseUrl}/mail`;
+  private baseURL = `${inject(APP_CONFIG).apiUrl}/mail`;
 
   private http = inject(HttpClient);
 

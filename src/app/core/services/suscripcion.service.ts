@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { SuscripcionCreateRequest } from '../../shared/models/suscripcion-create-request.model';
 import { Observable } from 'rxjs';
 import { SuscripcionResponse } from '../../shared/models/suscripcion-response.model';
@@ -10,7 +10,7 @@ import { SuscripcionResponse } from '../../shared/models/suscripcion-response.mo
 })
 export class SuscripcionService {
 
-  private baseURL = `${environment.baseUrl}/suscripcion`;
+  private baseURL = `${inject(APP_CONFIG).apiUrl}/suscripcion`;
   private http = inject(HttpClient);
   private suscripcionId?: number;
 

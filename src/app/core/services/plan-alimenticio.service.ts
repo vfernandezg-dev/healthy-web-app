@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { HttpClient } from '@angular/common/http';
 import { PlanAlimenticioCreateUpdateRequest } from '../../shared/models/plan-alimenticio-create-update-request.model';
 import { Observable } from 'rxjs';
@@ -10,7 +10,7 @@ import { PlanAlimenticioResponse } from '../../shared/models/plan-alimenticio-re
 })
 export class PlanAlimenticioService {
 
-  private baseURL = `${environment.baseUrl}/plan-alimenticio`;
+  private baseURL = `${inject(APP_CONFIG).apiUrl}/plan-alimenticio`;
   private http = inject(HttpClient);
 
   getAllPlanAlimenticio(): Observable<PlanAlimenticioResponse[]> {

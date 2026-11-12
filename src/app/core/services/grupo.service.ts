@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { GrupoCreateRequestModel } from '../../shared/models/grupo-create-request-mode';
 import { Observable } from 'rxjs';
 import { GrupoResponse } from '../../shared/models/grupo-response.model';
@@ -10,7 +10,7 @@ import { GrupoResponse } from '../../shared/models/grupo-response.model';
 })
 export class GrupoService {
 
-    private baseUrl = `${environment.baseUrl}/grupo`;
+    private baseUrl = `${inject(APP_CONFIG).apiUrl}/grupo`;
     private http = inject(HttpClient);
 
     getAllGrupoByClienteId(clienteId: number): Observable<GrupoResponse[]> {

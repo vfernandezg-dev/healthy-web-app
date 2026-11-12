@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { RecompensaCreateRequest } from '../../shared/models/recompensa-create-request.model';
 import { Observable } from 'rxjs';
 import { RecompensaResponse } from '../../shared/models/recompensa-response.model';
@@ -10,7 +10,7 @@ import { RecompensaResponse } from '../../shared/models/recompensa-response.mode
 })
 export class RecompensaService {
 
-    private baseURL = `${environment.baseUrl}/recompensa`;
+    private baseURL = `${inject(APP_CONFIG).apiUrl}/recompensa`;
     private http = inject(HttpClient);
 
     createRecompensa(recompensa: RecompensaCreateRequest): Observable<RecompensaResponse> {

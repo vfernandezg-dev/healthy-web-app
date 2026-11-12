@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ContenidoResponse } from '../../shared/models/contenido-response.model';
@@ -10,7 +10,7 @@ import { ContenidoRequest } from '../../shared/models/contenido-request.model';
 })
 export class ContenidoService {
 
-    private baseURL = `${environment.baseUrl}/contenido`;
+    private baseURL = `${inject(APP_CONFIG).apiUrl}/contenido`;
     private http = inject(HttpClient);
 
     getAllContenidos(): Observable<ContenidoResponse[]> {

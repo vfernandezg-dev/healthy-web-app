@@ -1,5 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { Pipe, PipeTransform, inject } from '@angular/core';
+import { APP_CONFIG } from '../config/app-config';
 
 
 @Pipe({
@@ -7,9 +7,11 @@ import { environment } from '../../../environments/environment';
   standalone: true
 })
 export class ApiImgPipe implements PipeTransform {
+  private readonly apiUrl = inject(APP_CONFIG).apiUrl;
+
 
   transform(path: string): string {
-    return `${environment.baseUrl}/media/${path}`;
+    return `${this.apiUrl}/media/${path}`;
   }
 
 }

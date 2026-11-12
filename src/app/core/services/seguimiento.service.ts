@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { Observable } from 'rxjs';
 import { SeguimientoRequest } from '../../shared/models/seguimiento-request.model';
 import { SeguimientoResponse } from '../../shared/models/seguimiento-response.model';
@@ -11,7 +11,7 @@ import { PageableResponse } from '../../shared/models/pageable-response.model';
 })
 export class SeguimientoService {
 
-    private baseURL = `${environment.baseUrl}/meta`;
+    private baseURL = `${inject(APP_CONFIG).apiUrl}/meta`;
     private http = inject(HttpClient);
 
     crearSeguimiento(metaId: number, seguimiento: SeguimientoRequest): Observable<SeguimientoResponse> {
