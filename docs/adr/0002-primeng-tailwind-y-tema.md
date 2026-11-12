@@ -20,8 +20,8 @@ diálogos, avisos, pestañas, cajón lateral) sin escribirlos desde cero.
 - **Solo los tokens de los componentes que se usan** (`core/theme/aura-lean.ts`): el preset completo trae 95
   componentes y suma unos 70 kB al bundle inicial. `pnpm theme:check` falla si se usa un componente sin sus tokens.
 - **Tailwind CSS 4** para la maquetación, con los mismos tokens que la landing (`src/styles/tokens.css`) y
-  `tailwindcss-primeui` para usar los colores del tema en las utilidades. Capas CSS en orden: `theme, base,
-primeng, components, utilities`.
+  `tailwindcss-primeui` para usar los colores del tema en las utilidades. Las capas CSS van en este orden:
+  theme, base, primeng, components y utilities (las utilidades de Tailwind ganan a los estilos de PrimeNG).
 - **Lucide** para los iconos (un componente por icono), también dentro de los botones de PrimeNG. No se carga la
   fuente de iconos de PrimeNG.
 - **Licencia Community de PrimeNG** (gratuita). La clave va en `NG_APP_PRIMENG_LICENSE_KEY` y en el secreto de CI.
