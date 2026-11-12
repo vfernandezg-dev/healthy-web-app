@@ -23,7 +23,7 @@ export class SeguimientoService {
     }
 
     eliminarSeguimiento(metaId: number, seguimientoId: number): Observable<void> {
-        return this.http.delete<void>(`${this.baseURL}/${seguimientoId}/seguimientos/${metaId}`);
+        return this.http.delete<void>(`${this.baseURL}/${metaId}/seguimientos/${seguimientoId}`);
     }
 
     getAllSeguimientosByMetaId(metaId: number): Observable<SeguimientoResponse[]> {
@@ -34,11 +34,6 @@ export class SeguimientoService {
         return this.http.get<SeguimientoResponse>(`${this.baseURL}/${metaId}/seguimientos/${seguimientoId}`);
     }
 
-    paginateSeguimientos(metaId: number, page: number, size: number): Observable<PageableResponse<SeguimientoResponse>> {
-        const params = new HttpParams().set('page', page.toString()).set('size', size.toString());
-        return this.http.get<PageableResponse<SeguimientoResponse>>(`${this.baseURL}/${metaId}/seguimientos/page`,
-            { params });
-    }
 
     paginateSeguimientosByClienteId(metaId: number, clienteId: number, page: number, size: number): Observable<PageableResponse<SeguimientoResponse>> {
         const params = new HttpParams().set('page', page.toString()).set('size', size.toString());

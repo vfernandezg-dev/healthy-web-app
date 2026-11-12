@@ -41,7 +41,9 @@
           </div>
           <div class="mat-mdc-card-content">
             <p>{{ publicacion.descripcion }}</p>
-            <img [src]="publicacion.publicacionPath | apiImg" alt="Cover">
+            @if (publicacion.publicacionPath) {
+              <img [src]="publicacion.publicacionPath | apiImg" alt="Imagen de la publicación">
+            }
             <hr>
               <!-- Mostrar comentarios si esta publicación está seleccionada -->
               @if (isComentariosVisible(publicacion.id)) {

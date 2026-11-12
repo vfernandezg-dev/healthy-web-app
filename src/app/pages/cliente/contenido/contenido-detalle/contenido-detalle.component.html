@@ -1,5 +1,15 @@
 <main class="p-3">
   <div class="container-fluid">
+    @if (locked) {
+      <mat-card>
+        <mat-card-title>Contenido premium</mat-card-title>
+        <mat-card-content>
+          <p>Para abrirlo necesitas una suscripción Premium o VIP, o desbloquearlo completando la racha de una recompensa.</p>
+          <a routerLink="/cliente/suscripciones">Ver suscripciones</a>
+        </mat-card-content>
+      </mat-card>
+    }
+
     @if (contenido) {
       <mat-card>
         <mat-card-title>{{ contenido.titulo }}</mat-card-title>

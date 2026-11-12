@@ -70,7 +70,7 @@ export class GrupoFormComponent {
   }
 
   loadGrupo(grupoId: number): void {
-    const userId = this.authService.getNutricionistaId();
+    const userId = this.authService.getClienteId();
     if (!userId) {
       this.showSnackBar('Usuario no autenticado.');
       this.router.navigate(['/auth/login']);
@@ -86,7 +86,7 @@ export class GrupoFormComponent {
   }
 
   onSubmit(): void {
-    const userId = this.authService.getNutricionistaId();
+    const userId = this.authService.getClienteId();
     if (this.grupoForm.invalid) {
       this.showSnackBar('Por favor, completa correctamente todos los campos.');
       return;

@@ -95,7 +95,7 @@ export class MetaListComponent implements OnInit {
       return;
     }
 
-    this.userProfileService.getUserProfile(clienteId).subscribe({
+    this.userProfileService.getUserProfile(Number(this.authService.getUser()?.id)).subscribe({
       next: (cliente) => {
         this.cliente = cliente;
       }

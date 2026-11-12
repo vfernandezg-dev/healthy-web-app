@@ -1,5 +1,6 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -14,7 +15,7 @@ import { FormatPlanObjetivoPipe } from '../../../../core/pipes/format-plan-objet
 
 @Component({
     selector: 'app-contenido-detalle',
-    imports: [MatCardModule, MatTableModule, ApiImgPipe, FormatPlanObjetivoPipe],
+    imports: [MatCardModule, MatTableModule, ApiImgPipe, FormatPlanObjetivoPipe, RouterLink],
     templateUrl: './contenido-detalle.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./contenido-detalle.component.css']
@@ -22,6 +23,8 @@ import { FormatPlanObjetivoPipe } from '../../../../core/pipes/format-plan-objet
 export class ContenidoDetalleComponent {
   contenido: ContenidoResponse | undefined;
   planAlimenticio: PlanAlimenticioResponse | undefined;
+  /** El servidor ha denegado el acceso: contenido o plan de pago sin suscripción ni recompensa. */
+  locked = false;
   comidas: ComidaResponse[] = [];
   displayedColumns: string[] = ['Orden', 'nombreComida', 'categoria', 'calorias'];
   private route = inject(ActivatedRoute);
@@ -38,7 +41,8 @@ export class ContenidoDetalleComponent {
           next: (contenido) => {
             this.contenido = contenido;
           },
-          error: (error) => {
+          error: (error: HttpErrorResponse) => {
+            this.locked = error.status === 403;
             console.error('Error al cargar el contenido', error);
           }
         });
@@ -48,7 +52,8 @@ export class ContenidoDetalleComponent {
             this.planAlimenticio = planAlimenticio;
             this.loadComidas(planAlimenticio.id);
           },
-          error: (error) => {
+          error: (error: HttpErrorResponse) => {
+            this.locked = error.status === 403;
             console.error('Error al cargar el plan alimenticio', error);
           }
         });

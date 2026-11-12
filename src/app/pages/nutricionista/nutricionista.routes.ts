@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { NutricionistaLayoutComponent } from './nutricionista-layout/nutricionista-layout.component';
 import { PlanAlimenticioListComponent } from './plan-alimenticio/plan-alimenticio-list/plan-alimenticio-list.component';
 import { ComidaListComponent } from './comida/comida-list/comida-list.component';
-import { GestionarClientesListComponent } from './gestionar-clientes/gestionar-clientes-list/gestionar-clientes-list.component';
 import { ContenidoListComponent } from './contenido/contenido-list/contenido-list.component';
 import { ContenidoFormComponent } from './contenido/contenido-form/contenido-form.component';
 import { PlanAlimenticioFormComponent } from './plan-alimenticio/plan-alimenticio-form/plan-alimenticio-form.component';
@@ -16,8 +15,6 @@ export const nutricionistaRoutes: Routes = [
         component: NutricionistaLayoutComponent,
         children: [
             {path: '', pathMatch: 'full', redirectTo: 'plan-alimenticio/list'},
-
-            {path: 'gestionar-perfiles/list', component: GestionarClientesListComponent},
 
             {path: 'plan-alimenticio/list', component: PlanAlimenticioListComponent},
             {path: 'plan-alimenticio/create', component: PlanAlimenticioFormComponent},

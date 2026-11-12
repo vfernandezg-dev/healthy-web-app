@@ -77,7 +77,7 @@ export class RecompensasFormComponent implements OnInit {
   }
 
   private loadContenidoOptions(): void {
-    this.contenidoService.getAllContenidos().subscribe({
+    this.contenidoService.getAllContenidosByNutricionistaId(this.authService.getNutricionistaId()).subscribe({
       next: (contenidos) => (this.contenidoOptions = contenidos),
       error: () => this.showSnackBar('Error al cargar los contenidos disponibles')
     });
