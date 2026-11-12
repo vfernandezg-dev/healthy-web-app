@@ -28,7 +28,7 @@ El hosting de la web aún no está decidido; Vercel es lo previsto.
     `angular.json`. En una SPA el CSS crítico casi no aporta: nada se pinta hasta que carga el bundle.
   - `style-src 'self' 'unsafe-inline'`: PrimeNG y Angular inyectan `<style>` en tiempo de ejecución, y un nonce
     necesitaría un servidor que lo genere en cada petición.
-  - `connect-src 'self' https://api.healthybites.vfernandezg.dev`.
+  - `connect-src 'self' https://api-healthybites.vfernandezg.dev`.
   - `img-src` y `media-src` admiten `https:` por las URLs prefirmadas del almacenamiento de ficheros.
   - `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'self'` y `form-action 'self'`.
 - **Otras cabeceras:** HSTS, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`,
@@ -43,7 +43,10 @@ El hosting de la web aún no está decidido; Vercel es lo previsto.
 
 - **Un cambio que rompa la CSP falla en CI:** un script en línea, un dominio nuevo para la API o una librería que
   inyecte scripts.
-- **Si la API cambia de dominio,** hay que actualizar `connect-src` en `vercel.json`.
+- **Dominios previstos:** la app en `app-healthybites.vfernandezg.dev` y la API en
+  `api-healthybites.vfernandezg.dev`. Son orígenes distintos del mismo sitio (`vfernandezg.dev`), así que la cookie
+  `SameSite=Strict` del refresh sigue viajando y la API solo tiene que permitir el origen de la app en CORS. Si la API
+  cambia de dominio, hay que actualizar `connect-src` en `vercel.json`.
 - **Si el hosting no es Vercel,** se traducen las mismas reglas a su formato; la política no cambia.
 - **Trusted Types se evaluó y queda fuera.** Con `require-trusted-types-for 'script'`, PrimeNG escribe `innerHTML`
   en un ShadowRoot fuera de las políticas de Angular y fallaban 119 de las 201 pruebas. Se revisará cuando PrimeNG lo
