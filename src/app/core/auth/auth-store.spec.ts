@@ -54,7 +54,7 @@ describe('AuthStore', () => {
     expect(request.request.headers.get('X-Requested-With')).toBe('XMLHttpRequest');
     request.flush(session('NUTRITIONIST'));
 
-    await expect(Promise.all([first, second])).resolves.toEqual([true, true]);
+    await expect(Promise.all([first, second])).resolves.toEqual(['renewed', 'renewed']);
     expect(store.role()).toBe('NUTRITIONIST');
   });
 
@@ -64,9 +64,35 @@ describe('AuthStore', () => {
       .expectOne('/api/v1/auth/refresh')
       .flush({ code: 'invalid-refresh-token' }, { status: 401, statusText: 'Unauthorized' });
 
-    await expect(refresh).resolves.toBe(false);
+    await expect(refresh).resolves.toBe('expired');
     expect(store.isAuthenticated()).toBe(false);
     expect(store.homeUrl()).toBe('/auth/login');
+  });
+
+  it('sin red o con un 5xx al renovar, la sesión sigue', async () => {
+    store.applySession(session());
+
+    const offline = store.refresh();
+    http.expectOne('/api/v1/auth/refresh').error(new ProgressEvent('error'));
+    await expect(offline).resolves.toBe('unavailable');
+
+    const failing = store.refresh();
+    http
+      .expectOne('/api/v1/auth/refresh')
+      .flush(null, { status: 503, statusText: 'Service Unavailable' });
+    await expect(failing).resolves.toBe('unavailable');
+
+    expect(store.accessToken()).toBe('token-1');
+  });
+
+  it('al arrancar no espera a la API más de lo previsto', async () => {
+    await store.restore(5);
+    expect(store.isAuthenticated()).toBe(false);
+
+    // Si la respuesta llega después, la sesión se aplica igualmente.
+    http.expectOne('/api/v1/auth/refresh').flush(session());
+    await Promise.resolve();
+    expect(store.isAuthenticated()).toBe(true);
   });
 
   it('cerrar sesión la borra, avisa al servidor y vuelve al login', async () => {
@@ -93,6 +119,58 @@ describe('AuthStore', () => {
     http.expectOne('/api/v1/auth/login').flush(session('CLIENT'));
 
     await expect(register).resolves.toMatchObject({ role: 'CLIENT' });
+  });
+
+  describe('entre pestañas', () => {
+    let tabs: BroadcastChannel;
+
+    beforeEach(() => {
+      tabs = new BroadcastChannel('healthybites-session');
+    });
+
+    afterEach(() => {
+      tabs.close();
+    });
+
+    it('avisa a las demás pestañas al entrar', async () => {
+      const received: unknown[] = [];
+      tabs.addEventListener('message', (event: MessageEvent<unknown>) => received.push(event.data));
+
+      const login = store.login('maria.lopez@healthybites.com', 'una-clave-larga');
+      http.expectOne('/api/v1/auth/login').flush(session());
+      await login;
+
+      await vi.waitFor(() => {
+        expect(received).toEqual([{ type: 'login', userId: session().user.id }]);
+      });
+    });
+
+    it('si otra pestaña entra con otra cuenta, adopta esa sesión y va a su inicio', async () => {
+      store.applySession(session('CLIENT'));
+      const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+      const other = session('NUTRITIONIST', 'token-2');
+
+      tabs.postMessage({ type: 'login', userId: 'otra-cuenta' });
+
+      await vi.waitFor(() => {
+        http
+          .expectOne('/api/v1/auth/refresh')
+          .flush({ ...other, user: { ...other.user, id: 'otra-cuenta' } });
+      });
+      await vi.waitFor(() => {
+        expect(navigate).toHaveBeenCalledWith('/nutritionist');
+      });
+      expect(store.accessToken()).toBe('token-2');
+    });
+
+    it('si es la misma cuenta, o el mensaje no es de la app, no hace nada', async () => {
+      store.applySession(session());
+      tabs.postMessage({ type: 'login', userId: session().user.id });
+      tabs.postMessage({ type: 'algo-raro' });
+
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      http.expectNone('/api/v1/auth/refresh');
+    });
   });
 
   it('actualiza el nombre de la sesión tras editar el perfil', () => {

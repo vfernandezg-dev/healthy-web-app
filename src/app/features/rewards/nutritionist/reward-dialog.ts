@@ -1,18 +1,18 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
-import { FormField, form, max, maxLength, min, required, submit } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
+import { Component, computed, inject, output, signal, input, linkedSignal } from '@angular/core';
+import { FormField, form, max, maxLength, min, required } from '@angular/forms/signals';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
 import { SelectButton } from 'primeng/selectbutton';
 import { Textarea } from 'primeng/textarea';
-import { toProblem } from '../../../core/api/problem';
-import type { RewardResponse } from '../../../core/api/schema';
-import { LabeledField, fieldDescription } from '../../../shared/forms/labeled-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../../shared/forms/server-errors';
+import type { RewardResponse } from '@core/api/schema';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
 import { RewardsApi } from '../data/rewards-api';
+import { PAGE_SIZE } from '@shared/table/page-size';
+import { ContentApi } from '@features/content/data/content-api';
+import { MealPlansApi } from '@features/meal-plans/data/meal-plans-api';
+import { FormDialog } from '@shared/forms/form-dialog';
+import { formSubmitter } from '@shared/forms/form-submitter';
 
 type PrizeType = 'CONTENT' | 'MEAL_PLAN';
 
@@ -29,129 +29,32 @@ function optionsFor(prizes: readonly { id: string; title: string }[]) {
   return prizes.map((prize) => ({ label: prize.title, value: prize.id }));
 }
 
-/** Crear o editar una recompensa. El premio es un contenido o un plan propio y publicado. */
+/** Crear o editar una recompensa. El premio es un contenido o un plan propio y publicado. La página lo crea al abrirlo. */
 @Component({
   selector: 'app-reward-dialog',
   imports: [
     FormField,
-    Dialog,
     InputText,
     InputNumber,
     Textarea,
     Select,
     SelectButton,
-    Message,
-    ButtonDirective,
-    ButtonLabel,
     LabeledField,
+    FormDialog,
   ],
-  template: `
-    <p-dialog
-      [(visible)]="visible"
-      [header]="editing() ? 'Editar la recompensa' : 'Nueva recompensa'"
-      [modal]="true"
-      [draggable]="false"
-      closeAriaLabel="Cerrar"
-      styleClass="w-[min(34rem,calc(100vw-2rem))]"
-    >
-      @if (failure(); as message) {
-        <p-message severity="error" class="mb-4 block">{{ message }}</p-message>
-      }
-      <form id="reward-form" class="space-y-5" novalidate (submit)="onSubmit($event)">
-        <app-field label="Nombre" inputId="reward-title" [field]="rewardForm.title">
-          <input
-            pInputText
-            id="reward-title"
-            class="w-full"
-            placeholder="Por ejemplo: Constancia de 7 días"
-            [formField]="rewardForm.title"
-            [attr.aria-describedby]="describe('reward-title', rewardForm.title)"
-          />
-        </app-field>
-        <app-field
-          label="Descripción"
-          inputId="reward-description"
-          [field]="rewardForm.description"
-        >
-          <textarea
-            pTextarea
-            id="reward-description"
-            rows="2"
-            class="w-full"
-            [formField]="rewardForm.description"
-            [attr.aria-describedby]="describe('reward-description', rewardForm.description)"
-          ></textarea>
-        </app-field>
-        <app-field
-          label="Días seguidos"
-          inputId="reward-days"
-          [field]="rewardForm.requiredStreakDays"
-        >
-          <p-inputnumber
-            inputId="reward-days"
-            suffix=" días"
-            [useGrouping]="false"
-            [fluid]="true"
-            [formField]="rewardForm.requiredStreakDays"
-            [ariaDescribedBy]="describe('reward-days', rewardForm.requiredStreakDays) ?? undefined"
-          />
-        </app-field>
-        <div>
-          <span id="reward-prize-type-label" class="mb-1.5 block text-sm font-semibold text-ink"
-            >Premio</span
-          >
-          <p-selectbutton
-            ariaLabelledBy="reward-prize-type-label"
-            [options]="prizeTypes"
-            optionLabel="label"
-            optionValue="value"
-            [allowEmpty]="false"
-            [formField]="rewardForm.prizeType"
-          />
-        </div>
-        <app-field
-          [label]="model().prizeType === 'CONTENT' ? 'Contenido' : 'Plan alimenticio'"
-          inputId="reward-prize"
-          [field]="rewardForm.prizeId"
-          hint="Solo aparecen tus contenidos y planes publicados."
-        >
-          <p-select
-            appendTo="body"
-            inputId="reward-prize"
-            ariaLabelledBy="reward-prize-label"
-            [options]="prizeOptions()"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Elige uno"
-            [fluid]="true"
-            [formField]="rewardForm.prizeId"
-          />
-        </app-field>
-      </form>
-      <ng-template #footer>
-        <button
-          pButton
-          type="button"
-          severity="secondary"
-          variant="text"
-          (click)="visible.set(false)"
-        >
-          <span pButtonLabel>Cancelar</span>
-        </button>
-        <button pButton type="submit" form="reward-form" [loading]="rewardForm().submitting()">
-          <span pButtonLabel>{{ editing() ? 'Guardar' : 'Crear la recompensa' }}</span>
-        </button>
-      </ng-template>
-    </p-dialog>
-  `,
+  templateUrl: './reward-dialog.html',
 })
 export class RewardDialog {
   private readonly api = inject(RewardsApi);
 
-  readonly saved = output<RewardResponse>();
+  private readonly submitForm = formSubmitter();
 
-  protected readonly visible = signal(false);
-  private readonly reward = signal<RewardResponse | null>(null);
+  /** La recompensa que se edita; null para crear una. */
+  readonly reward = input.required<RewardResponse | null>();
+  readonly saved = output<RewardResponse>();
+  readonly closed = output();
+
+  protected readonly open = signal(true);
   protected readonly editing = computed(() => this.reward() !== null);
   protected readonly failure = signal<string | null>(null);
   protected readonly describe = fieldDescription;
@@ -160,15 +63,26 @@ export class RewardDialog {
     { label: 'Un plan', value: 'MEAL_PLAN' },
   ];
 
-  private readonly content = this.api.ownContent();
-  private readonly plans = this.api.ownMealPlans();
+  /**
+   * Premios posibles: sus contenidos y sus planes publicados (todos de una vez). Se piden al abrir el diálogo: la
+   * página lo crea solo entonces.
+   */
+  private readonly content = inject(ContentApi).mine(
+    signal({ status: 'PUBLISHED', page: 0, size: PAGE_SIZE.options, sort: 'updatedAt,desc' }),
+  );
+  private readonly plans = inject(MealPlansApi).mine(
+    signal({ status: 'PUBLISHED', page: 0, size: PAGE_SIZE.options, sort: 'title,asc' }),
+  );
 
-  protected readonly model = signal<RewardModel>({
-    title: '',
-    description: '',
-    requiredStreakDays: 7,
-    prizeType: 'CONTENT',
-    prizeId: null,
+  protected readonly model = linkedSignal<RewardModel>(() => {
+    const reward = this.reward();
+    return {
+      title: reward?.title ?? '',
+      description: reward?.description ?? '',
+      requiredStreakDays: reward?.requiredStreakDays ?? 7,
+      prizeType: reward?.target.type ?? 'CONTENT',
+      prizeId: reward?.target.id ?? null,
+    };
   });
   protected readonly rewardForm = form(this.model, (path) => {
     required(path.title, { message: 'Ponle un nombre' });
@@ -196,56 +110,33 @@ export class RewardDialog {
     {
       equal: (a, b) =>
         a.length === b.length &&
-        a.every(
-          (option, index) => option.value === b[index].value && option.label === b[index].label,
-        ),
+        a.every((option, index) => {
+          const other = b.at(index);
+          return option.value === other?.value && option.label === other.label;
+        }),
     },
   );
 
-  open(reward: RewardResponse | null): void {
-    this.reward.set(reward);
-    this.failure.set(null);
-    this.rewardForm().reset({
-      title: reward?.title ?? '',
-      description: reward?.description ?? '',
-      requiredStreakDays: reward?.requiredStreakDays ?? 7,
-      prizeType: reward?.target.type ?? 'CONTENT',
-      prizeId: reward?.target.id ?? null,
-    });
-    this.visible.set(true);
-  }
-
-  protected async onSubmit(event: Event): Promise<void> {
-    event.preventDefault();
-    this.failure.set(null);
-    await submit(this.rewardForm, {
-      action: async () => {
+  protected save(event: Event): Promise<void> {
+    return this.submitForm(event, this.rewardForm, {
+      failure: this.failure,
+      save: () => {
         const value = this.model();
         const body = {
           title: value.title.trim(),
           description: value.description.trim(),
+          // El esquema exige los días y el premio: aquí nunca son null.
           requiredStreakDays: value.requiredStreakDays ?? 1,
           contentItemId: value.prizeType === 'CONTENT' ? value.prizeId : null,
           mealPlanId: value.prizeType === 'MEAL_PLAN' ? value.prizeId : null,
         };
         const current = this.reward();
-        try {
-          const saved = current
-            ? await this.api.update(current.id, body)
-            : await this.api.create(body);
-          this.visible.set(false);
-          this.saved.emit(saved);
-          return undefined;
-        } catch (error) {
-          const problem = toProblem(error);
-          if (problem.errors.length > 0) {
-            return serverFieldErrors(this.rewardForm, problem);
-          }
-          this.failure.set(problem.detail);
-          return undefined;
-        }
+        return current ? this.api.update(current.id, body) : this.api.create(body);
       },
-      onInvalid: (tree) => focusFirstInvalid(tree),
+      onSuccess: (reward) => {
+        this.saved.emit(reward);
+        this.open.set(false);
+      },
     });
   }
 }

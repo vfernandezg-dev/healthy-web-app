@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 import { expectNoA11yViolations } from './support/a11y';
-import { mockApi, problem } from './support/api';
+import { mockApi, problem, requestBody } from './support/api';
 
 const CLIENT_ME = {
   id: '00000000-0000-7000-8000-000000000005',
@@ -20,7 +20,7 @@ test.describe('perfil', () => {
       routes: {
         '/me': (route) => route.fulfill({ json: CLIENT_ME }),
         '/me/profile': (route) => {
-          saved = route.request().postDataJSON();
+          saved = requestBody<Record<string, unknown>>(route);
           return route.fulfill({
             json: {
               ...CLIENT_ME,
@@ -131,7 +131,7 @@ test.describe('perfil', () => {
       routes: {
         '/me': (route) => route.fulfill({ json: me }),
         '/me/profile': (route) => {
-          saved = route.request().postDataJSON();
+          saved = requestBody<Record<string, unknown>>(route);
           return route.fulfill({ json: me });
         },
       },
@@ -159,14 +159,16 @@ test.describe('perfil', () => {
         '/me': (route) => {
           calls += 1;
           return calls === 1
-            ? route.fulfill(problem(503, 'unavailable', 'El servicio no está disponible'))
+            ? route.fulfill(problem(503, 'unavailable', 'Detalle interno del servidor'))
             : route.fulfill({ json: CLIENT_ME });
         },
       },
     });
 
     await page.goto('/client/profile');
-    await expect(page.getByText('El servicio no está disponible')).toBeVisible();
+    // Un 5xx enseña un texto genérico, nunca el del servidor.
+    await expect(page.getByText('El servidor no está disponible ahora mismo')).toBeVisible();
+    await expect(page.getByText('Detalle interno del servidor')).toHaveCount(0);
     await page.getByRole('button', { name: 'Reintentar' }).click();
     await expect(page.getByLabel('Nombre')).toHaveValue('María');
   });

@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { type Route, Router, type UrlTree, provideRouter } from '@angular/router';
+import { Router, type UrlTree, provideRouter } from '@angular/router';
 import { AuthStore } from './auth-store';
 import { guestGuard, roleGuard } from './guards';
 import { provideTestConfig, session } from './testing';
@@ -24,7 +24,7 @@ describe('guards', () => {
   });
 
   const run = (guard: ReturnType<typeof roleGuard>) =>
-    TestBed.runInInjectionContext(() => guard({} as Route, [], {} as never));
+    TestBed.runInInjectionContext(() => guard({}, [], {} as never));
   const url = (result: unknown) => router.serializeUrl(result as UrlTree);
 
   it('sin sesión, las áreas privadas llevan al login', () => {

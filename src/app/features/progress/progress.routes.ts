@@ -6,7 +6,7 @@ export const PROGRESS_ROUTES: Routes = [
   {
     path: '',
     title: 'Tu progreso',
-    providers: [provideEchartsCore({ echarts: () => import('../../shared/charts/echarts-setup') })],
+    providers: [provideEchartsCore({ echarts: () => import('@shared/charts/echarts-setup') })],
     loadComponent: () => import('./progress-page').then((m) => m.ProgressPage),
   },
 ];

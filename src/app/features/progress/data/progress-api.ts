@@ -1,15 +1,15 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, type Signal, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import { silentErrors } from '../../../core/api/http-context';
+import { APP_CONFIG } from '@core/api/api-config';
+import { silentErrors } from '@core/api/http-context';
 import type {
   GoalRequest,
   GoalResponse,
   RecommendationResponse,
   WeightEntryRequest,
   WeightEntryResponse,
-} from '../../../core/api/schema';
+} from '@core/api/schema';
 
 /** Metas de peso del cliente, sus pesajes y la recomendación de peso saludable. */
 @Injectable({ providedIn: 'root' })

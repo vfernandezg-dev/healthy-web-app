@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 import { expectNoA11yViolations } from './support/a11y';
-import { mockApi, problem } from './support/api';
+import { mockApi, problem, requestBody } from './support/api';
 
 /** PNG de 1×1 px para portadas simuladas. */
 const PNG = Buffer.from(
@@ -123,9 +123,10 @@ test.describe('contenido para clientes', () => {
     await browser.goto('/client/content/contenido-video');
     await browser.getByRole('button', { name: 'Ver el vídeo' }).click();
 
+    // URL absoluta y comprobada: solo rutas de la propia API.
     await expect(browser.locator('video')).toHaveAttribute(
       'src',
-      '/api/v1/media/clip?expires=1&signature=s',
+      /^http:\/\/localhost:\d+\/api\/v1\/media\/clip\?expires=1&signature=s$/,
     );
   });
 
@@ -179,7 +180,7 @@ test.describe('contenido del nutricionista', () => {
           }),
         '/media/cover1': (route) => route.fulfill({ contentType: 'image/png', body: PNG }),
         '/nutritionist/content-items': (route) => {
-          created = route.request().postDataJSON();
+          created = requestBody<Record<string, unknown>>(route);
           return route.fulfill({ status: 201, json: saved() });
         },
         '/nutritionist/content-items/nueva': (route) => route.fulfill({ json: saved() }),

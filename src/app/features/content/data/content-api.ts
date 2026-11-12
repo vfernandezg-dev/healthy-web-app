@@ -1,8 +1,8 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, type Signal, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import { silentErrors } from '../../../core/api/http-context';
+import { APP_CONFIG } from '@core/api/api-config';
+import { silentErrors } from '@core/api/http-context';
 import type {
   ContentDetailResponse,
   ContentRequest,
@@ -10,16 +10,21 @@ import type {
   EditableContentResponse,
   FileLinkResponse,
   PagedModelContentSummaryResponse,
-} from '../../../core/api/schema';
-import type { ContentCategory, ContentType } from '../../../shared/i18n/labels';
+  PublicationSummaryResponse,
+} from '@core/api/schema';
+import type { ContentCategory, ContentType, PublicationStatus } from '@shared/i18n/labels';
+import { type PageRequest, pageParams } from '@shared/table/page-query';
 
-export const CONTENT_PAGE_SIZE = 12;
-
-export interface ContentQuery {
+export interface ContentFilters {
   readonly type: ContentType | null;
   readonly category: ContentCategory | null;
-  readonly search: string;
-  readonly page: number;
+  /** Busca por título. */
+  readonly q: string;
+}
+
+/** Contenido del nutricionista: todo, o solo el de un estado. */
+export interface OwnContentFilters {
+  readonly status: PublicationStatus | null;
 }
 
 /** Contenido: catálogo, detalle y fichero del cliente; gestión del nutricionista. */
@@ -30,20 +35,10 @@ export class ContentApi {
 
   // ---------------------------------------------------------------- cliente
 
-  catalog(query: Signal<ContentQuery>) {
+  catalog(request: Signal<ContentFilters & PageRequest>) {
     return httpResource<PagedModelContentSummaryResponse>(() => {
-      const { type, category, search, page } = query();
-      return {
-        url: `${this.api}/content-items`,
-        params: {
-          page,
-          size: CONTENT_PAGE_SIZE,
-          sort: 'publishedAt,desc',
-          ...(type ? { type } : {}),
-          ...(category ? { category } : {}),
-          ...(search.trim() ? { q: search.trim() } : {}),
-        },
-      };
+      const { type, category, q, ...page } = request();
+      return { url: `${this.api}/content-items`, params: pageParams(page, { type, category, q }) };
     });
   }
 
@@ -64,11 +59,22 @@ export class ContentApi {
 
   // ---------------------------------------------------------------- nutricionista
 
-  mine(page: Signal<number>) {
-    return httpResource<PagedModelContentSummaryResponse>(() => ({
-      url: `${this.api}/nutritionist/content-items`,
-      params: { page: page(), size: 20, sort: 'updatedAt,desc' },
-    }));
+  /** Su contenido (en todos los estados, o en uno). Lo usan también el panel y el diálogo de recompensas. */
+  mine(request: Signal<OwnContentFilters & PageRequest>) {
+    return httpResource<PagedModelContentSummaryResponse>(() => {
+      const { status, ...page } = request();
+      return {
+        url: `${this.api}/nutritionist/content-items`,
+        params: pageParams(page, { status }),
+      };
+    });
+  }
+
+  /** Cuántos contenidos tiene en cada estado. */
+  summary() {
+    return httpResource<PublicationSummaryResponse>(
+      () => `${this.api}/nutritionist/content-items/summary`,
+    );
   }
 
   own(id: Signal<string>) {

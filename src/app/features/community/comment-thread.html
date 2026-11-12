@@ -1,0 +1,83 @@
+@if (comments.loaded()) {
+  @if (comments.items().length === 0) {
+    <p class="text-sm text-muted">Aún no hay comentarios.</p>
+  } @else {
+    <ul class="space-y-3" role="list">
+      @for (comment of comments.items(); track comment.id) {
+        @let author = authorName(comment);
+        <li class="rounded-2xl bg-brand-50/70 px-4 py-3">
+          <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+            <p class="text-sm">
+              <span class="font-semibold">{{ author }}</span>
+              @if (comment.createdAt; as createdAt) {
+                <span class="text-muted">
+                  ·
+                  <time [attr.datetime]="createdAt">{{ createdAt | date: dateFormat }}</time>
+                </span>
+              }
+            </p>
+            <span class="flex gap-1">
+              @if (isMine(comment) || viewer().owner) {
+                <button
+                  pButton
+                  type="button"
+                  size="small"
+                  severity="danger"
+                  variant="text"
+                  [attr.aria-label]="`Eliminar el comentario de ${author}`"
+                  (click)="remove.run(comment)"
+                >
+                  Eliminar
+                </button>
+              }
+              @if (!isMine(comment)) {
+                <button
+                  pButton
+                  type="button"
+                  size="small"
+                  severity="secondary"
+                  variant="text"
+                  [attr.aria-label]="`Denunciar el comentario de ${author}`"
+                  (click)="report.emit({ kind: 'comments', id: comment.id })"
+                >
+                  Denunciar
+                </button>
+              }
+            </span>
+          </div>
+          <p class="mt-1 whitespace-pre-line">{{ comment.body }}</p>
+        </li>
+      }
+    </ul>
+  }
+} @else if (!comments.resource.error()) {
+  <p-skeleton height="4rem" borderRadius="1rem" />
+}
+<app-load-more-footer
+  [list]="comments"
+  label="Ver más comentarios"
+  errorText="No se han podido cargar los comentarios."
+  [describedBy]="titleId()"
+/>
+
+@if (viewer().member) {
+  <form class="space-y-3" novalidate (submit)="save($event)">
+    <app-field label="Tu comentario" [inputId]="inputId()" [field]="commentForm.body">
+      <textarea
+        pTextarea
+        rows="2"
+        class="w-full"
+        [id]="inputId()"
+        [formField]="commentForm.body"
+        [attr.aria-describedby]="describe(inputId(), commentForm.body)"
+      ></textarea>
+    </app-field>
+    <div class="flex justify-end">
+      <button pButton type="submit" size="small" [loading]="commentForm().submitting()">
+        Comentar
+      </button>
+    </div>
+  </form>
+} @else {
+  <p class="text-sm text-muted">Únete al grupo para comentar.</p>
+}

@@ -44,6 +44,9 @@ const DETAILS: Readonly<Record<number, string>> = {
 };
 
 const UNEXPECTED = 'Algo ha fallado. Inténtalo de nuevo en unos minutos.';
+/** Los 5xx nunca muestran el texto del servidor: puede llevar detalles internos y al usuario no le sirve. */
+const SERVER_ERROR =
+  'El servidor no está disponible ahora mismo. Inténtalo de nuevo en unos minutos.';
 
 /** Convierte cualquier error de una petición en un {@link Problem}. Nunca lanza. */
 export function toProblem(error: unknown): Problem {
@@ -60,7 +63,12 @@ export function toProblem(error: unknown): Problem {
       typeof code === 'string' && code ? code : status === 0 ? 'network-error' : `http-${status}`,
     summary:
       SUMMARIES[status] ?? (status >= 500 ? 'Error del servidor' : 'No se ha podido completar'),
-    detail: typeof detail === 'string' && detail ? detail : (DETAILS[status] ?? UNEXPECTED),
+    detail:
+      status >= 500
+        ? SERVER_ERROR
+        : typeof detail === 'string' && detail
+          ? detail
+          : (DETAILS[status] ?? UNEXPECTED),
     errors: Array.isArray(errors) ? errors.filter(isFieldProblem) : [],
     properties: extra,
   };

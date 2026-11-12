@@ -55,7 +55,7 @@
             inputId="profile-birth-date"
             [field]="profileForm.birthDate"
             [optional]="true"
-            [hint]="age() !== null ? 'Tienes ' + age() + ' años.' : undefined"
+            [hint]="age() !== null ? `Tienes ${age()} años.` : undefined"
           >
             <input
               pInputText
@@ -131,7 +131,7 @@
 
         <div class="flex justify-end">
           <button pButton type="submit" [loading]="profileForm().submitting()">
-            <span pButtonLabel>Guardar cambios</span>
+            Guardar cambios
           </button>
         </div>
       </form>
@@ -186,7 +186,7 @@
             severity="secondary"
             [loading]="passwordForm().submitting()"
           >
-            <span pButtonLabel>Cambiar la contraseña</span>
+            Cambiar la contraseña
           </button>
         </div>
       </form>

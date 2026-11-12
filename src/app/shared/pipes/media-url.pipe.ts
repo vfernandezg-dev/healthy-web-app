@@ -1,5 +1,5 @@
 import { Pipe, type PipeTransform, inject } from '@angular/core';
-import { APP_CONFIG } from '../../core/api/api-config';
+import { APP_CONFIG } from '@core/api/api-config';
 
 /** URL completa de un fichero de la API a partir de su ruta (`/media/{id}`, firmada o no). */
 @Pipe({ name: 'mediaUrl' })

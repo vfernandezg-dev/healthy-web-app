@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import type { FieldTree } from '@angular/forms/signals';
-import { LucideCircleAlert } from '@lucide/angular';
+import { LucideCircleExclamationPoint } from '@lucide/angular';
 
 /**
  * Etiqueta, control y mensajes de un campo. El control va proyectado y tiene que usar el mismo `inputId` como id
@@ -14,7 +14,7 @@ import { LucideCircleAlert } from '@lucide/angular';
  */
 @Component({
   selector: 'app-field',
-  imports: [LucideCircleAlert],
+  imports: [LucideCircleExclamationPoint],
   host: { class: 'block' },
   template: `
     <label
@@ -30,7 +30,7 @@ import { LucideCircleAlert } from '@lucide/angular';
     <ng-content />
     @if (error(); as message) {
       <p [id]="inputId() + '-error'" class="mt-1.5 flex items-start gap-1.5 text-sm text-red-700">
-        <svg lucideCircleAlert class="mt-0.5 size-4"></svg>
+        <svg lucideCircleExclamationPoint class="mt-0.5 size-4"></svg>
         <span>{{ message }}</span>
       </p>
     } @else if (hint()) {
@@ -49,7 +49,7 @@ export class LabeledField {
 }
 
 /** Primer mensaje de error de un campo, si se ha tocado y es inválido. */
-export function fieldError(field: FieldTree<unknown> | undefined): string | null {
+function fieldError(field: FieldTree<unknown> | undefined): string | null {
   if (!field) {
     return null;
   }

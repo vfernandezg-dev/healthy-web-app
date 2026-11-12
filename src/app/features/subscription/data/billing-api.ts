@@ -1,15 +1,15 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import { silentErrors } from '../../../core/api/http-context';
+import { APP_CONFIG } from '@core/api/api-config';
+import { silentErrors } from '@core/api/http-context';
 import type {
   CheckoutResponse,
   CurrentSubscriptionResponse,
   PagedModelPaymentResponse,
   PlanResponse,
-} from '../../../core/api/schema';
-import type { Tier } from '../../../shared/i18n/labels';
+} from '@core/api/schema';
+import type { Tier } from '@shared/i18n/labels';
 
 /** Planes, suscripción del usuario y pagos (crear los recursos en el contexto de inyección del componente). */
 @Injectable({ providedIn: 'root' })

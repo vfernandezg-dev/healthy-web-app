@@ -1,10 +1,4 @@
-<a
-  routerLink=".."
-  class="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline"
->
-  <svg lucideArrowLeft class="size-4"></svg>
-  Tus planes
-</a>
+<app-back-link link=".." label="Tus planes" />
 
 @if (detail.error()) {
   <app-load-error [error]="detail.error()" (retry)="detail.reload()" />
@@ -28,46 +22,22 @@
         }
       </p>
     </div>
-    <div class="flex flex-wrap gap-2">
-      @if (status === 'DRAFT') {
-        <button
-          pButton
-          type="button"
-          severity="danger"
-          variant="text"
-          [disabled]="busy()"
-          (click)="remove()"
-        >
-          <svg lucideTrash2 pButtonIcon></svg>
-          <span pButtonLabel>Eliminar</span>
-        </button>
-        <button pButton type="button" [loading]="busy()" (click)="publish()">
-          <svg lucideSend pButtonIcon></svg>
-          <span pButtonLabel>Publicar</span>
-        </button>
-      } @else if (status === 'PUBLISHED') {
-        <button
-          pButton
-          type="button"
-          severity="secondary"
-          variant="outlined"
-          [loading]="busy()"
-          (click)="archive()"
-        >
-          <svg lucideArchive pButtonIcon></svg>
-          <span pButtonLabel>Archivar</span>
-        </button>
-      }
-    </div>
+    <app-publication-actions
+      [status]="status"
+      [pending]="pending()"
+      (publish)="publish.run()"
+      (archive)="archive.run()"
+      (remove)="remove.run()"
+    />
   </header>
 
   <div class="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] xl:items-start">
     <section aria-labelledby="meals-title" class="space-y-4">
       <h2 id="meals-title" class="text-xl font-bold">Comidas</h2>
       @for (day of days(); track day.day) {
-        <section class="card p-5" [attr.aria-labelledby]="'editor-day-' + day.day">
+        <section class="card p-5" [attr.aria-labelledby]="`editor-day-${day.day}`">
           <div class="mb-3 flex items-center justify-between gap-3">
-            <h3 [id]="'editor-day-' + day.day" class="font-bold">
+            <h3 [id]="`editor-day-${day.day}`" class="font-bold">
               Día {{ day.day }}
               @if (day.calories > 0) {
                 <span class="ml-2 text-sm font-medium text-muted"
@@ -80,11 +50,11 @@
               type="button"
               size="small"
               variant="text"
-              (click)="addMeal(day.day)"
-              [attr.aria-label]="'Añadir comida al día ' + day.day"
+              (click)="mealDialog.open({ meal: null, day: day.day })"
+              [attr.aria-label]="`Añadir comida al día ${day.day}`"
             >
-              <svg lucidePlus pButtonIcon></svg>
-              <span pButtonLabel>Añadir comida</span>
+              <svg lucidePlus></svg>
+              Añadir comida
             </button>
           </div>
           @if (day.meals.length === 0) {
@@ -106,10 +76,10 @@
                       severity="secondary"
                       variant="text"
                       [iconOnly]="true"
-                      [attr.aria-label]="'Editar ' + meal.name"
-                      (click)="editMeal(meal)"
+                      [attr.aria-label]="`Editar ${meal.name}`"
+                      (click)="mealDialog.open({ meal })"
                     >
-                      <svg lucidePencil pButtonIcon></svg>
+                      <svg lucidePencil></svg>
                     </button>
                     <button
                       pButton
@@ -118,10 +88,10 @@
                       severity="danger"
                       variant="text"
                       [iconOnly]="true"
-                      [attr.aria-label]="'Quitar ' + meal.name"
-                      (click)="deleteMeal(meal)"
+                      [attr.aria-label]="`Quitar ${meal.name}`"
+                      (click)="deleteMeal.run(meal)"
                     >
-                      <svg lucideTrash2 pButtonIcon></svg>
+                      <svg lucideTrash></svg>
                     </button>
                   </span>
                 </li>
@@ -138,19 +108,23 @@
         <app-plan-fields [form]="planForm" />
         <div class="mt-6 flex justify-end">
           <button pButton type="submit" [loading]="planForm().submitting()">
-            <span pButtonLabel>Guardar los datos</span>
+            Guardar los datos
           </button>
         </div>
       </form>
     </section>
   </div>
 
-  <app-meal-dialog
-    [planId]="current.plan.id"
-    [durationDays]="current.plan.durationDays"
-    [positionFor]="positionFor"
-    (saved)="mealSaved()"
-  />
+  @defer (when mealDialog.isOpen(); prefetch on idle) {
+    @if (mealDialog.data(); as dialog) {
+      <app-meal-dialog
+        [plan]="current"
+        [target]="dialog.value"
+        (saved)="mealSaved()"
+        (closed)="mealDialog.close()"
+      />
+    }
+  }
 } @else {
   <div class="space-y-4" aria-busy="true">
     <p-skeleton height="2.5rem" width="50%" />

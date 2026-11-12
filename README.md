@@ -46,14 +46,19 @@ rutas `/auth/login` y `/auth/register` son las que enlaza la landing.
 ```text
 src/app/
 ├── core/       Servicios únicos de la app: sesión (auth), cliente de la API y sus tipos, interceptores,
-│               avisos y confirmaciones, título de la pestaña y tema de PrimeNG.
+│               avisos y confirmaciones, título de la pestaña, navegación y salidas externas, tema de PrimeNG.
 ├── layout/     Marco: layout de autenticación, shell con menú lateral (cajón en móvil) y página 404.
-├── shared/     Piezas reutilizables sin estado de negocio: campos de formulario, tablas, tarjetas, iconos,
-│               pipes, utilidades de fechas y texto, gráfico de peso.
-└── features/   Una carpeta por funcionalidad, con sus rutas y su `data/<funcionalidad>-api.ts`:
+├── shared/     Piezas reutilizables sin estado de negocio: listados paginados (pagedQuery, PagedGrid), formularios
+│               (formSubmitter, FormDialog), escrituras (mutation), tarjetas y celdas, pipes, gráfico de peso.
+└── features/   Una carpeta por funcionalidad: data/ (su API, stores de página, funciones puras), ui/
+                (presentacionales) y sus páginas y diálogos.
                 auth · dashboard · profile · progress · habits · rewards · meal-plans · content ·
                 community · subscription · nutritionist-clients · admin
 ```
+
+Las capas se importan con alias (`@core`, `@shared`, `@layout`, `@features`) y ESLint comprueba sus fronteras: de
+otra funcionalidad solo se usa su `data/`. Cómo se escribe cada cosa (estado, formularios, diálogos, listados) está en
+la [guía del frontend](docs/frontend-guidelines.md).
 
 ```mermaid
 flowchart LR
@@ -77,19 +82,23 @@ flowchart LR
   ([ADR 0004](docs/adr/0004-tipos-desde-openapi.md)).
 - **Errores RFC 9457.** El interceptor convierte cada `ProblemDetail` en un aviso (solo en las escrituras); los
   formularios muestran el mensaje de la API en su sitio.
+- **Diálogos declarativos.** Se crean al abrirlos dentro de un `@defer`, cada uno en su chunk, y piden sus datos solo
+  entonces ([ADR 0008](docs/adr/0008-dialogos-declarativos-y-stores-de-pagina.md)).
+- **CSP y cabeceras de seguridad** en `vercel.json`, aplicadas también en las pruebas E2E, que fallan ante cualquier
+  violación ([ADR 0009](docs/adr/0009-csp-y-cabeceras-de-seguridad.md)).
 
 ## Stack
 
-| Área            | Tecnología                                                                               |
-| --------------- | ---------------------------------------------------------------------------------------- |
-| Framework       | Angular 22 (zoneless, standalone, signals, Signal Forms), TypeScript 6                   |
-| Interfaz        | PrimeNG 22 (modo styled, preset propio sobre Aura), Tailwind CSS 4 + tailwindcss-primeui |
-| Iconos y fuente | Lucide (`@lucide/angular`), Plus Jakarta Sans (la misma tipografía que la landing)       |
-| Gráficos        | Apache ECharts 6 con ngx-echarts (solo los módulos usados, con SVG)                      |
-| Configuración   | Variables `NG_APP_*` con `@ngx-env/builder`                                              |
-| Pruebas         | Vitest (unitarias), Playwright + `@axe-core/playwright` (E2E y accesibilidad)            |
-| Calidad         | ESLint (angular-eslint con reglas de accesibilidad), Prettier con el plugin de Tailwind  |
-| Herramientas    | Node 26, pnpm 12 (con `minimumReleaseAge`), GitHub Actions, Dependabot, gitleaks         |
+| Área            | Tecnología                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------ |
+| Framework       | Angular 22 (zoneless, standalone, signals, Signal Forms), TypeScript 6                                 |
+| Interfaz        | PrimeNG 22 (modo styled, preset propio sobre Aura), Tailwind CSS 4 + tailwindcss-primeui               |
+| Iconos y fuente | Lucide (`@lucide/angular`), Plus Jakarta Sans (la misma tipografía que la landing)                     |
+| Gráficos        | Apache ECharts 6 con ngx-echarts (solo los módulos usados, con SVG)                                    |
+| Configuración   | Variables `NG_APP_*` con `@ngx-env/builder`                                                            |
+| Pruebas         | Vitest (unitarias), Playwright + `@axe-core/playwright` (E2E y accesibilidad)                          |
+| Calidad         | TypeScript estricto, ESLint con tipos (angular-eslint, accesibilidad, fronteras entre capas), Prettier |
+| Herramientas    | Node 26, pnpm 12 (con `minimumReleaseAge`), GitHub Actions, Dependabot, gitleaks                       |
 
 ## Ejecución local
 
@@ -157,15 +166,16 @@ falla si no está; en CI va en el secreto `PRIMENG_LICENSE_KEY`.
 | `pnpm start`              | Servidor de desarrollo en el puerto 4210, con proxy a la API                    |
 | `pnpm build`              | Build de producción en `dist/`                                                  |
 | `pnpm build:release`      | Build de producción que exige la clave de PrimeNG                               |
-| `pnpm lint`               | ESLint (TypeScript y plantillas, con reglas de accesibilidad)                   |
+| `pnpm lint`               | ESLint con tipos (plantillas, accesibilidad, fronteras entre capas)             |
+| `pnpm typecheck:e2e`      | Comprueba los tipos de las pruebas E2E (Playwright no lo hace)                  |
 | `pnpm format`             | Prettier (y `format:check` para comprobarlo)                                    |
 | `pnpm test`               | Tests unitarios (Vitest)                                                        |
-| `pnpm test:e2e`           | E2E con Playwright y axe sobre el build, en escritorio y móvil                  |
+| `pnpm test:e2e`           | E2E con Playwright y axe sobre el build, con la CSP de producción               |
 | `pnpm test:e2e:fullstack` | Recorridos contra la API real, antes de cada release (`e2e-fullstack/`)         |
 | `pnpm api:sync`           | Copia `docs/openapi.yaml` de la API hermana y regenera los tipos                |
 | `pnpm api:check`          | Falla si los tipos generados no coinciden con el contrato commiteado            |
 | `pnpm theme:check`        | Falla si el preset no trae los tokens de algún componente de PrimeNG que se usa |
-| `pnpm verify`             | Lint, formato, contrato, tema, tests y build: lo mismo que CI antes de los E2E  |
+| `pnpm verify`             | Lint, tipos E2E, formato, contrato, tema, tests y build (CI antes de los E2E)   |
 
 - **E2E con la API simulada** (`page.route`): cada funcionalidad tiene su recorrido por rol, y
   [`e2e/routes.spec.ts`](e2e/routes.spec.ts) visita todas las rutas comprobando el título, el `h1`, que no queden
@@ -182,8 +192,9 @@ falla si no está; en CI va en el secreto `PRIMENG_LICENSE_KEY`.
 ## Decisiones
 
 Las decisiones de arquitectura están en [`docs/adr`](docs/adr/README.md): Angular sin zone.js, PrimeNG con Tailwind y
-tema propio, la sesión en memoria, los tipos generados del contrato, las pruebas con la API simulada y los gráficos
-con ECharts.
+tema propio, la sesión en memoria, los tipos generados del contrato, las pruebas con la API simulada, los gráficos
+con ECharts, las capas con sus fronteras, los diálogos declarativos con los stores de página y la CSP. La
+[guía del frontend](docs/frontend-guidelines.md) es su versión práctica.
 
 ## Equipo
 

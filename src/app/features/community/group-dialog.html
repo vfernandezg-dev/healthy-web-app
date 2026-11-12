@@ -1,0 +1,56 @@
+<app-form-dialog
+  [(open)]="open"
+  [header]="editing() ? 'Editar el grupo' : 'Nuevo grupo'"
+  formId="group-form"
+  [submitLabel]="editing() ? 'Guardar' : 'Crear el grupo'"
+  [submitting]="groupForm().submitting()"
+  [failure]="failure()"
+  (closed)="closed.emit()"
+>
+  <form id="group-form" class="space-y-5" novalidate (submit)="save($event)">
+    <app-field label="Nombre" inputId="group-name" [field]="groupForm.name">
+      <input
+        pInputText
+        id="group-name"
+        class="w-full"
+        [formField]="groupForm.name"
+        [attr.aria-describedby]="describe('group-name', groupForm.name)"
+      />
+    </app-field>
+    <app-field
+      label="Descripción"
+      inputId="group-description"
+      [field]="groupForm.description"
+      [optional]="true"
+    >
+      <textarea
+        pTextarea
+        id="group-description"
+        rows="3"
+        class="w-full"
+        [formField]="groupForm.description"
+        [attr.aria-describedby]="describe('group-description', groupForm.description)"
+      ></textarea>
+    </app-field>
+    <div>
+      <span id="group-visibility-label" class="mb-1.5 block text-sm font-semibold text-ink"
+        >¿Quién puede leerlo?</span
+      >
+      <p-selectbutton
+        ariaLabelledBy="group-visibility-label"
+        [options]="visibilityOptions"
+        optionLabel="label"
+        optionValue="value"
+        [allowEmpty]="false"
+        [formField]="groupForm.visibility"
+      />
+      <p class="mt-1.5 text-sm text-muted">
+        {{
+          model().visibility === 'PUBLIC'
+            ? 'Cualquiera puede entrar y leer.'
+            : 'Hay que pedir entrar y tú apruebas cada solicitud.'
+        }}
+      </p>
+    </div>
+  </form>
+</app-form-dialog>

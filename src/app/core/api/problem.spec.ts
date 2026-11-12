@@ -56,6 +56,18 @@ describe('toProblem', () => {
     const problem = toProblem(new HttpErrorResponse({ status: 503, error: null }));
 
     expect(problem).toMatchObject({ code: 'http-503', summary: 'Error del servidor' });
-    expect(problem.detail).toContain('Algo ha fallado');
+    expect(problem.detail).toContain('El servidor no está disponible');
+  });
+
+  it('un 5xx nunca enseña el texto del servidor, pero conserva su código', () => {
+    const problem = toProblem(
+      new HttpErrorResponse({
+        status: 500,
+        error: { code: 'internal-error', detail: 'NullPointerException en BillingService:42' },
+      }),
+    );
+
+    expect(problem.code).toBe('internal-error');
+    expect(problem.detail).not.toContain('NullPointerException');
   });
 });

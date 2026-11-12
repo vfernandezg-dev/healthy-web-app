@@ -10,13 +10,12 @@
   optionValue="value"
   [allowEmpty]="false"
   ariaLabel="Estado de las denuncias"
-  [(ngModel)]="status"
+  [formField]="filters.status"
 />
 
 @if (reports.error()) {
   <app-load-error [error]="reports.error()" (retry)="reports.reload()" />
-} @else if (reports.hasValue()) {
-  @let result = reports.value();
+} @else if (reports.page(); as result) {
   @if (result.content.length === 0) {
     <app-empty-state
       [icon]="doneIcon"
@@ -48,7 +47,7 @@
           </div>
 
           <blockquote class="mt-4 border-l-4 border-brand-200 pl-4">
-            <p [id]="'report-' + report.id + '-excerpt'" class="whitespace-pre-line">
+            <p [id]="`report-${report.id}-excerpt`" class="whitespace-pre-line">
               {{ report.excerpt }}
             </p>
             <footer class="mt-1 text-sm text-muted">
@@ -76,20 +75,20 @@
                 type="button"
                 severity="secondary"
                 variant="outlined"
-                [attr.aria-describedby]="'report-' + report.id + '-excerpt'"
-                (click)="dialog()?.open(report, 'DISMISS')"
+                [attr.aria-describedby]="`report-${report.id}-excerpt`"
+                (click)="resolveDialog.open({ report, action: 'DISMISS' })"
               >
-                <span pButtonLabel>Descartar</span>
+                Descartar
               </button>
               <button
                 pButton
                 type="button"
                 severity="danger"
-                [attr.aria-describedby]="'report-' + report.id + '-excerpt'"
-                (click)="dialog()?.open(report, 'HIDE')"
+                [attr.aria-describedby]="`report-${report.id}-excerpt`"
+                (click)="resolveDialog.open({ report, action: 'HIDE' })"
               >
-                <svg lucideEyeOff pButtonIcon></svg>
-                <span pButtonLabel>Ocultar</span>
+                <svg lucideEyeOff></svg>
+                Ocultar
               </button>
             </div>
           } @else if (report.resolvedAt) {
@@ -104,10 +103,10 @@
     @if (result.page.totalPages > 1) {
       <p-paginator
         class="mt-6 block"
-        [first]="result.page.number * pageSize"
-        [rows]="pageSize"
+        [first]="reports.first()"
+        [rows]="reports.pageSize"
         [totalRecords]="result.page.totalElements"
-        (onPageChange)="changePage($event)"
+        (onPageChange)="reports.onPage($event)"
       />
     }
   }
@@ -119,4 +118,12 @@
   </div>
 }
 
-<app-resolve-dialog (resolved)="resolved($event)" />
+@defer (when resolveDialog.isOpen(); prefetch on idle) {
+  @if (resolveDialog.data(); as dialog) {
+    <app-resolve-dialog
+      [resolution]="dialog.value"
+      (resolved)="resolved($event)"
+      (closed)="resolveDialog.close()"
+    />
+  }
+}

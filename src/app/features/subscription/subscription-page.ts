@@ -1,47 +1,36 @@
 import { DatePipe, formatDate } from '@angular/common';
 import { Component, LOCALE_ID, computed, inject, signal } from '@angular/core';
 import { LucideReceipt } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
-import type { PlanResponse } from '../../core/api/schema';
-import { ExternalNavigation, isPayPalUrl } from '../../core/routing/external-navigation';
-import { Confirmer } from '../../core/ui/confirmer';
-import { Toaster } from '../../core/ui/toaster';
+import type { PlanResponse, CurrentSubscriptionResponse } from '@core/api/schema';
+import { ExternalNavigation } from '@core/routing/external-navigation';
+import { Toaster } from '@core/ui/toaster';
 import {
   PAYMENT_STATUS_LABELS,
   PAYMENT_STATUS_SEVERITY,
   TIER_LABELS,
   type Tier,
-} from '../../shared/i18n/labels';
-import { MoneyPipe } from '../../shared/pipes/money.pipe';
-import { EmptyState } from '../../shared/ui/empty-state';
-import { LoadError } from '../../shared/ui/load-error';
-import { PageHeader } from '../../shared/ui/page-header';
+} from '@shared/i18n/labels';
+import { MoneyPipe } from '@shared/pipes/money.pipe';
+import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
 import { BillingApi } from './data/billing-api';
+import { mutation } from '@shared/utils/mutation';
 
 const TIER_ORDER: readonly Tier[] = ['BASIC', 'PREMIUM', 'VIP'];
 
 /** Plan actual, planes disponibles (pago con PayPal) e historial de pagos del cliente. */
 @Component({
   selector: 'app-subscription-page',
-  imports: [
-    DatePipe,
-    MoneyPipe,
-    ButtonDirective,
-    ButtonLabel,
-    Skeleton,
-    Tag,
-    EmptyState,
-    LoadError,
-    PageHeader,
-  ],
+  imports: [DatePipe, MoneyPipe, ButtonDirective, Skeleton, Tag, EmptyState, LoadError, PageHeader],
   templateUrl: './subscription-page.html',
 })
 export class SubscriptionPage {
   private readonly billing = inject(BillingApi);
   private readonly navigation = inject(ExternalNavigation);
-  private readonly confirmer = inject(Confirmer);
   private readonly toaster = inject(Toaster);
   private readonly locale = inject(LOCALE_ID);
 
@@ -58,9 +47,11 @@ export class SubscriptionPage {
     this.current.hasValue() ? this.current.value() : undefined,
   );
   protected readonly currentTier = computed<Tier>(() => this.subscription()?.tier ?? 'BASIC');
-  /** Plan del que se está iniciando el pago (el botón queda cargando hasta salir hacia PayPal). */
+  /**
+   * Plan del que se está iniciando el pago. No es un mutation(): el botón sigue cargando hasta que el navegador sale
+   * hacia PayPal (y solo vuelve a su estado si el pago no llega a empezar).
+   */
   protected readonly checkingOut = signal<Tier | null>(null);
-  protected readonly canceling = signal(false);
 
   protected isFree(plan: PlanResponse): boolean {
     return Number(plan.price.amount) === 0;
@@ -74,49 +65,42 @@ export class SubscriptionPage {
     this.checkingOut.set(tier);
     try {
       const { approvalUrl } = await this.billing.checkout(tier);
-      if (!isPayPalUrl(approvalUrl)) {
+      if (!this.navigation.toPayPal(approvalUrl)) {
         this.toaster.error(
           'No se ha podido iniciar el pago',
           'La dirección de pago no es de PayPal.',
         );
         this.checkingOut.set(null);
-        return;
       }
-      this.navigation.assign(approvalUrl);
     } catch {
       // El interceptor de errores ya ha avisado.
       this.checkingOut.set(null);
     }
   }
 
-  protected async cancel(): Promise<void> {
-    const subscription = this.subscription();
-    if (!subscription?.currentPeriodEnd) {
-      return;
-    }
-    const tier = TIER_LABELS[subscription.tier];
-    const until = formatDate(subscription.currentPeriodEnd, 'longDate', this.locale);
-    const confirmed = await this.confirmer.ask({
-      header: 'Cancelar la suscripción',
-      message: `Mantendrás el acceso ${tier} hasta el ${until}. Después pasarás al plan Básico.`,
-      acceptLabel: 'Cancelar la suscripción',
-      rejectLabel: 'Mantenerla',
-      danger: true,
-    });
-    if (!confirmed) {
-      return;
-    }
-    this.canceling.set(true);
-    try {
-      this.current.value.set(await this.billing.cancel());
-      this.toaster.success(
-        'Suscripción cancelada',
-        `Mantienes el acceso ${tier} hasta el ${until}.`,
-      );
-    } catch {
-      // El interceptor de errores ya ha avisado.
-    } finally {
-      this.canceling.set(false);
-    }
+  protected readonly cancel = mutation(
+    (_subscription: CurrentSubscriptionResponse) => this.billing.cancel(),
+    {
+      confirm: (subscription) => ({
+        header: 'Cancelar la suscripción',
+        message: `Mantendrás el acceso ${this.accessUntil(subscription)}. Después pasarás al plan Básico.`,
+        acceptLabel: 'Cancelar la suscripción',
+        rejectLabel: 'Mantenerla',
+        danger: true,
+      }),
+      success: (_, subscription) => ({
+        summary: 'Suscripción cancelada',
+        detail: `Mantienes el acceso ${this.accessUntil(subscription)}.`,
+      }),
+      onSuccess: (updated) => this.current.value.set(updated),
+    },
+  );
+
+  /** «Premium hasta el 12 de diciembre de 2026». */
+  private accessUntil(subscription: CurrentSubscriptionResponse): string {
+    const until = subscription.currentPeriodEnd
+      ? formatDate(subscription.currentPeriodEnd, 'longDate', this.locale)
+      : '';
+    return `${TIER_LABELS[subscription.tier]} hasta el ${until}`;
   }
 }

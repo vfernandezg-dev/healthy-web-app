@@ -2,6 +2,7 @@ dist/
 .angular/
 coverage/
 playwright-report/
+playwright-report-fullstack/
 test-results/
 pnpm-lock.yaml
 # Contrato de la API (copiado) y tipos generados a partir de él.

@@ -1,0 +1,109 @@
+<div class="mb-4 flex flex-wrap gap-3">
+  <p-select
+    [options]="statusOptions"
+    optionLabel="label"
+    optionValue="value"
+    ariaLabel="Estado de la suscripción"
+    [formField]="filters.status"
+  />
+  <p-select
+    [options]="tierOptions"
+    optionLabel="label"
+    optionValue="value"
+    ariaLabel="Nivel"
+    [formField]="filters.tier"
+  />
+</div>
+
+@if (subscriptions.error()) {
+  <app-load-error [error]="subscriptions.error()" (retry)="subscriptions.reload()" />
+} @else if (subscriptions.page()) {
+  <div class="card overflow-hidden">
+    <p-table
+      [value]="subscriptions.items()"
+      [lazy]="true"
+      dataKey="id"
+      [totalRecords]="subscriptions.total()"
+      [rows]="subscriptions.pageSize"
+      [first]="subscriptions.first()"
+      [paginator]="subscriptions.total() > subscriptions.pageSize"
+      sortField="createdAt"
+      [sortOrder]="-1"
+      [loading]="subscriptions.loading()"
+      [scrollable]="true"
+      [rowHover]="true"
+      tableStyleClass="md:min-w-[52rem]"
+      (onLazyLoad)="subscriptions.onLazyLoad($event)"
+    >
+      <ng-template #header>
+        <tr class="max-md:hidden">
+          <th scope="col">Titular</th>
+          <th scope="col">Nivel</th>
+          <th scope="col">Estado</th>
+          <th pSortableColumn="currentPeriodEnd" scope="col">
+            Período <p-sort-icon field="currentPeriodEnd" />
+          </th>
+          <th pSortableColumn="createdAt" scope="col">Alta <p-sort-icon field="createdAt" /></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-subscription [appRow]="subscriptions.items()">
+        <tr>
+          <td class="md:hidden" colspan="5">
+            <app-person-cell [person]="subscription.customer" />
+            <div class="mt-3 flex flex-wrap items-center gap-2">
+              <app-tier-badge [tier]="subscription.tier" />
+              <p-tag
+                [value]="statuses[subscription.status]"
+                [severity]="severities[subscription.status]"
+              />
+            </div>
+            <p class="mt-2 text-sm text-muted">
+              <ng-container
+                [ngTemplateOutlet]="period"
+                [ngTemplateOutletContext]="{ $implicit: subscription }"
+              />
+            </p>
+          </td>
+          <td class="max-md:hidden">
+            <app-person-cell [person]="subscription.customer" />
+          </td>
+          <td class="max-md:hidden"><app-tier-badge [tier]="subscription.tier" /></td>
+          <td class="max-md:hidden">
+            <p-tag
+              [value]="statuses[subscription.status]"
+              [severity]="severities[subscription.status]"
+            />
+          </td>
+          <td class="max-md:hidden">
+            <ng-container
+              [ngTemplateOutlet]="period"
+              [ngTemplateOutletContext]="{ $implicit: subscription }"
+            />
+          </td>
+          <td class="max-md:hidden">{{ subscription.createdAt | date: 'mediumDate' }}</td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="5" class="py-10 text-center text-muted">
+            No hay suscripciones con esos filtros.
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #sorticon let-order>
+        <app-sort-icon [order]="order" />
+      </ng-template>
+    </p-table>
+  </div>
+} @else {
+  <p-skeleton height="20rem" borderRadius="1.5rem" />
+}
+
+<ng-template #period let-subscription [appRow]="subscriptions.items()">
+  @if (subscription.currentPeriodStart && subscription.currentPeriodEnd) {
+    {{ subscription.currentPeriodStart | date: 'mediumDate' }} –
+    {{ subscription.currentPeriodEnd | date: 'mediumDate' }}
+  } @else {
+    <span class="text-muted">Sin pagar</span>
+  }
+</ng-template>

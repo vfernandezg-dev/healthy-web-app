@@ -1,15 +1,12 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
-import { FormField, form, max, maxLength, min, required, submit } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
+import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { FormField, form, max, maxLength, min, required, schema } from '@angular/forms/signals';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
-import { toProblem } from '../../core/api/problem';
-import type { GoalResponse } from '../../core/api/schema';
-import { LabeledField, fieldDescription } from '../../shared/forms/labeled-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../shared/forms/server-errors';
+import type { GoalRequest, GoalResponse } from '@core/api/schema';
+import { FormDialog } from '@shared/forms/form-dialog';
+import { formSubmitter } from '@shared/forms/form-submitter';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
 import { ProgressApi } from './data/progress-api';
 
 interface GoalModel {
@@ -18,152 +15,67 @@ interface GoalModel {
   description: string;
 }
 
-/** Crear o editar una meta de peso. Se abre con {@link GoalDialog.open}. */
+export const goalSchema = schema<GoalModel>((path) => {
+  required(path.title, { message: 'Ponle un nombre' });
+  maxLength(path.title, 120, { message: 'Máximo 120 caracteres' });
+  required(path.targetWeightKg, { message: 'Indica tu peso objetivo' });
+  min(path.targetWeightKg, 20, { message: 'El peso mínimo es 20 kg' });
+  max(path.targetWeightKg, 400, { message: 'El peso máximo es 400 kg' });
+  maxLength(path.description, 500, { message: 'Máximo 500 caracteres' });
+});
+
+function modelOf(goal: GoalResponse | null): GoalModel {
+  return {
+    title: goal?.title ?? '',
+    targetWeightKg: goal?.targetWeightKg ?? null,
+    description: goal?.description ?? '',
+  };
+}
+
+function requestOf(model: GoalModel): GoalRequest {
+  return {
+    title: model.title.trim(),
+    // El esquema exige el peso: aquí nunca es null.
+    targetWeightKg: model.targetWeightKg ?? 0,
+    description: model.description.trim() || null,
+  };
+}
+
+/** Crear o editar una meta de peso. La página lo crea al abrirlo (ver `dialogState`). */
 @Component({
   selector: 'app-goal-dialog',
-  imports: [
-    FormField,
-    Dialog,
-    InputText,
-    InputNumber,
-    Textarea,
-    Message,
-    ButtonDirective,
-    ButtonLabel,
-    LabeledField,
-  ],
-  template: `
-    <p-dialog
-      [(visible)]="visible"
-      [header]="editing() ? 'Editar la meta' : 'Nueva meta'"
-      [modal]="true"
-      [draggable]="false"
-      closeAriaLabel="Cerrar"
-      styleClass="w-[min(32rem,calc(100vw-2rem))]"
-    >
-      @if (failure(); as message) {
-        <p-message severity="error" class="mb-4 block">{{ message }}</p-message>
-      }
-      <form id="goal-form" class="space-y-5" novalidate (submit)="onSubmit($event)">
-        <app-field label="Nombre de la meta" inputId="goal-title" [field]="goalForm.title">
-          <input
-            pInputText
-            id="goal-title"
-            class="w-full"
-            placeholder="Por ejemplo: llegar a 70 kg en verano"
-            [formField]="goalForm.title"
-            [attr.aria-describedby]="describe('goal-title', goalForm.title)"
-          />
-        </app-field>
-        <app-field label="Peso objetivo" inputId="goal-target" [field]="goalForm.targetWeightKg">
-          <p-inputnumber
-            inputId="goal-target"
-            suffix=" kg"
-            [minFractionDigits]="0"
-            [maxFractionDigits]="1"
-            [fluid]="true"
-            [formField]="goalForm.targetWeightKg"
-            [ariaDescribedBy]="describe('goal-target', goalForm.targetWeightKg) ?? undefined"
-          />
-        </app-field>
-        <app-field
-          label="Por qué te la propones"
-          inputId="goal-description"
-          [field]="goalForm.description"
-          [optional]="true"
-        >
-          <textarea
-            pTextarea
-            id="goal-description"
-            rows="3"
-            class="w-full"
-            [formField]="goalForm.description"
-            [attr.aria-describedby]="describe('goal-description', goalForm.description)"
-          ></textarea>
-        </app-field>
-      </form>
-      <ng-template #footer>
-        <button
-          pButton
-          type="button"
-          severity="secondary"
-          variant="text"
-          (click)="visible.set(false)"
-        >
-          <span pButtonLabel>Cancelar</span>
-        </button>
-        <button pButton type="submit" form="goal-form" [loading]="goalForm().submitting()">
-          <span pButtonLabel>{{ editing() ? 'Guardar' : 'Crear la meta' }}</span>
-        </button>
-      </ng-template>
-    </p-dialog>
-  `,
+  imports: [FormField, InputText, InputNumber, Textarea, LabeledField, FormDialog],
+  templateUrl: './goal-dialog.html',
 })
 export class GoalDialog {
   private readonly api = inject(ProgressApi);
+  private readonly submitForm = formSubmitter();
 
+  /** La meta que se edita; null para crear una. */
+  readonly goal = input.required<GoalResponse | null>();
   readonly saved = output<GoalResponse>();
+  readonly closed = output();
 
-  protected readonly visible = signal(false);
-  private readonly goal = signal<GoalResponse | null>(null);
-  protected readonly editing = computed(() => this.goal() !== null);
+  protected readonly open = signal(true);
   protected readonly failure = signal<string | null>(null);
+  protected readonly editing = computed(() => this.goal() !== null);
   protected readonly describe = fieldDescription;
 
-  protected readonly model = signal<GoalModel>({
-    title: '',
-    targetWeightKg: null,
-    description: '',
-  });
-  protected readonly goalForm = form(this.model, (path) => {
-    required(path.title, { message: 'Ponle un nombre' });
-    maxLength(path.title, 120, { message: 'Máximo 120 caracteres' });
-    required(path.targetWeightKg, { message: 'Indica tu peso objetivo' });
-    min(path.targetWeightKg, 20, { message: 'El peso mínimo es 20 kg' });
-    max(path.targetWeightKg, 400, { message: 'El peso máximo es 400 kg' });
-    maxLength(path.description, 500, { message: 'Máximo 500 caracteres' });
-  });
+  protected readonly model = linkedSignal(() => modelOf(this.goal()));
+  protected readonly goalForm = form(this.model, goalSchema);
 
-  open(goal: GoalResponse | null): void {
-    this.goal.set(goal);
-    this.failure.set(null);
-    this.goalForm().reset({
-      title: goal?.title ?? '',
-      targetWeightKg: goal?.targetWeightKg ?? null,
-      description: goal?.description ?? '',
-    });
-    this.visible.set(true);
-  }
-
-  protected async onSubmit(event: Event): Promise<void> {
-    event.preventDefault();
-    this.failure.set(null);
-    await submit(this.goalForm, {
-      action: async () => {
-        const value = this.model();
-        const body = {
-          title: value.title.trim(),
-          targetWeightKg: value.targetWeightKg ?? 0,
-          description: value.description.trim() || null,
-        };
+  protected save(event: Event): Promise<void> {
+    return this.submitForm(event, this.goalForm, {
+      failure: this.failure,
+      save: () => {
         const current = this.goal();
-        try {
-          const saved = current
-            ? await this.api.update(current.id, body)
-            : await this.api.create(body);
-          this.visible.set(false);
-          this.saved.emit(saved);
-          return undefined;
-        } catch (error) {
-          const problem = toProblem(error);
-          if (problem.errors.length > 0) {
-            return serverFieldErrors(this.goalForm, problem);
-          }
-          this.failure.set(problem.detail);
-          return undefined;
-        }
+        const body = requestOf(this.model());
+        return current ? this.api.update(current.id, body) : this.api.create(body);
       },
-      onInvalid: (tree) => focusFirstInvalid(tree),
+      onSuccess: (goal) => {
+        this.saved.emit(goal);
+        this.open.set(false);
+      },
     });
   }
 }

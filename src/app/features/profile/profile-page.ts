@@ -7,28 +7,26 @@ import {
   min,
   minLength,
   required,
-  submit,
   validate,
 } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { SelectButton } from 'primeng/selectbutton';
 import { Skeleton } from 'primeng/skeleton';
 import { Textarea } from 'primeng/textarea';
-import { toProblem } from '../../core/api/problem';
-import type { ClientData, MeResponse } from '../../core/api/schema';
-import { AuthStore } from '../../core/auth/auth-store';
-import { Toaster } from '../../core/ui/toaster';
-import { LabeledField, fieldDescription } from '../../shared/forms/labeled-field';
-import { PasswordField, PasswordInput } from '../../shared/forms/password-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../shared/forms/server-errors';
-import { MESSAGES, PASSWORD_MAX, PASSWORD_MIN } from '../../shared/forms/validation';
-import { SEX_LABELS, optionsOf } from '../../shared/i18n/labels';
-import { LoadError } from '../../shared/ui/load-error';
-import { PageHeader } from '../../shared/ui/page-header';
-import { ageOn, todayIso } from '../../shared/utils/date';
+import type { ClientData, MeResponse } from '@core/api/schema';
+import { AuthStore } from '@core/auth/auth-store';
+import { Toaster } from '@core/ui/toaster';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
+import { PasswordField, PasswordInput } from '@shared/forms/password-field';
+import { MESSAGES, PASSWORD_MAX, PASSWORD_MIN } from '@shared/forms/validation';
+import { SEX_LABELS, optionsOf } from '@shared/i18n/labels';
+import { LoadError } from '@shared/ui/load-error';
+import { PageHeader } from '@shared/ui/page-header';
+import { ageOn, todayIso } from '@shared/utils/date';
 import { ProfileApi } from './data/profile-api';
+import { formSubmitter } from '@shared/forms/form-submitter';
 
 type Sex = NonNullable<ClientData['sex']>;
 
@@ -66,7 +64,6 @@ function toModel(me: MeResponse | undefined): ProfileModel {
     Textarea,
     Skeleton,
     ButtonDirective,
-    ButtonLabel,
     LabeledField,
     PasswordField,
     PasswordInput,
@@ -76,6 +73,7 @@ function toModel(me: MeResponse | undefined): ProfileModel {
   templateUrl: './profile-page.html',
 })
 export class ProfilePage {
+  private readonly submitForm = formSubmitter();
   private readonly api = inject(ProfileApi);
   private readonly auth = inject(AuthStore);
   private readonly toaster = inject(Toaster);
@@ -114,40 +112,30 @@ export class ProfilePage {
     return birthDate && birthDate < this.today ? ageOn(birthDate) : null;
   });
 
-  protected async saveProfile(event: Event): Promise<void> {
-    event.preventDefault();
-    await submit(this.profileForm, {
-      action: async () => {
+  protected saveProfile(event: Event): Promise<void> {
+    return this.submitForm(event, this.profileForm, {
+      save: () => {
         const value = this.model();
-        try {
-          const updated = await this.api.update({
-            firstName: value.firstName.trim(),
-            lastName: value.lastName.trim(),
-            bio: this.isNutritionist() ? value.bio.trim() || null : null,
-            client: this.isClient()
-              ? {
-                  sex: value.sex,
-                  birthDate: value.birthDate || null,
-                  heightCm: value.heightCm,
-                  weightKg: value.weightKg,
-                }
-              : null,
-          });
-          this.me.value.set(updated);
-          this.profileForm().reset();
-          this.auth.updateUser({ firstName: updated.firstName, lastName: updated.lastName });
-          this.toaster.success('Perfil guardado');
-          return undefined;
-        } catch (error) {
-          const problem = toProblem(error);
-          if (problem.errors.length > 0) {
-            return serverFieldErrors(this.profileForm, problem);
-          }
-          this.toaster.problem(problem);
-          return undefined;
-        }
+        return this.api.update({
+          firstName: value.firstName.trim(),
+          lastName: value.lastName.trim(),
+          bio: this.isNutritionist() ? value.bio.trim() || null : null,
+          client: this.isClient()
+            ? {
+                sex: value.sex,
+                birthDate: value.birthDate || null,
+                heightCm: value.heightCm,
+                weightKg: value.weightKg,
+              }
+            : null,
+        });
       },
-      onInvalid: (tree) => focusFirstInvalid(tree),
+      onSuccess: (updated) => {
+        this.me.value.set(updated);
+        this.profileForm().reset();
+        this.auth.updateUser({ firstName: updated.firstName, lastName: updated.lastName });
+        this.toaster.success('Perfil guardado');
+      },
     });
   }
 
@@ -162,28 +150,17 @@ export class ProfilePage {
     maxLength(path.newPassword, PASSWORD_MAX, { message: MESSAGES.passwordLength });
   });
 
-  protected async changePassword(event: Event): Promise<void> {
-    event.preventDefault();
-    await submit(this.passwordForm, {
-      action: async () => {
-        try {
-          this.auth.applySession(await this.api.changePassword(this.passwordModel()));
-          this.passwordForm().reset({ currentPassword: '', newPassword: '' });
-          this.toaster.success(
-            'Contraseña cambiada',
-            'Hemos cerrado tus sesiones en los demás dispositivos.',
-          );
-          return undefined;
-        } catch (error) {
-          const problem = toProblem(error);
-          if (problem.errors.length > 0) {
-            return serverFieldErrors(this.passwordForm, problem);
-          }
-          this.toaster.problem(problem);
-          return undefined;
-        }
+  protected changePassword(event: Event): Promise<void> {
+    return this.submitForm(event, this.passwordForm, {
+      save: () => this.api.changePassword(this.passwordModel()),
+      onSuccess: (session) => {
+        this.auth.applySession(session);
+        this.passwordForm().reset({ currentPassword: '', newPassword: '' });
+        this.toaster.success(
+          'Contraseña cambiada',
+          'Hemos cerrado tus sesiones en los demás dispositivos.',
+        );
       },
-      onInvalid: (tree) => focusFirstInvalid(tree),
     });
   }
 }

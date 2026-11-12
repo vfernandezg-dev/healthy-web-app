@@ -1,29 +1,41 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
-import { FormField, form, maxLength, required, submit } from '@angular/forms/signals';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
-import { Message } from 'primeng/message';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { FormField, form, maxLength, required } from '@angular/forms/signals';
 import { Textarea } from 'primeng/textarea';
-import { toProblem } from '../../../core/api/problem';
-import type { ReportResponse, ResolveRequest } from '../../../core/api/schema';
-import { LabeledField, fieldDescription } from '../../../shared/forms/labeled-field';
-import { focusFirstInvalid, serverFieldErrors } from '../../../shared/forms/server-errors';
+import { toProblem } from '@core/api/problem';
+import type { ReportResponse, ResolveRequest } from '@core/api/schema';
+import { FormDialog } from '@shared/forms/form-dialog';
+import { formSubmitter } from '@shared/forms/form-submitter';
+import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
 import { AdminApi } from '../data/admin-api';
 
 type Action = ResolveRequest['action'];
 
+/** Qué denuncia se resuelve y cómo. */
+export interface Resolution {
+  readonly report: ReportResponse;
+  readonly action: Action;
+}
+
+/** Cómo terminó: resuelta ahora, o ya la había cerrado otra persona (409 `report-closed`). */
+export interface Resolved {
+  readonly action: Action;
+  readonly alreadyClosed: boolean;
+}
+
 /** Resolver una denuncia: ocultar lo denunciado o descartarla, con una nota para el registro. */
 @Component({
   selector: 'app-resolve-dialog',
-  imports: [FormField, Dialog, Textarea, Message, ButtonDirective, ButtonLabel, LabeledField],
+  imports: [FormField, Textarea, LabeledField, FormDialog],
   template: `
-    <p-dialog
-      [(visible)]="visible"
+    <app-form-dialog
+      [(open)]="open"
       [header]="hiding() ? 'Ocultar el contenido' : 'Descartar la denuncia'"
-      [modal]="true"
-      [draggable]="false"
-      closeAriaLabel="Cerrar"
-      styleClass="w-[min(32rem,calc(100vw-2rem))]"
+      formId="resolve-form"
+      [submitLabel]="hiding() ? 'Ocultar' : 'Descartar'"
+      [danger]="hiding()"
+      [submitting]="resolveForm().submitting()"
+      [failure]="failure()"
+      (closed)="closed.emit()"
     >
       <p class="mb-5 text-muted">
         @if (hiding()) {
@@ -32,10 +44,7 @@ type Action = ResolveRequest['action'];
           La denuncia se cerrará y el contenido seguirá visible.
         }
       </p>
-      @if (failure(); as message) {
-        <p-message severity="error" class="mb-4 block">{{ message }}</p-message>
-      }
-      <form id="resolve-form" novalidate (submit)="onSubmit($event)">
+      <form id="resolve-form" novalidate (submit)="save($event)">
         <app-field
           label="Nota para el registro"
           inputId="resolve-note"
@@ -52,43 +61,24 @@ type Action = ResolveRequest['action'];
           ></textarea>
         </app-field>
       </form>
-      <ng-template #footer>
-        <button
-          pButton
-          type="button"
-          severity="secondary"
-          variant="text"
-          (click)="visible.set(false)"
-        >
-          <span pButtonLabel>Cancelar</span>
-        </button>
-        <button
-          pButton
-          type="submit"
-          form="resolve-form"
-          [severity]="hiding() ? 'danger' : 'primary'"
-          [loading]="resolveForm().submitting()"
-        >
-          <span pButtonLabel>{{ hiding() ? 'Ocultar' : 'Descartar' }}</span>
-        </button>
-      </ng-template>
-    </p-dialog>
+    </app-form-dialog>
   `,
 })
 export class ResolveDialog {
   private readonly api = inject(AdminApi);
+  private readonly submitForm = formSubmitter();
 
+  readonly resolution = input.required<Resolution>();
   /** La denuncia se ha resuelto (o ya lo estaba): hay que recargar la lista. */
-  readonly resolved = output<{ readonly action: Action; readonly alreadyClosed: boolean }>();
+  readonly resolved = output<Resolved>();
+  readonly closed = output();
 
-  protected readonly visible = signal(false);
-  private readonly report = signal<ReportResponse | null>(null);
-  private readonly action = signal<Action>('HIDE');
-  protected readonly hiding = computed(() => this.action() === 'HIDE');
-  protected readonly target = computed(() =>
-    this.report()?.targetType === 'COMMENT' ? 'El comentario' : 'La publicación',
-  );
+  protected readonly open = signal(true);
   protected readonly failure = signal<string | null>(null);
+  protected readonly hiding = computed(() => this.resolution().action === 'HIDE');
+  protected readonly target = computed(() =>
+    this.resolution().report.targetType === 'COMMENT' ? 'El comentario' : 'La publicación',
+  );
   protected readonly describe = fieldDescription;
 
   protected readonly model = signal({ note: '' });
@@ -97,44 +87,26 @@ export class ResolveDialog {
     maxLength(path.note, 200, { message: 'Máximo 200 caracteres' });
   });
 
-  open(report: ReportResponse, action: Action): void {
-    this.report.set(report);
-    this.action.set(action);
-    this.failure.set(null);
-    this.resolveForm().reset({ note: '' });
-    this.visible.set(true);
-  }
-
-  protected async onSubmit(event: Event): Promise<void> {
-    event.preventDefault();
-    const report = this.report();
-    if (!report) {
-      return;
-    }
-    this.failure.set(null);
-    await submit(this.resolveForm, {
-      action: async () => {
-        const action = this.action();
+  protected save(event: Event): Promise<void> {
+    return this.submitForm(event, this.resolveForm, {
+      failure: this.failure,
+      save: async (): Promise<Resolved> => {
+        const { report, action } = this.resolution();
         try {
           await this.api.resolve(report.id, { action, note: this.model().note.trim() });
-          this.visible.set(false);
-          this.resolved.emit({ action, alreadyClosed: false });
-          return undefined;
+          return { action, alreadyClosed: false };
         } catch (error) {
-          const problem = toProblem(error);
-          if (problem.code === 'report-closed') {
-            this.visible.set(false);
-            this.resolved.emit({ action, alreadyClosed: true });
-            return undefined;
+          // Otra persona la cerró antes: no es un fallo, la lista se pone al día igual.
+          if (toProblem(error).code === 'report-closed') {
+            return { action, alreadyClosed: true };
           }
-          if (problem.errors.length > 0) {
-            return serverFieldErrors(this.resolveForm, problem);
-          }
-          this.failure.set(problem.detail);
-          return undefined;
+          throw error;
         }
       },
-      onInvalid: (tree) => focusFirstInvalid(tree),
+      onSuccess: (resolved) => {
+        this.resolved.emit(resolved);
+        this.open.set(false);
+      },
     });
   }
 }

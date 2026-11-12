@@ -1,6 +1,10 @@
-import type { components } from '../../core/api/schema';
+import type { components } from '@core/api/schema';
+import type { Role } from '@core/auth/roles';
 
 type Schemas = components['schemas'];
+
+/** Nombre que se muestra cuando el autor o el titular ya no tiene cuenta (la API lo manda como null). */
+export const DELETED_ACCOUNT = 'Cuenta eliminada';
 
 /** Nombres en español de los valores que la API envía en inglés (enums). */
 export const SEX_LABELS: Readonly<Record<NonNullable<Schemas['ClientData']['sex']>, string>> = {
@@ -17,13 +21,14 @@ export const TIER_LABELS: Readonly<Record<Tier, string>> = {
   VIP: 'VIP',
 };
 
-export const PAYMENT_STATUS_LABELS: Readonly<Record<Schemas['PaymentResponse']['status'], string>> =
-  {
-    CREATED: 'Pendiente',
-    CAPTURED: 'Pagado',
-    FAILED: 'Fallido',
-    CANCELED: 'Cancelado',
-  };
+export type PaymentStatus = Schemas['PaymentResponse']['status'];
+
+export const PAYMENT_STATUS_LABELS: Readonly<Record<PaymentStatus, string>> = {
+  CREATED: 'Pendiente',
+  CAPTURED: 'Pagado',
+  FAILED: 'Fallido',
+  CANCELED: 'Cancelado',
+};
 
 /** Severidad de p-tag para cada estado de pago. */
 export const PAYMENT_STATUS_SEVERITY: Readonly<
@@ -104,11 +109,16 @@ export const GROUP_VISIBILITY_LABELS: Readonly<Record<GroupVisibility, string>> 
   PRIVATE: 'Privado',
 };
 
-export type Role = Schemas['AdminUserResponse']['role'];
-
 export const ROLE_LABELS: Readonly<Record<Role, string>> = {
   CLIENT: 'Cliente',
   NUTRITIONIST: 'Nutricionista',
+  ADMIN: 'Administración',
+};
+
+/** Los roles en plural (filtros y recuentos por rol). */
+export const ROLE_PLURAL_LABELS: Readonly<Record<Role, string>> = {
+  CLIENT: 'Clientes',
+  NUTRITIONIST: 'Nutricionistas',
   ADMIN: 'Administración',
 };
 
@@ -176,9 +186,21 @@ export const REPORT_TARGET_LABELS: Readonly<
   COMMENT: 'Comentario',
 };
 
+/** Una opción de un p-select o p-selectbutton. */
+export interface Option<T> {
+  readonly label: string;
+  readonly value: T;
+}
+
 /** Opciones para un p-select o p-selectbutton a partir de un mapa de etiquetas. */
-export function optionsOf<T extends string>(
-  labels: Readonly<Record<T, string>>,
-): { label: string; value: T }[] {
+export function optionsOf<T extends string>(labels: Readonly<Record<T, string>>): Option<T>[] {
   return (Object.keys(labels) as T[]).map((value) => ({ label: labels[value], value }));
+}
+
+/** Las opciones de un filtro, con una primera opción «todos» (valor null) que no filtra. */
+export function withAllOption<T extends string>(
+  allLabel: string,
+  labels: Readonly<Record<T, string>>,
+): Option<T | null>[] {
+  return [{ label: allLabel, value: null }, ...optionsOf(labels)];
 }

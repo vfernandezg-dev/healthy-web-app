@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 import { expectNoA11yViolations } from './support/a11y';
 import { mockApi, openNavigation, problem, sessionFor } from './support/api';
 
@@ -219,6 +219,10 @@ test.describe('recuperar la contraseña', () => {
     });
     await page.goto('/auth/login');
     await page.getByRole('link', { name: '¿Has olvidado tu contraseña?' }).click();
+    // El login también tiene un campo «Correo electrónico»: hay que esperar a la página nueva antes de escribir.
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Recupera tu contraseña' }),
+    ).toBeVisible();
 
     await page.getByLabel('Correo electrónico').fill('nadie@correo.com');
     await page.getByRole('button', { name: 'Enviar el enlace' }).click();

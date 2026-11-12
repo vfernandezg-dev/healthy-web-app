@@ -1,5 +1,8 @@
 import type { Page, Route } from '@playwright/test';
-import type { SessionResponse, SessionUser } from '../../src/app/core/api/schema';
+import type { SessionResponse, SessionUser, components } from '../../src/app/core/api/schema';
+
+/** Tipos del contrato de la API. */
+export type Schemas = components['schemas'];
 
 export type Role = SessionUser['role'];
 
@@ -44,6 +47,11 @@ export function problem(status: number, code: string, detail: string, extra: obj
 }
 
 export type Handler = (route: Route) => Promise<void> | void;
+
+/** Cuerpo JSON de la petición con el tipo del contrato (Playwright lo devuelve como `any`). */
+export function requestBody<T>(route: Route): T {
+  return route.request().postDataJSON() as T;
+}
 
 /**
  * Simula la API. Cualquier petición sin manejador responde 501 (el test falla de forma visible). Por defecto no hay

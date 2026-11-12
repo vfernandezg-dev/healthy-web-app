@@ -4,14 +4,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LucideDynamicIcon, LucideLogOut, LucideMenu } from '@lucide/angular';
 import { Avatar } from 'primeng/avatar';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Drawer } from 'primeng/drawer';
 import { filter, skip } from 'rxjs';
-import { AuthStore } from '../../core/auth/auth-store';
-import { SIGNAL_FORMS_PROVIDERS } from '../../shared/forms/forms.config';
-import { BrandLogo } from '../../shared/ui/brand-logo';
-import { ROLE_LABELS } from '../../shared/i18n/labels';
-import { NAVIGATION } from './nav-config';
+import { AuthStore } from '@core/auth/auth-store';
+import { SIGNAL_FORMS_PROVIDERS } from '@shared/forms/forms.config';
+import { BrandLogo } from '@shared/ui/brand-logo';
+import { ROLE_LABELS } from '@shared/i18n/labels';
+import { NAVIGATION } from '@core/routing/navigation';
 
 /**
  * Marco de la aplicación con sesión: menú lateral en escritorio y cajón en móvil, según el rol. Tras cada
@@ -29,8 +29,6 @@ import { NAVIGATION } from './nav-config';
     LucideLogOut,
     Avatar,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     Drawer,
     BrandLogo,
   ],

@@ -50,11 +50,11 @@ export class WeightChart {
   protected readonly summary = computed(() => {
     const points = this.points();
     const kg = (value: number) => `${this.number().format(value)} kg`;
-    if (points.length === 0) {
+    const first = points.at(0);
+    const last = points.at(-1);
+    if (!first || !last) {
       return `Sin pesajes todavía. Objetivo: ${kg(this.targetKg())}.`;
     }
-    const first = points[0];
-    const last = points[points.length - 1];
     return (
       `Evolución del peso: ${points.length} pesajes, de ${kg(first.weightKg)} ` +
       `a ${kg(last.weightKg)}. Objetivo: ${kg(this.targetKg())}.`

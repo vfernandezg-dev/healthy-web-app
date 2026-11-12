@@ -1,0 +1,49 @@
+<app-form-dialog
+  [(open)]="open"
+  header="Invitar a un nutricionista"
+  formId="invite-form"
+  submitLabel="Enviar la invitación"
+  [submitting]="inviteForm().submitting()"
+  [failure]="failure()"
+  (closed)="closed.emit()"
+>
+  <p class="mb-5 text-muted">
+    Le enviaremos un enlace para crear su cuenta. Si caduca antes de que lo use, puedes reenviarlo
+    desde la lista.
+  </p>
+  <form id="invite-form" class="space-y-5" novalidate (submit)="save($event)">
+    <div class="grid gap-5 sm:grid-cols-2">
+      <app-field label="Nombre" inputId="invite-first-name" [field]="inviteForm.firstName">
+        <input
+          pInputText
+          id="invite-first-name"
+          class="w-full"
+          autocomplete="off"
+          [formField]="inviteForm.firstName"
+          [attr.aria-describedby]="describe('invite-first-name', inviteForm.firstName)"
+        />
+      </app-field>
+      <app-field label="Apellidos" inputId="invite-last-name" [field]="inviteForm.lastName">
+        <input
+          pInputText
+          id="invite-last-name"
+          class="w-full"
+          autocomplete="off"
+          [formField]="inviteForm.lastName"
+          [attr.aria-describedby]="describe('invite-last-name', inviteForm.lastName)"
+        />
+      </app-field>
+    </div>
+    <app-field label="Correo electrónico" inputId="invite-email" [field]="inviteForm.email">
+      <input
+        pInputText
+        id="invite-email"
+        type="email"
+        class="w-full"
+        autocomplete="off"
+        [formField]="inviteForm.email"
+        [attr.aria-describedby]="describe('invite-email', inviteForm.email)"
+      />
+    </app-field>
+  </form>
+</app-form-dialog>

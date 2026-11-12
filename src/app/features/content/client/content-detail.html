@@ -1,30 +1,7 @@
-<a
-  routerLink=".."
-  class="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline"
->
-  <svg lucideArrowLeft class="size-4"></svg>
-  Contenido
-</a>
+<app-back-link link=".." label="Contenido" />
 
-@if (requiredTier()) {
-  <div class="card mx-auto max-w-xl px-6 py-12 text-center sm:px-12">
-    <span class="mx-auto grid size-14 place-items-center rounded-full bg-mint text-brand-900">
-      <svg lucideLock class="size-7"></svg>
-    </span>
-    <h1 class="mt-6 text-2xl font-bold">Este contenido es {{ requiredTierLabel() }}</h1>
-    <p class="mt-2 text-muted">
-      Suscríbete a {{ requiredTierLabel() }} para leerlo, o consíguelo completando una racha de
-      hábitos que lo tenga como premio.
-    </p>
-    <div class="mt-8 flex flex-wrap justify-center gap-3">
-      <a pButton routerLink="/client/subscription"
-        ><span pButtonLabel>Ver los planes de suscripción</span></a
-      >
-      <a pButton routerLink="/client/rewards" severity="secondary" variant="outlined">
-        <span pButtonLabel>Ver las recompensas</span>
-      </a>
-    </div>
-  </div>
+@if (requiredTier(); as tier) {
+  <app-paywall [tier]="tier" subject="Este contenido" benefit="leerlo" />
 } @else if (detail.error()) {
   <app-load-error [error]="detail.error()" (retry)="detail.reload()" />
 } @else if (detail.hasValue()) {
@@ -66,20 +43,18 @@
               controls
               playsinline
               class="w-full rounded-3xl bg-ink"
-              [attr.aria-label]="'Vídeo: ' + item.title"
+              [attr.aria-label]="`Vídeo: ${item.title}`"
             ></video>
           } @else {
             <button pButton type="button" [loading]="opening()" (click)="playVideo(item.id)">
-              <svg lucidePlay pButtonIcon></svg>
-              <span pButtonLabel>Ver el vídeo</span>
+              <svg lucidePlay></svg>
+              Ver el vídeo
             </button>
           }
         } @else {
           <button pButton type="button" [loading]="opening()" (click)="openFile(item.id)">
-            <svg lucideDownload pButtonIcon></svg>
-            <span pButtonLabel>{{
-              item.type === 'GUIDE' ? 'Abrir la guía' : 'Abrir el fichero'
-            }}</span>
+            <svg lucideDownload></svg>
+            {{ item.type === 'GUIDE' ? 'Abrir la guía' : 'Abrir el fichero' }}
           </button>
         }
         @if (fileFailure(); as message) {

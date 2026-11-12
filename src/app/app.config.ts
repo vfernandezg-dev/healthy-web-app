@@ -1,8 +1,9 @@
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import {
   type ApplicationConfig,
   inject,
   provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
 import {
@@ -13,18 +14,20 @@ import {
 } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { routes } from './app.routes';
-import { APP_CONFIG, readAppConfig } from './core/api/api-config';
-import { errorInterceptor } from './core/api/error-interceptor';
-import { authInterceptor } from './core/auth/auth-interceptor';
-import { AuthStore } from './core/auth/auth-store';
-import { AppTitleStrategy } from './core/routing/title-strategy';
-import { provideUi } from './core/theme/ui.config';
+import { APP_CONFIG, readAppConfig } from '@core/api/api-config';
+import { errorInterceptor } from '@core/api/error-interceptor';
+import { authInterceptor } from '@core/auth/auth-interceptor';
+import { AuthStore } from '@core/auth/auth-store';
+import { AppTitleStrategy } from '@core/routing/title-strategy';
+import { provideUi } from '@core/theme/ui.config';
 
 const config = readAppConfig();
 
 export const appConfig: ApplicationConfig = {
   providers: [
     { provide: APP_CONFIG, useValue: config },
+    // Sin zone.js, los errores no capturados y las promesas rechazadas no llegan solos al ErrorHandler.
+    provideBrowserGlobalErrorListeners(),
     // Sin zone.js: la vista se actualiza con signals y eventos de plantilla.
     provideZonelessChangeDetection(),
     provideRouter(
@@ -34,10 +37,12 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ scrollPositionRestoration: 'top' }),
     ),
     { provide: TitleStrategy, useClass: AppTitleStrategy },
-    // El de errores va fuera: ve el resultado final, después de que la sesión reintente tras un 401.
-    provideHttpClient(withFetch(), withInterceptors([errorInterceptor, authInterceptor])),
-    // Al recargar, el access token en memoria se pierde: se recupera con la cookie antes de la primera navegación.
-    provideAppInitializer(() => inject(AuthStore).refresh()),
+    // XHR y no Fetch (el backend por defecto): FetchBackend no informa del avance de las subidas.
+    // El interceptor de errores va fuera: ve el resultado final, después de que la sesión reintente tras un 401.
+    provideHttpClient(withXhr(), withInterceptors([errorInterceptor, authInterceptor])),
+    // Al recargar, el access token en memoria se pierde: se recupera con la cookie antes de la primera navegación
+    // (con tope de espera: sin red, la app arranca sin sesión).
+    provideAppInitializer(() => inject(AuthStore).restore()),
     provideUi(config.primengLicenseKey),
     MessageService,
     ConfirmationService,

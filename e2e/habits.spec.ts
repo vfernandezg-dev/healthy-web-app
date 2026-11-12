@@ -1,6 +1,6 @@
-import { type Page, expect, test } from '@playwright/test';
+import { type Page, expect, test } from './support/test';
 import { expectNoA11yViolations } from './support/a11y';
-import { mockApi } from './support/api';
+import { mockApi, requestBody } from './support/api';
 
 /** Hoy y ayer según el navegador (la app usa la fecha local). */
 async function browserDays(page: Page): Promise<{ today: string; yesterday: string }> {
@@ -29,7 +29,7 @@ test.describe('hábitos', () => {
       routes: {
         '/me/habit-logs?*': (route) => route.fulfill({ json: logs }),
         '/me/habit-logs': (route) => {
-          created = route.request().postDataJSON();
+          created = requestBody<Record<string, unknown>>(route);
           logs = [{ id: 'h1', average: 5.75, ...created }];
           return route.fulfill({ status: 201, json: logs[0] });
         },

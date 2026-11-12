@@ -1,8 +1,11 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 import { expectNoA11yViolations } from './support/a11y';
+import type { components } from '../src/app/core/api/schema';
 import { mockApi } from './support/api';
 
-function reward(id: string, overrides: Record<string, unknown> = {}) {
+type RewardResponse = components['schemas']['RewardResponse'];
+
+function reward(id: string, overrides: Partial<RewardResponse> = {}): RewardResponse {
   return {
     id,
     title: `Recompensa ${id}`,
@@ -150,6 +153,25 @@ test.describe('recompensas del cliente', () => {
 });
 
 test.describe('recompensas del nutricionista', () => {
+  test('no pide los premios posibles hasta abrir el diálogo', async ({ page }) => {
+    const prizeRequests: string[] = [];
+    page.on('request', (request) => {
+      if (/\/nutritionist\/(content-items|meal-plans)/.test(request.url())) {
+        prizeRequests.push(request.url());
+      }
+    });
+    await mockApi(page, {
+      session: 'NUTRITIONIST',
+      routes: { '/nutritionist/rewards?*': (route) => route.fulfill({ json: paged([], 12) }) },
+    });
+
+    await page.goto('/nutritionist/rewards');
+    await expect(page.getByRole('heading', { level: 1, name: 'Tus recompensas' })).toBeVisible();
+    await page.waitForLoadState('networkidle');
+
+    expect(prizeRequests).toEqual([]);
+  });
+
   test('crea una recompensa con uno de sus planes publicados como premio', async ({ page }) => {
     let created: unknown;
     let mine: ReturnType<typeof reward>[] = [];
@@ -199,8 +221,8 @@ test.describe('recompensas del nutricionista', () => {
     await expect(page.getByRole('heading', { name: 'Una semana constante' })).toBeVisible();
     expect(queries).toEqual({
       rewards: { page: '0', size: '12', sort: 'createdAt,desc' },
-      content: { status: 'PUBLISHED', size: '100', sort: 'updatedAt,desc' },
-      plans: { status: 'PUBLISHED', size: '100', sort: 'title,asc' },
+      content: { status: 'PUBLISHED', page: '0', size: '100', sort: 'updatedAt,desc' },
+      plans: { status: 'PUBLISHED', page: '0', size: '100', sort: 'title,asc' },
     });
     expect(created).toEqual({
       title: 'Una semana constante',

@@ -29,6 +29,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      # Tipos de las pruebas E2E (Playwright las ejecuta sin comprobarlos).
+      - run: pnpm typecheck:e2e
       - run: pnpm format:check
 
       # Los tipos generados (schema.d.ts) tienen que coincidir con el contrato commiteado (openapi.yaml).

@@ -63,6 +63,51 @@ describe('authInterceptor', () => {
     await expect(result).resolves.toEqual({ firstName: 'María' });
   });
 
+  it('un 401 que llega después de otra renovación se repite sin otro refresh', async () => {
+    const first = firstValueFrom(http.get('/api/v1/me'));
+    const second = firstValueFrom(http.get('/api/v1/me/goals'));
+
+    backend.expectOne('/api/v1/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+    backend.expectOne('/api/v1/auth/refresh').flush(session('CLIENT', 'token-2'));
+    await nextTick();
+    backend.expectOne('/api/v1/me').flush({ firstName: 'María' });
+    await first;
+
+    // La segunda salió con el token viejo: se repite con el nuevo, sin rotar otra vez el refresh token.
+    backend.expectOne('/api/v1/me/goals').flush(null, { status: 401, statusText: 'Unauthorized' });
+    await nextTick();
+    backend.expectNone('/api/v1/auth/refresh');
+    const retry = backend.expectOne('/api/v1/me/goals');
+    expect(retry.request.headers.get('Authorization')).toBe('Bearer token-2');
+    retry.flush([]);
+
+    await expect(second).resolves.toEqual([]);
+  });
+
+  it('sin red al renovar, falla la petición pero la sesión sigue', async () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    const result = firstValueFrom(http.get('/api/v1/me'));
+    backend.expectOne('/api/v1/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+    backend.expectOne('/api/v1/auth/refresh').error(new ProgressEvent('error'));
+
+    await expect(result).rejects.toMatchObject({ status: 401 });
+    expect(store.isAuthenticated()).toBe(true);
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('si el reintento vuelve a dar 401, la sesión ha caducado', async () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    const result = firstValueFrom(http.get('/api/v1/me'));
+    backend.expectOne('/api/v1/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+    backend.expectOne('/api/v1/auth/refresh').flush(session('CLIENT', 'token-2'));
+    await nextTick();
+    backend.expectOne('/api/v1/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    await expect(result).rejects.toMatchObject({ status: 401 });
+    expect(store.isAuthenticated()).toBe(false);
+    expect(navigate).toHaveBeenCalledWith(['/auth/login'], expect.anything());
+  });
+
   it('si no puede renovar, cierra la sesión y manda al login', async () => {
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     const result = firstValueFrom(http.get('/api/v1/me'));

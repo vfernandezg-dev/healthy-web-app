@@ -8,31 +8,33 @@ import {
   LucideUserPlus,
   LucideUsers,
 } from '@lucide/angular';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
-import { NAVIGATION } from '../../../layout/app-shell/nav-config';
-import { type Role, REPORT_TARGET_LABELS } from '../../../shared/i18n/labels';
-import { MoneyPipe } from '../../../shared/pipes/money.pipe';
-import { PageHeader } from '../../../shared/ui/page-header';
-import { StatCard } from '../../../shared/ui/stat-card';
-import { Shortcuts } from '../../dashboard/shortcuts';
-import { activeSubscriptions, formatAmounts } from '../billing/billing-summary';
+import { NAVIGATION } from '@core/routing/navigation';
+import type { Role } from '@core/auth/roles';
+import { REPORT_TARGET_LABELS, ROLE_PLURAL_LABELS } from '@shared/i18n/labels';
+import { MoneyPipe } from '@shared/pipes/money.pipe';
+import { PageHeader } from '@shared/ui/page-header';
+import { StatCard } from '@shared/ui/stat-card';
+import { Shortcuts } from '@shared/ui/shortcuts';
+import { activeSubscriptions, formatAmounts } from '../data/billing-summary';
 import { AdminApi } from '../data/admin-api';
+import { LoadError } from '@shared/ui/load-error';
 
-const ROLES: readonly { role: Role; label: string }[] = [
-  { role: 'CLIENT', label: 'Clientes' },
-  { role: 'NUTRITIONIST', label: 'Nutricionistas' },
-  { role: 'ADMIN', label: 'Administración' },
-];
+const ROLES: readonly { role: Role; label: string }[] = (
+  Object.keys(ROLE_PLURAL_LABELS) as Role[]
+).map((role) => ({ role, label: ROLE_PLURAL_LABELS[role] }));
+
+const OLDEST_REPORTS = 3;
 
 /** Resumen de administración: cuentas, suscripciones e ingresos, denuncias pendientes y cuentas por rol. */
 @Component({
   selector: 'app-overview-page',
   imports: [
+    LoadError,
     RouterLink,
     I18nPluralPipe,
     ButtonDirective,
-    ButtonLabel,
     Skeleton,
     LucideArrowRight,
     PageHeader,
@@ -61,9 +63,9 @@ export class OverviewPage {
 
   protected readonly users = this.api.userSummary();
   protected readonly billing = this.api.billingSummary();
-  /** Las denuncias abiertas, de la más antigua a la más reciente. */
+  /** Las tres denuncias abiertas más antiguas (y en la respuesta, cuántas hay). */
   protected readonly reports = this.api.reports(
-    signal({ status: 'OPEN' as const, page: 0, sort: 'createdAt,asc' }),
+    signal({ status: 'OPEN' as const, page: 0, size: OLDEST_REPORTS, sort: 'createdAt,asc' }),
   );
 
   protected readonly kpis = computed(() => {
@@ -96,6 +98,6 @@ export class OverviewPage {
   });
 
   protected readonly oldestReports = computed(() =>
-    this.reports.hasValue() ? this.reports.value().content.slice(0, 3) : [],
+    this.reports.hasValue() ? this.reports.value().content : [],
   );
 }

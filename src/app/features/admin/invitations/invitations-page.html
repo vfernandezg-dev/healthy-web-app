@@ -2,42 +2,42 @@
   title="Invitaciones"
   description="Los nutricionistas se dan de alta por invitación: reciben un enlace por correo para crear su cuenta."
 >
-  <button pButton type="button" (click)="dialog()?.open()">
-    <svg lucideMailPlus pButtonIcon></svg>
-    <span pButtonLabel>Invitar</span>
+  <button pButton type="button" (click)="inviteDialog.open()">
+    <svg lucideMailPlus></svg>
+    Invitar
   </button>
 </app-page-header>
 
 @if (invitations.error()) {
   <app-load-error [error]="invitations.error()" (retry)="invitations.reload()" />
-} @else if (result()) {
-  @if (total() === 0) {
+} @else if (invitations.page()) {
+  @if (invitations.total() === 0) {
     <app-empty-state
       [icon]="mailIcon"
       title="Aún no has invitado a nadie"
       description="Invita a un nutricionista para que pueda publicar planes y contenido."
     >
-      <button pButton type="button" (click)="dialog()?.open()">
-        <span pButtonLabel>Invitar a un nutricionista</span>
+      <button pButton type="button" (click)="inviteDialog.open()">
+        Invitar a un nutricionista
       </button>
     </app-empty-state>
   } @else {
     <div class="card overflow-hidden">
       <p-table
-        [value]="items()"
+        [value]="invitations.items()"
         [lazy]="true"
         dataKey="id"
-        [totalRecords]="total()"
-        [rows]="pageSize"
-        [first]="first()"
-        [paginator]="total() > pageSize"
+        [totalRecords]="invitations.total()"
+        [rows]="invitations.pageSize"
+        [first]="invitations.first()"
+        [paginator]="invitations.total() > invitations.pageSize"
         sortField="createdAt"
         [sortOrder]="-1"
-        [loading]="invitations.isLoading()"
+        [loading]="invitations.loading()"
         [scrollable]="true"
         [rowHover]="true"
         tableStyleClass="md:min-w-[52rem]"
-        (onLazyLoad)="load($event)"
+        (onLazyLoad)="invitations.onLazyLoad($event)"
       >
         <ng-template #header>
           <tr class="max-md:hidden">
@@ -52,20 +52,32 @@
             <th scope="col"><span class="sr-only">Acciones</span></th>
           </tr>
         </ng-template>
-        <ng-template #body let-invitation [appRow]="items()">
+        <ng-template #body let-invitation [appRow]="invitations.items()">
           <tr>
             <td class="md:hidden" colspan="5">
-              <ng-container *ngTemplateOutlet="who; context: { $implicit: invitation }" />
+              <ng-container
+                [ngTemplateOutlet]="who"
+                [ngTemplateOutletContext]="{ $implicit: invitation }"
+              />
               <p class="mt-2 text-sm text-muted">
                 Enviada el {{ invitation.createdAt | date: 'mediumDate' }} ·
-                <ng-container *ngTemplateOutlet="deadline; context: { $implicit: invitation }" />
+                <ng-container
+                  [ngTemplateOutlet]="deadline"
+                  [ngTemplateOutletContext]="{ $implicit: invitation }"
+                />
               </p>
               <div class="mt-3 flex flex-wrap gap-2">
-                <ng-container *ngTemplateOutlet="actions; context: { $implicit: invitation }" />
+                <ng-container
+                  [ngTemplateOutlet]="actions"
+                  [ngTemplateOutletContext]="{ $implicit: invitation }"
+                />
               </div>
             </td>
             <td class="max-md:hidden">
-              <ng-container *ngTemplateOutlet="who; context: { $implicit: invitation }" />
+              <ng-container
+                [ngTemplateOutlet]="who"
+                [ngTemplateOutletContext]="{ $implicit: invitation }"
+              />
             </td>
             <td class="max-md:hidden">
               <p-tag
@@ -75,11 +87,17 @@
             </td>
             <td class="max-md:hidden">{{ invitation.createdAt | date: 'mediumDate' }}</td>
             <td class="max-md:hidden">
-              <ng-container *ngTemplateOutlet="deadline; context: { $implicit: invitation }" />
+              <ng-container
+                [ngTemplateOutlet]="deadline"
+                [ngTemplateOutletContext]="{ $implicit: invitation }"
+              />
             </td>
             <td class="max-md:hidden">
               <div class="flex justify-end gap-1">
-                <ng-container *ngTemplateOutlet="actions; context: { $implicit: invitation }" />
+                <ng-container
+                  [ngTemplateOutlet]="actions"
+                  [ngTemplateOutletContext]="{ $implicit: invitation }"
+                />
               </div>
             </td>
           </tr>
@@ -96,9 +114,13 @@
   </div>
 }
 
-<app-invite-dialog (invited)="invited($event)" />
+@defer (when inviteDialog.isOpen(); prefetch on idle) {
+  @if (inviteDialog.isOpen()) {
+    <app-invite-dialog (invited)="invited($event)" (closed)="inviteDialog.close()" />
+  }
+}
 
-<ng-template #who let-invitation [appRow]="items()">
+<ng-template #who let-invitation [appRow]="invitations.items()">
   <p class="font-semibold">{{ invitation.firstName }} {{ invitation.lastName }}</p>
   <p class="text-sm text-muted">{{ invitation.email }}</p>
   <p-tag
@@ -108,7 +130,7 @@
   />
 </ng-template>
 
-<ng-template #deadline let-invitation [appRow]="items()">
+<ng-template #deadline let-invitation [appRow]="invitations.items()">
   @switch (invitation.status) {
     @case ('ACCEPTED') {
       Aceptada el {{ invitation.acceptedAt | date: 'mediumDate' }}
@@ -125,7 +147,7 @@
   }
 </ng-template>
 
-<ng-template #actions let-invitation [appRow]="items()">
+<ng-template #actions let-invitation [appRow]="invitations.items()">
   @if (canResend(invitation)) {
     <button
       pButton
@@ -133,12 +155,10 @@
       size="small"
       severity="secondary"
       variant="outlined"
-      [attr.aria-label]="
-        'Reenviar la invitación de ' + invitation.firstName + ' ' + invitation.lastName
-      "
-      (click)="resend(invitation)"
+      [attr.aria-label]="`Reenviar la invitación de ${invitation.firstName} ${invitation.lastName}`"
+      (click)="resend.run(invitation)"
     >
-      <span pButtonLabel>Reenviar</span>
+      Reenviar
     </button>
   }
   @if (invitation.status === 'PENDING') {
@@ -148,12 +168,10 @@
       size="small"
       severity="danger"
       variant="text"
-      [attr.aria-label]="
-        'Revocar la invitación de ' + invitation.firstName + ' ' + invitation.lastName
-      "
-      (click)="revoke(invitation)"
+      [attr.aria-label]="`Revocar la invitación de ${invitation.firstName} ${invitation.lastName}`"
+      (click)="revoke.run(invitation)"
     >
-      <span pButtonLabel>Revocar</span>
+      Revocar
     </button>
   }
 </ng-template>

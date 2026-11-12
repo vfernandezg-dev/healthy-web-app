@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { RegisterRequest, SessionResponse, SessionUser } from '../api/schema';
@@ -8,7 +9,21 @@ import { homeFor } from './roles';
 /** Claves que guardaba la versión 1 en localStorage (con el JWT); se borran al arrancar. */
 const LEGACY_STORAGE_KEYS = ['healthybites_auth', 'resetToken'];
 const CHANNEL = 'healthybites-session';
-const LOGOUT = 'logout';
+/** Tope de espera al recuperar la sesión al arrancar: sin red, la app arranca igualmente (sin sesión). */
+const RESTORE_TIMEOUT_MS = 8000;
+
+/** Avisos entre pestañas del mismo navegador. */
+type SessionMessage =
+  { readonly type: 'logout' } | { readonly type: 'login'; readonly userId: string };
+
+/**
+ * Resultado de renovar el access token:
+ * - `renewed`: hay sesión nueva.
+ * - `expired`: la API rechazó la cookie (400/401/403). No hay sesión.
+ * - `unavailable`: sin red o error del servidor. La sesión que hubiera sigue intacta: no se echa a nadie al login
+ *   por un corte momentáneo.
+ */
+export type RefreshOutcome = 'renewed' | 'expired' | 'unavailable';
 
 /**
  * Sesión del usuario (ver el ADR de sesión de la API).
@@ -18,7 +33,8 @@ const LOGOUT = 'logout';
  * - El refresh token está en una cookie httpOnly que el navegador solo envía a /auth/refresh y /auth/logout. Al
  *   arrancar y tras un 401 se pide un access token nuevo con ella.
  * - Un único refresh a la vez, también entre pestañas: el servidor rota el refresh token en cada uso.
- * - Cerrar sesión en una pestaña la cierra en todas (BroadcastChannel).
+ * - Cerrar sesión en una pestaña la cierra en todas (BroadcastChannel). Entrar con otra cuenta en una pestaña lleva
+ *   a las demás a la página de inicio de esa cuenta: la cookie es la misma para todas.
  */
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
@@ -26,7 +42,7 @@ export class AuthStore {
   private readonly router = inject(Router);
 
   private readonly session = signal<SessionResponse | null>(null);
-  private refreshInFlight: Promise<boolean> | null = null;
+  private refreshInFlight: Promise<RefreshOutcome> | null = null;
   private readonly channel =
     typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel(CHANNEL);
 
@@ -40,10 +56,7 @@ export class AuthStore {
       LEGACY_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
     }
     this.channel?.addEventListener('message', (event: MessageEvent<unknown>) => {
-      if (event.data === LOGOUT && this.session()) {
-        this.session.set(null);
-        void this.router.navigateByUrl('/auth/login');
-      }
+      void this.onMessage(event.data);
     });
   }
 
@@ -54,6 +67,7 @@ export class AuthStore {
   async login(email: string, password: string): Promise<SessionUser> {
     const session = await this.api.login({ email, password });
     this.session.set(session);
+    this.broadcast({ type: 'login', userId: session.user.id });
     return session.user;
   }
 
@@ -85,11 +99,24 @@ export class AuthStore {
     );
   }
 
+  /** Al arrancar: recupera la sesión con la cookie antes de la primera navegación, con un tope de espera. */
+  async restore(timeoutMs = RESTORE_TIMEOUT_MS): Promise<void> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<void>((resolve) => {
+      timer = setTimeout(resolve, timeoutMs);
+    });
+    try {
+      await Promise.race([this.refresh(), timeout]);
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   /**
-   * Pide un access token nuevo con la cookie del refresh token. Nunca falla: devuelve false si no hay sesión.
-   * Las llamadas simultáneas comparten la misma petición.
+   * Pide un access token nuevo con la cookie del refresh token. Nunca lanza (ver {@link RefreshOutcome}). Las
+   * llamadas simultáneas comparten la misma petición.
    */
-  refresh(): Promise<boolean> {
+  refresh(): Promise<RefreshOutcome> {
     this.refreshInFlight ??= withRefreshLock(() => this.requestRefresh()).finally(() => {
       this.refreshInFlight = null;
     });
@@ -99,7 +126,7 @@ export class AuthStore {
   /** Cierra la sesión en el servidor, en esta pestaña y en las demás. */
   async logout(): Promise<void> {
     this.session.set(null);
-    this.channel?.postMessage(LOGOUT);
+    this.broadcast({ type: 'logout' });
     try {
       await this.api.logout();
     } catch {
@@ -120,13 +147,52 @@ export class AuthStore {
     });
   }
 
-  private async requestRefresh(): Promise<boolean> {
+  private async requestRefresh(): Promise<RefreshOutcome> {
     try {
       this.session.set(await this.api.refresh());
-      return true;
-    } catch {
-      this.session.set(null);
-      return false;
+      return 'renewed';
+    } catch (error) {
+      if (isRejection(error)) {
+        this.session.set(null);
+        return 'expired';
+      }
+      return 'unavailable';
     }
   }
+
+  private broadcast(message: SessionMessage): void {
+    this.channel?.postMessage(message);
+  }
+
+  private async onMessage(data: unknown): Promise<void> {
+    if (!isSessionMessage(data)) {
+      return;
+    }
+    if (data.type === 'logout') {
+      if (this.session()) {
+        this.session.set(null);
+        await this.router.navigateByUrl('/auth/login');
+      }
+      return;
+    }
+    // Otra pestaña ha entrado con otra cuenta: la cookie ya es de esa cuenta, así que esta pestaña la adopta.
+    if (this.user()?.id !== data.userId && (await this.refresh()) === 'renewed') {
+      await this.router.navigateByUrl(this.homeUrl());
+    }
+  }
+}
+
+/** La API rechazó la cookie del refresh token (caducada, revocada, reutilizada o sin la cabecera anti-CSRF). */
+function isRejection(error: unknown): boolean {
+  return error instanceof HttpErrorResponse && [400, 401, 403].includes(error.status);
+}
+
+function isSessionMessage(data: unknown): data is SessionMessage {
+  if (typeof data !== 'object' || data === null || !('type' in data)) {
+    return false;
+  }
+  return (
+    data.type === 'logout' ||
+    (data.type === 'login' && 'userId' in data && typeof data.userId === 'string')
+  );
 }

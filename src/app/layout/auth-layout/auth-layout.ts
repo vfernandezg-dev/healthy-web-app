@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { LucideFlame, LucideSalad, LucideTarget } from '@lucide/angular';
-import { APP_CONFIG } from '../../core/api/api-config';
-import { SIGNAL_FORMS_PROVIDERS } from '../../shared/forms/forms.config';
-import { BrandLogo } from '../../shared/ui/brand-logo';
+import { APP_CONFIG } from '@core/api/api-config';
+import { SIGNAL_FORMS_PROVIDERS } from '@shared/forms/forms.config';
+import { BrandLogo } from '@shared/ui/brand-logo';
 
 /** Pantallas de acceso: la marca a un lado (en escritorio) y el formulario al otro. */
 @Component({

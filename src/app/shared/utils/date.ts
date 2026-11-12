@@ -15,9 +15,25 @@ export function toIsoDate(date: Date): string {
   return `${date.getFullYear()}-${month}-${day}`;
 }
 
+const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+/** Año, mes (1-12) y día de una fecha `YYYY-MM-DD`. Lanza un error si no tiene ese formato. */
+function partsOf(iso: string): {
+  readonly year: number;
+  readonly month: number;
+  readonly day: number;
+} {
+  const match = ISO_DATE.exec(iso);
+  if (!match) {
+    throw new RangeError(`Fecha no válida (se espera YYYY-MM-DD): ${iso}`);
+  }
+  const [, year, month, day] = match.map(Number);
+  return { year: year ?? 0, month: month ?? 1, day: day ?? 1 };
+}
+
 /** Fecha local (a medianoche) a partir de `YYYY-MM-DD`. */
 export function fromIsoDate(iso: string): Date {
-  const [year, month, day] = iso.split('-').map(Number);
+  const { year, month, day } = partsOf(iso);
   return new Date(year, month - 1, day);
 }
 
@@ -30,8 +46,9 @@ export function addDays(iso: string, days: number): string {
 
 /** Años cumplidos en `onDate` por alguien nacido en `birthDate` (ambas `YYYY-MM-DD`). */
 export function ageOn(birthDate: string, onDate: string = todayIso()): number {
-  const [birthYear, birthMonth, birthDay] = birthDate.split('-').map(Number);
-  const [year, month, day] = onDate.split('-').map(Number);
-  const birthdayPassed = month > birthMonth || (month === birthMonth && day >= birthDay);
-  return year - birthYear - (birthdayPassed ? 0 : 1);
+  const birth = partsOf(birthDate);
+  const on = partsOf(onDate);
+  const birthdayPassed =
+    on.month > birth.month || (on.month === birth.month && on.day >= birth.day);
+  return on.year - birth.year - (birthdayPassed ? 0 : 1);
 }

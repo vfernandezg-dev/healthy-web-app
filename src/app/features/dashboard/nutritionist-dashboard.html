@@ -38,7 +38,11 @@
       </li>
     </ul>
   } @else if (failed()) {
-    <p class="text-red-700" role="alert">No se han podido cargar tus cifras. Recarga la página.</p>
+    <app-load-error
+      [compact]="true"
+      title="No se han podido cargar tus cifras"
+      (retry)="reloadFigures()"
+    />
   } @else {
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-busy="true">
       @for (placeholder of [1, 2, 3, 4]; track placeholder) {
@@ -61,7 +65,7 @@
         <ul class="mt-4 space-y-4" role="list">
           @for (client of recentClients(); track client.id) {
             <li class="flex items-center gap-3">
-              <app-person-avatar [name]="client.firstName + ' ' + client.lastName" />
+              <app-person-avatar [name]="`${client.firstName} ${client.lastName}`" />
               <div class="min-w-0">
                 <p class="truncate font-semibold">{{ client.firstName }} {{ client.lastName }}</p>
                 <p class="truncate text-sm text-muted">
@@ -124,9 +128,12 @@
         </ul>
       }
     } @else if (draftPlans.error() || draftContent.error()) {
-      <p class="mt-3 text-red-700" role="alert">
-        No se han podido cargar tus borradores. Recarga la página.
-      </p>
+      <app-load-error
+        class="mt-3 block"
+        [compact]="true"
+        title="No se han podido cargar tus borradores"
+        (retry)="draftPlans.reload(); draftContent.reload()"
+      />
     } @else {
       <div class="mt-4 space-y-3" aria-busy="true">
         <p-skeleton height="2.5rem" />

@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { type Page, expect, test } from './support/test';
 import { expectNoA11yViolations } from './support/a11y';
-import { mockApi, problem, sessionFor } from './support/api';
+import { type Schemas, mockApi, problem, requestBody, sessionFor } from './support/api';
 
 /** PNG de 1×1 px para las imágenes simuladas. */
 const PNG = Buffer.from(
@@ -21,14 +21,24 @@ const ACTIVE_MEMBER: Membership = { role: 'MEMBER', status: 'ACTIVE' };
 const OWNER: Membership = { role: 'OWNER', status: 'ACTIVE' };
 const PENDING: Membership = { role: 'MEMBER', status: 'PENDING' };
 
-function group(id: string, overrides: Record<string, unknown> = {}) {
+/** La lista de miembros se carga al acercarse a ella (en móvil está debajo de las publicaciones). */
+async function membersPanel(page: Page) {
+  await page.getByRole('heading', { level: 1 }).waitFor();
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  return page.getByRole('region', { name: 'Miembros' });
+}
+
+function group(
+  id: string,
+  overrides: Partial<Schemas['GroupResponse']> = {},
+): Schemas['GroupResponse'] {
   return {
     id,
     name: `Grupo ${id}`,
     description: 'Recetas, dudas y avances.',
     visibility: 'PUBLIC',
     members: 3,
-    membership: null as Membership,
+    membership: null,
     createdAt: '2026-10-01T15:00:00Z',
     ...overrides,
   };
@@ -74,7 +84,7 @@ function pageParam(url: string): number {
 test.describe('comunidad: directorio', () => {
   test('busca grupos y crea uno privado', async ({ page }) => {
     const searches: (string | null)[] = [];
-    let created: { name: string; description: string | null; visibility: string } | undefined;
+    let created: Schemas['GroupRequest'] | undefined;
     const newGroup = () =>
       group('nuevo', {
         ...created,
@@ -101,7 +111,7 @@ test.describe('comunidad: directorio', () => {
           return route.fulfill({ json: paged(found, 12) });
         },
         '/groups': (route) => {
-          created = route.request().postDataJSON();
+          created = requestBody<NonNullable<typeof created>>(route);
           return route.fulfill({ status: 201, json: newGroup() });
         },
         '/groups/nuevo': (route) => route.fulfill({ json: newGroup() }),
@@ -184,14 +194,14 @@ test.describe('comunidad: un grupo', () => {
           route.fulfill({ json: paged([member(CARLOS, 'OWNER'), member(MARIA)], 20) }),
         '/groups/g1/posts?*': (route) => route.fulfill({ json: paged(posts) }),
         '/groups/g1/posts': (route) => {
-          const body = route.request().postDataJSON();
+          const body = requestBody<Schemas['PostRequest']>(route);
           calls.push(`POST ${JSON.stringify(body)}`);
           const created = post('p3', MARIA, { title: body.title, body: body.body });
           posts = [created, ...posts];
           return route.fulfill({ status: 201, json: created });
         },
         '/posts/p1': (route) => {
-          const body = route.request().postDataJSON();
+          const body = requestBody<Schemas['PostRequest']>(route);
           calls.push(`PUT p1 ${JSON.stringify(body)}`);
           posts = posts.map((p) => (p.id === 'p1' ? { ...p, title: body.title } : p));
           return route.fulfill({ json: posts.find((p) => p.id === 'p1') });
@@ -200,7 +210,7 @@ test.describe('comunidad: un grupo', () => {
         '/posts/p2/comments': (route) => {
           const created = {
             id: 'c2',
-            body: route.request().postDataJSON().body,
+            body: requestBody<Schemas['CommentRequest']>(route).body,
             author: MARIA,
             createdAt: '2026-11-12T10:00:00Z',
           };
@@ -246,7 +256,7 @@ test.describe('comunidad: un grupo', () => {
     await expect(other.getByRole('button', { name: 'Editar' })).toHaveCount(0);
     await expect(other.getByRole('button', { name: 'Eliminar' })).toHaveCount(0);
 
-    const members = page.getByRole('region', { name: 'Miembros' });
+    const members = await membersPanel(page);
     await expect(members.getByRole('listitem').filter({ hasText: 'Carlos García' })).toContainText(
       'Creador del grupo',
     );
@@ -359,7 +369,7 @@ test.describe('comunidad: un grupo', () => {
         '/posts/p9/comments': (route) => {
           const created = {
             id: 'c-nuevo',
-            body: route.request().postDataJSON().body,
+            body: requestBody<Schemas['CommentRequest']>(route).body,
             author: MARIA,
             createdAt: '2026-11-12T10:00:00Z',
           };
@@ -370,7 +380,7 @@ test.describe('comunidad: un grupo', () => {
     });
 
     await page.goto('/client/community/groups/g4');
-    const panel = page.getByRole('region', { name: 'Miembros' });
+    const panel = await membersPanel(page);
     await expect(panel.getByRole('listitem')).toHaveCount(20);
     await panel.getByRole('button', { name: 'Ver más miembros' }).click();
     await expect(panel.getByRole('listitem')).toHaveCount(22);
@@ -465,7 +475,7 @@ test.describe('comunidad: un grupo', () => {
         '/groups/g3': (route) => {
           const method = route.request().method();
           if (method === 'PUT') {
-            const body = route.request().postDataJSON();
+            const body = requestBody<Schemas['GroupRequest']>(route);
             calls.push(`PUT ${JSON.stringify(body)}`);
             current = { ...current, ...body };
           } else if (method === 'DELETE') {
@@ -497,7 +507,7 @@ test.describe('comunidad: un grupo', () => {
     });
 
     await page.goto('/nutritionist/community/groups/g3');
-    const panel = page.getByRole('region', { name: 'Miembros' });
+    const panel = await membersPanel(page);
     await expect(panel).toContainText('Solicitudes pendientes (1)');
     await expect(panel.getByRole('button', { name: 'Expulsar a Carlos García' })).toHaveCount(0);
     await expectNoA11yViolations(page);

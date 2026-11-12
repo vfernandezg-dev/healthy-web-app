@@ -1,6 +1,6 @@
-import { type Page, type Route, expect, test } from '@playwright/test';
+import { type Page, type Route, expect, test } from './support/test';
 import { expectNoA11yViolations } from './support/a11y';
-import { mockApi, problem, sessionFor } from './support/api';
+import { type Schemas, mockApi, problem, requestBody, sessionFor } from './support/api';
 
 type Params = Record<string, string>;
 
@@ -142,7 +142,7 @@ test.describe('administración: invitaciones', () => {
       routes: {
         '/admin/nutritionist-invitations?*': (route) => route.fulfill({ json: paged(invitations) }),
         '/admin/nutritionist-invitations': (route) => {
-          const body = route.request().postDataJSON();
+          const body = requestBody<Schemas['InviteNutritionistRequest']>(route);
           calls.push(`POST ${body.email}`);
           if (body.email === 'carlos.garcia@healthybites.com') {
             return route.fulfill(

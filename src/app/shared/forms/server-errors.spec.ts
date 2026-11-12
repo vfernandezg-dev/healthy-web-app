@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { form } from '@angular/forms/signals';
-import type { Problem } from '../../core/api/problem';
+import type { Problem } from '@core/api/problem';
 import { serverFieldErrors } from './server-errors';
 
 function problem(errors: Problem['errors']): Problem {

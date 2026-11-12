@@ -1,10 +1,10 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component, DestroyRef, computed, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { LucideFile, LucideImage, LucideTrash2, LucideUpload } from '@lucide/angular';
-import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
-import { toProblem } from '../../core/api/problem';
-import type { UploadResponse } from '../../core/api/schema';
+import { LucideFile, LucideImage, LucideTrash, LucideUpload } from '@lucide/angular';
+import { ButtonDirective } from 'primeng/button';
+import { toProblem } from '@core/api/problem';
+import type { UploadResponse } from '@core/api/schema';
 import { MediaUrlPipe } from '../pipes/media-url.pipe';
 import { ProgressBar } from '../ui/progress-bar';
 import { MediaApi, type MediaPurpose } from './media-api';
@@ -20,95 +20,13 @@ import { MediaApi, type MediaPurpose } from './media-api';
     MediaUrlPipe,
     ProgressBar,
     ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
     LucideUpload,
-    LucideTrash2,
+    LucideTrash,
     LucideImage,
     LucideFile,
   ],
   host: { class: 'block' },
-  template: `
-    <p [id]="inputId() + '-label'" class="mb-1.5 text-sm font-semibold text-ink">
-      {{ label() }} <span class="font-normal text-muted">(opcional)</span>
-    </p>
-    <div
-      class="flex flex-wrap items-center gap-4 rounded-2xl border border-dashed border-brand-200 bg-white p-4"
-    >
-      @if (isImage() && previewPath()) {
-        <img
-          [ngSrc]="(previewPath() | mediaUrl) ?? ''"
-          alt=""
-          width="80"
-          height="80"
-          class="size-20 shrink-0 rounded-xl object-cover"
-        />
-      } @else {
-        <span
-          class="grid size-20 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700"
-        >
-          @if (isImage()) {
-            <svg lucideImage class="size-7"></svg>
-          } @else {
-            <svg lucideFile class="size-7"></svg>
-          }
-        </span>
-      }
-      <div class="min-w-0 flex-1">
-        <p class="truncate font-medium" [id]="inputId() + '-status'">{{ status() }}</p>
-        <p class="text-sm text-muted">{{ hint() }}</p>
-        @if (progress() !== null) {
-          <app-progress-bar
-            class="mt-2"
-            [value]="progress() ?? 0"
-            [label]="'Subiendo ' + label().toLowerCase()"
-          />
-        }
-        @if (failure(); as message) {
-          <p class="mt-1 text-sm text-red-700" role="alert">{{ message }}</p>
-        }
-      </div>
-      <div class="flex gap-2">
-        <input
-          #picker
-          type="file"
-          class="sr-only"
-          tabindex="-1"
-          [id]="inputId()"
-          [attr.aria-labelledby]="inputId() + '-label'"
-          [accept]="accept()"
-          (change)="choose(picker)"
-        />
-        <button
-          pButton
-          type="button"
-          size="small"
-          severity="secondary"
-          variant="outlined"
-          [disabled]="progress() !== null"
-          [attr.aria-describedby]="inputId() + '-label ' + inputId() + '-status'"
-          (click)="picker.click()"
-        >
-          <svg lucideUpload pButtonIcon></svg>
-          <span pButtonLabel>{{ hasFile() ? 'Cambiar' : 'Subir' }}</span>
-        </button>
-        @if (hasFile()) {
-          <button
-            pButton
-            type="button"
-            size="small"
-            severity="danger"
-            variant="text"
-            [iconOnly]="true"
-            [attr.aria-label]="'Quitar ' + label().toLowerCase()"
-            (click)="remove()"
-          >
-            <svg lucideTrash2 pButtonIcon></svg>
-          </button>
-        }
-      </div>
-    </div>
-  `,
+  templateUrl: './media-upload.html',
 })
 export class MediaUpload {
   private readonly media = inject(MediaApi);

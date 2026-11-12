@@ -1,8 +1,8 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, type Signal, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import { silentErrors } from '../../../core/api/http-context';
+import { APP_CONFIG } from '@core/api/api-config';
+import { silentErrors } from '@core/api/http-context';
 import type {
   EnrollmentResponse,
   MealPlanDetailResponse,
@@ -10,10 +10,19 @@ import type {
   MealRequest,
   MealResponse,
   PagedModelMealPlanSummaryResponse,
-} from '../../../core/api/schema';
-import type { MealPlanGoal } from '../../../shared/i18n/labels';
+  PublicationSummaryResponse,
+} from '@core/api/schema';
+import type { MealPlanGoal, PublicationStatus } from '@shared/i18n/labels';
+import { type PageRequest, pageParams } from '@shared/table/page-query';
 
-export const CATALOG_PAGE_SIZE = 12;
+export interface CatalogFilters {
+  readonly goal: MealPlanGoal | null;
+}
+
+/** Planes del nutricionista: todos, o solo los de un estado. */
+export interface OwnPlanFilters {
+  readonly status: PublicationStatus | null;
+}
 
 /** Planes de alimentación: catálogo e inscripciones del cliente y gestión del nutricionista. */
 @Injectable({ providedIn: 'root' })
@@ -23,18 +32,10 @@ export class MealPlansApi {
 
   // ---------------------------------------------------------------- cliente
 
-  catalog(query: Signal<{ goal: MealPlanGoal | null; page: number }>) {
+  catalog(request: Signal<CatalogFilters & PageRequest>) {
     return httpResource<PagedModelMealPlanSummaryResponse>(() => {
-      const { goal, page } = query();
-      return {
-        url: `${this.api}/meal-plans`,
-        params: {
-          page,
-          size: CATALOG_PAGE_SIZE,
-          sort: 'publishedAt,desc',
-          ...(goal ? { goal } : {}),
-        },
-      };
+      const { goal, ...page } = request();
+      return { url: `${this.api}/meal-plans`, params: pageParams(page, { goal }) };
     });
   }
 
@@ -61,11 +62,19 @@ export class MealPlansApi {
 
   // ---------------------------------------------------------------- nutricionista
 
-  mine(page: Signal<number>) {
-    return httpResource<PagedModelMealPlanSummaryResponse>(() => ({
-      url: `${this.api}/nutritionist/meal-plans`,
-      params: { page: page(), size: 20, sort: 'updatedAt,desc' },
-    }));
+  /** Sus planes (en todos los estados, o en uno). Lo usan también el panel y el diálogo de recompensas. */
+  mine(request: Signal<OwnPlanFilters & PageRequest>) {
+    return httpResource<PagedModelMealPlanSummaryResponse>(() => {
+      const { status, ...page } = request();
+      return { url: `${this.api}/nutritionist/meal-plans`, params: pageParams(page, { status }) };
+    });
+  }
+
+  /** Cuántos planes tiene en cada estado. */
+  summary() {
+    return httpResource<PublicationSummaryResponse>(
+      () => `${this.api}/nutritionist/meal-plans/summary`,
+    );
   }
 
   /** El plan del nutricionista (cualquier estado), con sus comidas. */

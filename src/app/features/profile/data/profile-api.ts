@@ -1,14 +1,14 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import { silentErrors } from '../../../core/api/http-context';
+import { APP_CONFIG } from '@core/api/api-config';
+import { silentErrors } from '@core/api/http-context';
 import type {
   ChangePasswordRequest,
   MeResponse,
   SessionResponse,
   UpdateProfileRequest,
-} from '../../../core/api/schema';
+} from '@core/api/schema';
 
 /** La cuenta del usuario actual (/me). */
 @Injectable({ providedIn: 'root' })

@@ -1,0 +1,62 @@
+<app-page-header
+  title="Tus recompensas"
+  description="Premia la constancia: cuando un cliente registra sus hábitos los días que pidas, desbloquea un contenido o un plan tuyo."
+>
+  <button pButton type="button" (click)="rewardDialog.open(null)">
+    <svg lucidePlus></svg>
+    Nueva recompensa
+  </button>
+</app-page-header>
+
+<app-paged-grid [query]="rewards" label="Tus recompensas" [skeletons]="2">
+  <ng-template [appRow]="rewards.items()" let-reward>
+    <app-reward-card [reward]="reward" [headingLevel]="2">
+      <p-tag
+        badge
+        [value]="reward.active ? 'Activa' : 'Retirada'"
+        [severity]="reward.active ? 'success' : 'secondary'"
+      />
+      @if (reward.active) {
+        <div class="mt-5 flex justify-end gap-2">
+          <button
+            pButton
+            type="button"
+            size="small"
+            severity="secondary"
+            variant="text"
+            (click)="deactivate.run(reward)"
+          >
+            Retirar
+          </button>
+          <button
+            pButton
+            type="button"
+            size="small"
+            severity="secondary"
+            (click)="rewardDialog.open(reward)"
+          >
+            <svg lucidePencil></svg>
+            Editar
+          </button>
+        </div>
+      }
+    </app-reward-card>
+  </ng-template>
+  <div empty>
+    <app-empty-state
+      [icon]="trophy"
+      title="Aún no has creado recompensas"
+      description="Elige uno de tus contenidos o planes publicados como premio y cuántos días seguidos hacen falta."
+    />
+  </div>
+</app-paged-grid>
+
+@defer (when rewardDialog.isOpen(); prefetch on idle) {
+  @if (rewardDialog.data(); as dialog) {
+    <app-reward-dialog
+      [reward]="dialog.value"
+      (saved)="saved(dialog.value !== null)"
+      (closed)="rewardDialog.close()"
+    />
+  }
+}

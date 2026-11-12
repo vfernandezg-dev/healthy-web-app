@@ -1,16 +1,44 @@
-// Sirve el build de producción para los tests E2E, con la misma regla que el hosting: cualquier ruta
-// sin fichero devuelve index.html (la app resuelve la ruta).
+// Sirve el build de producción para los tests E2E, como el hosting: cualquier ruta sin fichero devuelve index.html
+// (la app resuelve la ruta) y cada respuesta lleva las cabeceras de vercel.json (CSP, HSTS, caché...). Así las
+// pruebas corren bajo la misma política de seguridad que producción.
 //
 // - Sin más argumentos, las peticiones a la API las simula Playwright con page.route y aquí no llegan.
 // - Con `--api <url>`, reenvía /api/* a esa API (pruebas contra el backend real): mismo origen, así que la cookie de
 //   sesión funciona igual que en producción.
 //
 // Uso: node scripts/serve-dist.mjs [puerto] [--api http://127.0.0.1:8090]
+import { readFileSync } from 'node:fs';
 import { readFile, stat } from 'node:fs/promises';
 import { createServer, request as httpRequest } from 'node:http';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 
 const ROOT = resolve('dist/healthybites-app/browser');
+
+/**
+ * Reglas de cabeceras de vercel.json. Sus `source` son expresiones regulares sin parámetros con nombre (`:id`), así
+ * que se aplican tal cual; si alguna los usa, este servidor ya no reproduce el hosting y se avisa al arrancar.
+ */
+const HEADER_RULES = JSON.parse(readFileSync('vercel.json', 'utf8')).headers.map(
+  ({ source, headers }) => {
+    if (/(^|\/):\w/.test(source)) {
+      throw new Error(`vercel.json: serve-dist no entiende parámetros con nombre en «${source}»`);
+    }
+    return { pattern: new RegExp(`^${source}$`), headers };
+  },
+);
+
+/** Cabeceras que el hosting añade a la respuesta de `pathname` (las reglas posteriores mandan). */
+function hostingHeaders(pathname) {
+  const result = {};
+  for (const { pattern, headers } of HEADER_RULES) {
+    if (pattern.test(pathname)) {
+      for (const { key, value } of headers) {
+        result[key] = value;
+      }
+    }
+  }
+  return result;
+}
 const args = process.argv.slice(2);
 const apiIndex = args.indexOf('--api');
 const API = apiIndex >= 0 ? new URL(args[apiIndex + 1]) : null;
@@ -75,17 +103,21 @@ createServer(async (request, response) => {
     proxy(request, response);
     return;
   }
+  const headers = hostingHeaders(pathname);
   const file = await resolveFile(pathname);
   if (!file) {
-    response.writeHead(404).end();
+    response.writeHead(404, headers).end();
     return;
   }
   try {
     const body = await readFile(file);
-    response.writeHead(200, { 'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream' });
+    response.writeHead(200, {
+      ...headers,
+      'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream',
+    });
     response.end(body);
   } catch {
-    response.writeHead(404).end();
+    response.writeHead(404, headers).end();
   }
 }).listen(PORT, () =>
   console.warn(`dist/ servido en http://localhost:${PORT}${API ? ` (API: ${API.origin})` : ''}`),

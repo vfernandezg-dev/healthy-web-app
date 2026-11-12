@@ -1,17 +1,15 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, type Signal, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { APP_CONFIG } from '../../../core/api/api-config';
-import { silentErrors } from '../../../core/api/http-context';
-import type {
-  PagedModelContentSummaryResponse,
-  PagedModelMealPlanSummaryResponse,
-  PagedModelRewardResponse,
-  RewardRequest,
-  RewardResponse,
-} from '../../../core/api/schema';
+import { APP_CONFIG } from '@core/api/api-config';
+import { silentErrors } from '@core/api/http-context';
+import type { PagedModelRewardResponse, RewardRequest, RewardResponse } from '@core/api/schema';
+import { type PageRequest, pageParams } from '@shared/table/page-query';
 
-export const REWARD_PAGE_SIZE = 12;
+/** Recompensas del nutricionista: todas, o solo las activas o las retiradas. */
+export interface OwnRewardFilters {
+  readonly active: boolean | null;
+}
 
 /** Recompensas: rachas del cliente y gestión del nutricionista. */
 @Injectable({ providedIn: 'root' })
@@ -22,10 +20,10 @@ export class RewardsApi {
   // ---------------------------------------------------------------- cliente
 
   /** Recompensas activas, de la más corta a la más larga, cada una con la racha del cliente hacia ella (si la tiene). */
-  catalog(page: Signal<number>) {
+  catalog(request: Signal<PageRequest>) {
     return httpResource<PagedModelRewardResponse>(() => ({
       url: `${this.api}/rewards`,
-      params: { page: page(), size: REWARD_PAGE_SIZE, sort: 'requiredStreakDays,asc' },
+      params: pageParams(request()),
     }));
   }
 
@@ -47,27 +45,11 @@ export class RewardsApi {
   // ---------------------------------------------------------------- nutricionista
 
   /** Sus recompensas (activas y retiradas), las últimas creadas primero. */
-  mine(page: Signal<number>) {
-    return httpResource<PagedModelRewardResponse>(() => ({
-      url: `${this.api}/nutritionist/rewards`,
-      params: { page: page(), size: REWARD_PAGE_SIZE, sort: 'createdAt,desc' },
-    }));
-  }
-
-  /** Premios posibles: sus contenidos publicados (hasta 100, la página más grande de la API). */
-  ownContent() {
-    return httpResource<PagedModelContentSummaryResponse>(() => ({
-      url: `${this.api}/nutritionist/content-items`,
-      params: { status: 'PUBLISHED', size: 100, sort: 'updatedAt,desc' },
-    }));
-  }
-
-  /** Premios posibles: sus planes publicados (hasta 100). */
-  ownMealPlans() {
-    return httpResource<PagedModelMealPlanSummaryResponse>(() => ({
-      url: `${this.api}/nutritionist/meal-plans`,
-      params: { status: 'PUBLISHED', size: 100, sort: 'title,asc' },
-    }));
+  mine(request: Signal<OwnRewardFilters & PageRequest>) {
+    return httpResource<PagedModelRewardResponse>(() => {
+      const { active, ...page } = request();
+      return { url: `${this.api}/nutritionist/rewards`, params: pageParams(page, { active }) };
+    });
   }
 
   create(body: RewardRequest): Promise<RewardResponse> {

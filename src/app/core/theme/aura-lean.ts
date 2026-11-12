@@ -25,7 +25,7 @@ import togglebutton from '@primeuix/themes/aura/togglebutton';
 type AuraPreset = typeof Aura;
 
 // Los tipos de aura/base solo declaran tipos, aunque el módulo exporta primitive y semantic.
-const { primitive, semantic } = auraBase as unknown as Pick<AuraPreset, 'primitive' | 'semantic'>;
+const base = auraBase as unknown as Pick<AuraPreset, 'primitive' | 'semantic'>;
 
 /**
  * Aura con los tokens de los componentes que usa la app. El preset completo trae los de 95 componentes y suma
@@ -35,8 +35,7 @@ const { primitive, semantic } = auraBase as unknown as Pick<AuraPreset, 'primiti
  * ellos sale sin estilos. `pnpm theme:check` (dentro de `pnpm verify`) lo comprueba.
  */
 export const AuraLean: AuraPreset = {
-  primitive,
-  semantic,
+  ...base,
   components: {
     avatar,
     button,

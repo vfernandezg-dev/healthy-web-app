@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   LucideArrowRight,
@@ -10,14 +10,18 @@ import {
   LucideUtensils,
 } from '@lucide/angular';
 import { Skeleton } from 'primeng/skeleton';
-import { AuthStore } from '../../core/auth/auth-store';
-import type { PublicationSummaryResponse } from '../../core/api/schema';
-import { NAVIGATION } from '../../layout/app-shell/nav-config';
-import { PageHeader } from '../../shared/ui/page-header';
-import { PersonAvatar } from '../../shared/ui/person-avatar';
-import { StatCard } from '../../shared/ui/stat-card';
-import { DashboardApi } from './data/dashboard-api';
-import { Shortcuts } from './shortcuts';
+import { AuthStore } from '@core/auth/auth-store';
+import type { PublicationSummaryResponse } from '@core/api/schema';
+import { NAVIGATION } from '@core/routing/navigation';
+import { PageHeader } from '@shared/ui/page-header';
+import { PersonAvatar } from '@shared/ui/person-avatar';
+import { StatCard } from '@shared/ui/stat-card';
+import { Shortcuts } from '@shared/ui/shortcuts';
+import { MealPlansApi } from '@features/meal-plans/data/meal-plans-api';
+import { ContentApi } from '@features/content/data/content-api';
+import { ClientsApi } from '@features/nutritionist-clients/data/clients-api';
+import { RewardsApi } from '@features/rewards/data/rewards-api';
+import { LoadError } from '@shared/ui/load-error';
 
 /** Todos sus planes o contenidos, en cualquier estado. */
 function totalOf(summary: PublicationSummaryResponse): number {
@@ -32,9 +36,20 @@ interface Draft {
 }
 
 /** Inicio del nutricionista: cifras de su actividad, clientes recientes y borradores por publicar. */
+/** Cuántos clientes recientes y cuántos borradores enseña el panel. */
+const DASHBOARD_CLIENTS = 4;
+const DASHBOARD_DRAFTS = 5;
+const DRAFTS = {
+  status: 'DRAFT',
+  page: 0,
+  size: DASHBOARD_DRAFTS,
+  sort: 'updatedAt,desc',
+} as const;
+
 @Component({
   selector: 'app-nutritionist-dashboard',
   imports: [
+    LoadError,
     RouterLink,
     DatePipe,
     Skeleton,
@@ -49,7 +64,10 @@ interface Draft {
 })
 export class NutritionistDashboard {
   private readonly auth = inject(AuthStore);
-  private readonly dashboard = inject(DashboardApi);
+  private readonly plansApi = inject(MealPlansApi);
+  private readonly contentApi = inject(ContentApi);
+  private readonly clientsApi = inject(ClientsApi);
+  private readonly rewardsApi = inject(RewardsApi);
 
   protected readonly greeting = computed(() => `Hola, ${this.auth.user()?.firstName ?? ''}`);
   protected readonly shortcuts = NAVIGATION.NUTRITIONIST.filter((item) => item.description);
@@ -60,21 +78,24 @@ export class NutritionistDashboard {
     rewards: LucideTrophy,
   };
 
-  protected readonly clients = this.dashboard.recentClients();
-  protected readonly rewards = this.dashboard.activeRewards();
-  protected readonly planSummary = this.dashboard.planSummary();
-  protected readonly contentSummary = this.dashboard.contentSummary();
-  protected readonly draftPlans = this.dashboard.draftPlans();
-  protected readonly draftContent = this.dashboard.draftContent();
+  /** Sus clientes más recientes (la API los ordena así) y, en `page.totalElements`, cuántos tiene. */
+  protected readonly clients = this.clientsApi.clients(
+    signal({ q: '', page: 0, size: DASHBOARD_CLIENTS }),
+  );
+  /** Solo para contar sus recompensas activas (`page.totalElements`). */
+  protected readonly rewards = this.rewardsApi.mine(
+    signal({ active: true, page: 0, size: 1, sort: 'createdAt,desc' }),
+  );
+  protected readonly planSummary = this.plansApi.summary();
+  protected readonly contentSummary = this.contentApi.summary();
+  /** Sus borradores, los últimos editados primero. */
+  protected readonly draftPlans = this.plansApi.mine(signal(DRAFTS));
+  protected readonly draftContent = this.contentApi.mine(signal(DRAFTS));
 
-  protected readonly failed = computed(
-    () =>
-      !!(
-        this.clients.error() ||
-        this.rewards.error() ||
-        this.planSummary.error() ||
-        this.contentSummary.error()
-      ),
+  protected readonly failed = computed(() =>
+    [this.clients, this.rewards, this.planSummary, this.contentSummary].some(
+      (source) => source.error() !== undefined,
+    ),
   );
 
   protected readonly stats = computed(() => {
@@ -121,5 +142,11 @@ export class NutritionistDashboard {
 
   protected publishedDetail(published: number, total: number): string {
     return total === published ? 'Todo publicado' : `${total - published} sin publicar`;
+  }
+
+  protected reloadFigures(): void {
+    for (const source of [this.clients, this.rewards, this.planSummary, this.contentSummary]) {
+      source.reload();
+    }
   }
 }
