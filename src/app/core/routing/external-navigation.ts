@@ -8,6 +8,27 @@ export class ExternalNavigation {
   assign(url: string): void {
     this.document.location.assign(url);
   }
+
+  /**
+   * Abre una pestaña nueva ya (dentro del clic, para que el navegador no la bloquee) y devuelve cómo llevarla a su
+   * destino cuando se conozca (por ejemplo, tras pedir un enlace firmado). Sin `opener`: la página abierta no puede
+   * tocar esta.
+   */
+  openTab(): PendingTab {
+    const tab = this.document.defaultView?.open('about:blank', '_blank') ?? null;
+    if (tab) {
+      tab.opener = null;
+    }
+    return {
+      go: (url) => (tab ? tab.location.assign(url) : this.assign(url)),
+      cancel: () => tab?.close(),
+    };
+  }
+}
+
+export interface PendingTab {
+  go(url: string): void;
+  cancel(): void;
 }
 
 /**

@@ -7,6 +7,7 @@ const shell = () => import('./layout/app-shell/app-shell').then((m) => m.AppShel
 const roleHome = () => import('./features/home/role-home').then((m) => m.RoleHome);
 const profile = () => import('./features/profile/profile-page').then((m) => m.ProfilePage);
 const mealPlans = () => import('./features/meal-plans/meal-plans.routes');
+const content = () => import('./features/content/content.routes');
 
 /**
  * Rutas por rol (/client, /nutritionist, /admin) con canMatch: el código de las áreas de otros roles ni se
@@ -35,6 +36,7 @@ export const routes: Routes = [
         path: 'meal-plans',
         loadChildren: () => mealPlans().then((m) => m.CLIENT_MEAL_PLAN_ROUTES),
       },
+      { path: 'content', loadChildren: () => content().then((m) => m.CLIENT_CONTENT_ROUTES) },
     ],
   },
   {
@@ -47,6 +49,10 @@ export const routes: Routes = [
       {
         path: 'meal-plans',
         loadChildren: () => mealPlans().then((m) => m.NUTRITIONIST_MEAL_PLAN_ROUTES),
+      },
+      {
+        path: 'content',
+        loadChildren: () => content().then((m) => m.NUTRITIONIST_CONTENT_ROUTES),
       },
     ],
   },

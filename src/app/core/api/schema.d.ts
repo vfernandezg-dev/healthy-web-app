@@ -1503,6 +1503,14 @@ export interface components {
             /** @enum {string} */
             tier: "BASIC" | "PREMIUM" | "VIP";
         };
+        EditableContentResponse: {
+            body?: string | null;
+            /** Format: uuid */
+            coverMediaId?: string | null;
+            /** Format: uuid */
+            fileMediaId?: string | null;
+            item: components["schemas"]["ContentSummaryResponse"];
+        };
         EnrollRequest: {
             /** Format: uuid */
             mealPlanId: string;
@@ -2032,6 +2040,7 @@ export type ContentDetailResponse = components['schemas']['ContentDetailResponse
 export type ContentRequest = components['schemas']['ContentRequest'];
 export type ContentSummaryResponse = components['schemas']['ContentSummaryResponse'];
 export type CurrentSubscriptionResponse = components['schemas']['CurrentSubscriptionResponse'];
+export type EditableContentResponse = components['schemas']['EditableContentResponse'];
 export type EnrollRequest = components['schemas']['EnrollRequest'];
 export type EnrollmentResponse = components['schemas']['EnrollmentResponse'];
 export type FileLinkResponse = components['schemas']['FileLinkResponse'];
@@ -3831,7 +3840,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ContentDetailResponse"];
+                    "*/*": components["schemas"]["EditableContentResponse"];
                 };
             };
         };
@@ -3853,7 +3862,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ContentDetailResponse"];
+                    "*/*": components["schemas"]["EditableContentResponse"];
                 };
             };
         };
@@ -3879,7 +3888,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ContentDetailResponse"];
+                    "*/*": components["schemas"]["EditableContentResponse"];
                 };
             };
         };
@@ -3921,7 +3930,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ContentDetailResponse"];
+                    "*/*": components["schemas"]["EditableContentResponse"];
                 };
             };
         };
@@ -3943,7 +3952,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ContentDetailResponse"];
+                    "*/*": components["schemas"]["EditableContentResponse"];
                 };
             };
         };

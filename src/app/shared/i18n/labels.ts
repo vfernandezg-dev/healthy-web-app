@@ -67,6 +67,21 @@ export const PUBLICATION_STATUS_SEVERITY: Readonly<
   ARCHIVED: 'secondary',
 };
 
+export type ContentType = Schemas['ContentSummaryResponse']['type'];
+export type ContentCategory = Schemas['ContentSummaryResponse']['category'];
+
+export const CONTENT_TYPE_LABELS: Readonly<Record<ContentType, string>> = {
+  ARTICLE: 'Artículo',
+  VIDEO: 'Vídeo',
+  GUIDE: 'Guía',
+};
+
+export const CONTENT_CATEGORY_LABELS: Readonly<Record<ContentCategory, string>> = {
+  NUTRITION: 'Nutrición',
+  EXERCISE: 'Ejercicio',
+  MENTAL_HEALTH: 'Salud mental',
+};
+
 /** Opciones para un p-select o p-selectbutton a partir de un mapa de etiquetas. */
 export function optionsOf<T extends string>(
   labels: Readonly<Record<T, string>>,
