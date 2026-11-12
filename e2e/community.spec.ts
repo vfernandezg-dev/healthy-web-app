@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 import { expectNoA11yViolations } from './support/a11y';
 import { type Schemas, mockApi, problem, requestBody, sessionFor } from './support/api';
 

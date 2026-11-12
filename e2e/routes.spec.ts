@@ -1,4 +1,4 @@
-import { type Route, expect, test } from '@playwright/test';
+import { type Route, expect, test } from './support/test';
 import { expectNoA11yViolations } from './support/a11y';
 import { type Role, mockApi } from './support/api';
 import { readsFor } from './support/fixtures';
