@@ -1,10 +1,57 @@
-/* Estilos globales mínimos. El sistema de diseño (Tailwind 4 + PrimeNG) se monta encima. */
-html,
-body {
-  height: 100%;
+/*
+ * Orden de las capas: los estilos de PrimeNG van después de la base de Tailwind y antes de sus utilidades,
+ * así una clase utilitaria siempre puede ajustar un componente de PrimeNG. PrimeNG usa el mismo orden
+ * (cssLayer en src/app/core/theme/ui.config.ts).
+ */
+@layer theme, base, primeng, components, utilities;
+
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+@import '@fontsource-variable/plus-jakarta-sans';
+@import './styles/tokens.css';
+
+@layer base {
+  :root {
+    /* Solo tema claro por ahora: el oscuro se activará con la clase .app-dark. */
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply min-h-dvh bg-surface font-sans text-ink antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+
+  /* Destinos de foco por programa (<main> al navegar): reciben el foco sin mostrar contorno. */
+  [tabindex='-1']:focus {
+    outline: none;
+  }
+
+  ::selection {
+    @apply bg-mint text-brand-950;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
+@layer components {
+  /* Tarjeta de la marca (como en la landing): esquinas grandes y sombra suave. */
+  .card {
+    @apply rounded-3xl border border-brand-100 bg-white shadow-card;
+  }
 }
