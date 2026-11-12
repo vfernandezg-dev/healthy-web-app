@@ -11,14 +11,18 @@ import {
 } from '@lucide/angular';
 import { Skeleton } from 'primeng/skeleton';
 import { AuthStore } from '../../core/auth/auth-store';
+import type { PublicationSummaryResponse } from '../../core/api/schema';
 import { NAVIGATION } from '../../layout/app-shell/nav-config';
-import { ClientsApi } from '../nutritionist-clients/data/clients-api';
-import { RewardsApi } from '../rewards/data/rewards-api';
 import { PageHeader } from '../../shared/ui/page-header';
 import { PersonAvatar } from '../../shared/ui/person-avatar';
 import { StatCard } from '../../shared/ui/stat-card';
 import { DashboardApi } from './data/dashboard-api';
 import { Shortcuts } from './shortcuts';
+
+/** Todos sus planes o contenidos, en cualquier estado. */
+function totalOf(summary: PublicationSummaryResponse): number {
+  return summary.draft + summary.published + summary.archived;
+}
 
 interface Draft {
   readonly id: string;
@@ -56,67 +60,63 @@ export class NutritionistDashboard {
     rewards: LucideTrophy,
   };
 
-  protected readonly clients = inject(ClientsApi).clients();
-  protected readonly rewards = inject(RewardsApi).mine();
-  protected readonly plans = this.dashboard.ownPlans();
-  protected readonly content = this.dashboard.ownContent();
+  protected readonly clients = this.dashboard.recentClients();
+  protected readonly rewards = this.dashboard.activeRewards();
+  protected readonly planSummary = this.dashboard.planSummary();
+  protected readonly contentSummary = this.dashboard.contentSummary();
+  protected readonly draftPlans = this.dashboard.draftPlans();
+  protected readonly draftContent = this.dashboard.draftContent();
 
-  protected readonly loaded = computed(
-    () =>
-      this.clients.hasValue() &&
-      this.rewards.hasValue() &&
-      this.plans.hasValue() &&
-      this.content.hasValue(),
-  );
   protected readonly failed = computed(
     () =>
       !!(
         this.clients.error() ||
         this.rewards.error() ||
-        this.plans.error() ||
-        this.content.error()
+        this.planSummary.error() ||
+        this.contentSummary.error()
       ),
   );
 
   protected readonly stats = computed(() => {
-    if (!this.loaded()) {
+    if (
+      !this.clients.hasValue() ||
+      !this.rewards.hasValue() ||
+      !this.planSummary.hasValue() ||
+      !this.contentSummary.hasValue()
+    ) {
       return null;
     }
-    const plans = this.plans.value()?.content ?? [];
-    const content = this.content.value()?.content ?? [];
+    const plans = this.planSummary.value();
+    const content = this.contentSummary.value();
     return {
-      clients: this.clients.value()?.length ?? 0,
-      plansPublished: plans.filter((plan) => plan.status === 'PUBLISHED').length,
-      plansTotal: this.plans.value()?.page.totalElements ?? 0,
-      contentPublished: content.filter((item) => item.status === 'PUBLISHED').length,
-      contentTotal: this.content.value()?.page.totalElements ?? 0,
-      activeRewards: (this.rewards.value() ?? []).filter((reward) => reward.active).length,
+      clients: this.clients.value().page.totalElements,
+      plansPublished: plans.published,
+      plansTotal: totalOf(plans),
+      contentPublished: content.published,
+      contentTotal: totalOf(content),
+      activeRewards: this.rewards.value().page.totalElements,
     };
   });
 
-  /** Los cuatro clientes que entraron hace menos. */
+  /** Los clientes que entraron hace menos (la API los manda así). */
   protected readonly recentClients = computed(() =>
-    [...(this.clients.value() ?? [])].sort((a, b) => b.since.localeCompare(a.since)).slice(0, 4),
+    this.clients.hasValue() ? this.clients.value().content : [],
   );
 
-  /** Planes y contenidos en borrador (los últimos editados primero). */
+  /** Los últimos planes y contenidos en borrador que ha editado. */
   protected readonly drafts = computed<Draft[]>(() => [
-    ...(this.plans.value()?.content ?? [])
-      .filter((plan) => plan.status === 'DRAFT')
-      .map((plan) => ({
-        id: plan.id,
-        title: plan.title,
-        kind: 'plan' as const,
-        link: `meal-plans/${plan.id}`,
-      })),
-    ...(this.content.value()?.content ?? [])
-      .filter((item) => item.status === 'DRAFT')
-      .map((item) => ({
-        id: item.id,
-        title: item.title,
-        kind: 'content' as const,
-        link: `content/${item.id}`,
-      })),
+    ...(this.draftPlans.hasValue() ? this.draftPlans.value().content : []).map((plan) => ({
+      id: plan.id,
+      title: plan.title,
+      kind: 'plan' as const,
+      link: `meal-plans/${plan.id}`,
+    })),
+    ...(this.draftContent.hasValue() ? this.draftContent.value().content : []).map((item) => ({
+      id: item.id,
+      title: item.title,
+      kind: 'content' as const,
+      link: `content/${item.id}`,
+    })),
   ]);
 
   protected publishedDetail(published: number, total: number): string {

@@ -1,4 +1,4 @@
-import { Component, inject, viewChild } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import {
   LucideBookOpen,
   LucideDynamicIcon,
@@ -9,6 +9,7 @@ import {
   LucideUtensils,
 } from '@lucide/angular';
 import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
 import type { RewardResponse } from '../../../core/api/schema';
@@ -17,7 +18,8 @@ import { Toaster } from '../../../core/ui/toaster';
 import { EmptyState } from '../../../shared/ui/empty-state';
 import { LoadError } from '../../../shared/ui/load-error';
 import { PageHeader } from '../../../shared/ui/page-header';
-import { RewardsApi } from '../data/rewards-api';
+import { lastValue } from '../../../shared/utils/last-value';
+import { REWARD_PAGE_SIZE, RewardsApi } from '../data/rewards-api';
 import { RewardDialog } from './reward-dialog';
 
 /** Recompensas del nutricionista: rachas de hábitos que desbloquean un contenido o un plan suyo. */
@@ -27,6 +29,7 @@ import { RewardDialog } from './reward-dialog';
     ButtonDirective,
     ButtonIcon,
     ButtonLabel,
+    Paginator,
     Skeleton,
     Tag,
     LucideDynamicIcon,
@@ -51,16 +54,20 @@ import { RewardDialog } from './reward-dialog';
 
     @if (rewards.error()) {
       <app-load-error [error]="rewards.error()" (retry)="rewards.reload()" />
-    } @else if (rewards.hasValue()) {
-      @if (rewards.value().length === 0) {
+    } @else if (result(); as result) {
+      @if (result.content.length === 0) {
         <app-empty-state
           [icon]="trophy"
           title="Aún no has creado recompensas"
           description="Elige uno de tus contenidos o planes publicados como premio y cuántos días seguidos hacen falta."
         />
       } @else {
-        <ul class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" role="list">
-          @for (reward of rewards.value(); track reward.id) {
+        <ul
+          class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
+          role="list"
+          [attr.aria-busy]="rewards.isLoading()"
+        >
+          @for (reward of result.content; track reward.id) {
             <li class="card flex flex-col p-6">
               <div class="flex items-center justify-between gap-2">
                 <span
@@ -106,6 +113,15 @@ import { RewardDialog } from './reward-dialog';
             </li>
           }
         </ul>
+        @if (result.page.totalPages > 1) {
+          <p-paginator
+            class="mt-6 block"
+            [first]="result.page.number * pageSize"
+            [rows]="pageSize"
+            [totalRecords]="result.page.totalElements"
+            (onPageChange)="changePage($event)"
+          />
+        }
       }
     } @else {
       <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true">
@@ -115,7 +131,7 @@ import { RewardDialog } from './reward-dialog';
       </div>
     }
 
-    <app-reward-dialog (saved)="saved()" />
+    <app-reward-dialog (saved)="saved($event)" />
   `,
 })
 export class NutritionistRewards {
@@ -124,16 +140,30 @@ export class NutritionistRewards {
   private readonly confirmer = inject(Confirmer);
 
   protected readonly dialog = viewChild(RewardDialog);
-  protected readonly rewards = this.api.mine();
+  protected readonly pageSize = REWARD_PAGE_SIZE;
+  private readonly page = signal(0);
+  protected readonly rewards = this.api.mine(this.page);
+  /** La última página: se sigue viendo mientras carga la siguiente. */
+  protected readonly result = lastValue(this.rewards);
   protected readonly trophy = LucideTrophy;
 
   protected prizeIcon(reward: RewardResponse) {
     return reward.target.type === 'MEAL_PLAN' ? LucideUtensils : LucideBookOpen;
   }
 
-  protected saved(): void {
-    this.rewards.reload();
+  protected changePage(event: PaginatorState): void {
+    this.page.set(event.page ?? 0);
+  }
+
+  protected saved(reward: RewardResponse): void {
     this.toaster.success('Recompensa guardada');
+    // Las nuevas salen las primeras; una editada sigue en su página.
+    const edited = this.result()?.content.some((item) => item.id === reward.id) ?? false;
+    if (edited || this.page() === 0) {
+      this.rewards.reload();
+    } else {
+      this.page.set(0);
+    }
   }
 
   protected async deactivate(reward: RewardResponse): Promise<void> {

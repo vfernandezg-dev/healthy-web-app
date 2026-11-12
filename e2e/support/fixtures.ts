@@ -11,7 +11,7 @@ export function paged<T>(content: T[], size = 20) {
   };
 }
 
-const CARLOS: S['AuthorResponse'] = {
+const CARLOS: S['PersonResponse'] = {
   id: sessionFor('NUTRITIONIST').user.id,
   name: 'Carlos García',
 };
@@ -94,6 +94,8 @@ const REWARD: S['RewardResponse'] = {
   streak: null,
 };
 
+const SUMMARY: S['PublicationSummaryResponse'] = { draft: 0, published: 1, archived: 0 };
+
 const SUBSCRIPTION: S['CurrentSubscriptionResponse'] = {
   tier: 'BASIC',
   status: null,
@@ -158,7 +160,7 @@ export function readsFor(role: Role): Record<string, unknown> {
     } satisfies S['RecommendationResponse'],
     '/me/habit-logs': [],
     '/me/streaks': [],
-    '/rewards': [REWARD],
+    '/rewards': paged([REWARD], 12),
     '/me/subscription': SUBSCRIPTION,
     '/me/subscription/checkout/capture': {
       ...SUBSCRIPTION,
@@ -192,21 +194,23 @@ export function readsFor(role: Role): Record<string, unknown> {
     '/groups': paged([GROUP], 12),
     '/groups/group-1': GROUP,
     '/groups/group-1/posts': paged([], 10),
-    '/groups/group-1/members': [
+    '/groups/group-1/members': paged<S['MemberResponse']>([
       { person: CARLOS, role: 'OWNER', status: 'ACTIVE', since: '2026-10-01T10:00:00Z' },
-    ] satisfies S['MemberResponse'][],
+    ]),
     // Nutricionista
-    '/nutritionist/meal-plans': paged([PLAN], 100),
+    '/nutritionist/meal-plans': paged([PLAN]),
+    '/nutritionist/meal-plans/summary': SUMMARY,
     '/nutritionist/meal-plans/plan-1': PLAN_DETAIL,
-    '/nutritionist/content-items': paged([CONTENT], 100),
+    '/nutritionist/content-items': paged([CONTENT]),
+    '/nutritionist/content-items/summary': SUMMARY,
     '/nutritionist/content-items/content-1': {
       item: CONTENT,
       body: 'Texto del artículo.',
       coverMediaId: null,
       fileMediaId: null,
     } satisfies S['EditableContentResponse'],
-    '/nutritionist/rewards': [REWARD],
-    '/nutritionist/clients': [],
+    '/nutritionist/rewards': paged([REWARD], 12),
+    '/nutritionist/clients': paged([]),
     // Administración
     '/admin/users/summary': {
       total: 3,

@@ -1,4 +1,4 @@
-import { pageParams, pageQueryOf, samePageQuery } from './page-query';
+import { pageOf, pageParams, pageQueryOf, samePageQuery } from './page-query';
 
 describe('pageQueryOf', () => {
   it('calcula la página a partir de la primera fila', () => {
@@ -20,6 +20,14 @@ describe('pageQueryOf', () => {
 
   it('sin filas en el evento usa el tamaño de página', () => {
     expect(pageQueryOf({ first: 30 }, 15, 'createdAt,asc').page).toBe(2);
+  });
+});
+
+describe('pageOf', () => {
+  it('calcula la página sin tocar el orden', () => {
+    expect(pageOf({ first: 0, rows: 20 }, 20)).toBe(0);
+    expect(pageOf({ first: 40, rows: 20, sortField: 'since' }, 20)).toBe(2);
+    expect(pageOf({}, 20)).toBe(0);
   });
 });
 

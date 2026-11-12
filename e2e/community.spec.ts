@@ -59,6 +59,18 @@ function paged<T>(content: T[], size = 10) {
   };
 }
 
+/** La página `number` (de 20 en 20, como los comentarios y los miembros) de una lista completa. */
+function slice<T>(all: T[], number: number, size = 20) {
+  return {
+    content: all.slice(number * size, number * size + size),
+    page: { size, number, totalElements: all.length, totalPages: Math.ceil(all.length / size) },
+  };
+}
+
+function pageParam(url: string): number {
+  return Number(new URL(url).searchParams.get('page'));
+}
+
 test.describe('comunidad: directorio', () => {
   test('busca grupos y crea uno privado', async ({ page }) => {
     const searches: (string | null)[] = [];
@@ -94,7 +106,8 @@ test.describe('comunidad: directorio', () => {
         },
         '/groups/nuevo': (route) => route.fulfill({ json: newGroup() }),
         '/groups/nuevo/posts?*': (route) => route.fulfill({ json: paged([]) }),
-        '/groups/nuevo/members': (route) => route.fulfill({ json: [member(MARIA, 'OWNER')] }),
+        '/groups/nuevo/members?*': (route) =>
+          route.fulfill({ json: paged([member(MARIA, 'OWNER')], 20) }),
       },
     });
 
@@ -167,8 +180,8 @@ test.describe('comunidad: un grupo', () => {
           route.fulfill({
             json: group('g1', { name: 'Recetas saludables', membership: ACTIVE_MEMBER }),
           }),
-        '/groups/g1/members': (route) =>
-          route.fulfill({ json: [member(CARLOS, 'OWNER'), member(MARIA)] }),
+        '/groups/g1/members?*': (route) =>
+          route.fulfill({ json: paged([member(CARLOS, 'OWNER'), member(MARIA)], 20) }),
         '/groups/g1/posts?*': (route) => route.fulfill({ json: paged(posts) }),
         '/groups/g1/posts': (route) => {
           const body = route.request().postDataJSON();
@@ -183,18 +196,16 @@ test.describe('comunidad: un grupo', () => {
           posts = posts.map((p) => (p.id === 'p1' ? { ...p, title: body.title } : p));
           return route.fulfill({ json: posts.find((p) => p.id === 'p1') });
         },
+        '/posts/p2/comments?*': (route) => route.fulfill({ json: paged(comments, 20) }),
         '/posts/p2/comments': (route) => {
-          if (route.request().method() === 'POST') {
-            const created = {
-              id: 'c2',
-              body: route.request().postDataJSON().body,
-              author: MARIA,
-              createdAt: '2026-11-12T10:00:00Z',
-            };
-            comments.push(created);
-            return route.fulfill({ status: 201, json: created });
-          }
-          return route.fulfill({ json: comments });
+          const created = {
+            id: 'c2',
+            body: route.request().postDataJSON().body,
+            author: MARIA,
+            createdAt: '2026-11-12T10:00:00Z',
+          };
+          comments.push(created);
+          return route.fulfill({ status: 201, json: created });
         },
         '/posts/p2/reports': (route) => {
           reports += 1;
@@ -315,6 +326,85 @@ test.describe('comunidad: un grupo', () => {
     ]);
   });
 
+  test('carga los comentarios y los miembros de 20 en 20 con «Ver más»', async ({ page }) => {
+    const people = Array.from({ length: 21 }, (_, index) => ({
+      id: `00000000-0000-7000-8000-1000000000${String(index + 10)}`,
+      name: `Persona ${index + 1}`,
+    }));
+    const members = [member(CARLOS, 'OWNER'), ...people.map((person) => member(person))];
+    const comments = Array.from({ length: 23 }, (_, index) => ({
+      id: `c${index + 1}`,
+      body: `Comentario número ${index + 1}`,
+      author: CARLOS,
+      createdAt: '2026-11-10T16:00:00Z',
+    }));
+    const requested: string[] = [];
+    await mockApi(page, {
+      session: 'CLIENT',
+      routes: {
+        '/groups/g4': (route) =>
+          route.fulfill({ json: group('g4', { members: 22, membership: ACTIVE_MEMBER }) }),
+        '/groups/g4/posts?*': (route) =>
+          route.fulfill({ json: paged([post('p9', CARLOS, { groupId: 'g4', title: 'Dudas' })]) }),
+        '/groups/g4/members?*': (route) => {
+          const number = pageParam(route.request().url());
+          requested.push(`members ${number}`);
+          return route.fulfill({ json: slice(members, number) });
+        },
+        '/posts/p9/comments?*': (route) => {
+          const number = pageParam(route.request().url());
+          requested.push(`comments ${number}`);
+          return route.fulfill({ json: slice(comments, number) });
+        },
+        '/posts/p9/comments': (route) => {
+          const created = {
+            id: 'c-nuevo',
+            body: route.request().postDataJSON().body,
+            author: MARIA,
+            createdAt: '2026-11-12T10:00:00Z',
+          };
+          comments.push(created);
+          return route.fulfill({ status: 201, json: created });
+        },
+      },
+    });
+
+    await page.goto('/client/community/groups/g4');
+    const panel = page.getByRole('region', { name: 'Miembros' });
+    await expect(panel.getByRole('listitem')).toHaveCount(20);
+    await panel.getByRole('button', { name: 'Ver más miembros' }).click();
+    await expect(panel.getByRole('listitem')).toHaveCount(22);
+    await expect(panel.getByRole('listitem').last()).toContainText('Persona 21');
+    await expect(panel.getByRole('button', { name: 'Ver más miembros' })).toHaveCount(0);
+
+    const article = page.getByRole('article', { name: 'Dudas' });
+    const items = article.getByRole('listitem');
+    await article.getByRole('button', { name: 'Comentarios' }).click();
+    await expect(items).toHaveCount(20);
+    await expect(items.first()).toContainText('Comentario número 1');
+    await expectNoA11yViolations(page);
+
+    // Los siguientes (más nuevos) van detrás.
+    await article.getByRole('button', { name: 'Ver más comentarios' }).click();
+    await expect(items).toHaveCount(23);
+    await expect(items.last()).toContainText('Comentario número 23');
+    await expect(article.getByRole('button', { name: 'Ver más comentarios' })).toHaveCount(0);
+
+    // El comentario nuevo sale al final sin volver a pedir la lista.
+    await article.getByLabel('Tu comentario').fill('Gracias a todos');
+    await article.getByRole('button', { name: 'Comentar', exact: true }).click();
+    await expect(items).toHaveCount(24);
+    await expect(items.last()).toContainText('Gracias a todos');
+
+    // Al volver a abrirlos, empiezan otra vez por la primera página.
+    await article.getByRole('button', { name: 'Ocultar los comentarios' }).click();
+    await article.getByRole('button', { name: 'Comentarios' }).click();
+    await expect(items).toHaveCount(20);
+    await expect(article.getByRole('button', { name: 'Ver más comentarios' })).toBeVisible();
+
+    expect(requested).toEqual(['members 0', 'members 1', 'comments 0', 'comments 1', 'comments 0']);
+  });
+
   test('pide entrar en un grupo privado y retira la solicitud', async ({ page }) => {
     const calls: string[] = [];
     let membership: Membership = null;
@@ -385,7 +475,7 @@ test.describe('comunidad: un grupo', () => {
           return route.fulfill({ json: current });
         },
         '/groups/g3/posts?*': (route) => route.fulfill({ json: paged(posts) }),
-        '/groups/g3/members': (route) => route.fulfill({ json: members }),
+        '/groups/g3/members?*': (route) => route.fulfill({ json: paged(members, 20) }),
         [`/groups/g3/members/${LUCIA.id}/approve`]: (route) => {
           calls.push('approve Lucía');
           members = members.map((m) => (m.person === LUCIA ? { ...m, status: 'ACTIVE' } : m));

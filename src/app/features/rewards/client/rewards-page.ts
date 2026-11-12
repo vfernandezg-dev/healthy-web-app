@@ -10,6 +10,7 @@ import {
   LucideUtensils,
 } from '@lucide/angular';
 import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { Skeleton } from 'primeng/skeleton';
 import type { RewardResponse } from '../../../core/api/schema';
 import { Confirmer } from '../../../core/ui/confirmer';
@@ -18,7 +19,8 @@ import { EmptyState } from '../../../shared/ui/empty-state';
 import { LoadError } from '../../../shared/ui/load-error';
 import { PageHeader } from '../../../shared/ui/page-header';
 import { ProgressBar } from '../../../shared/ui/progress-bar';
-import { RewardsApi } from '../data/rewards-api';
+import { lastValue } from '../../../shared/utils/last-value';
+import { REWARD_PAGE_SIZE, RewardsApi } from '../data/rewards-api';
 
 /** Rachas del cliente hacia las recompensas y las que puede empezar. */
 @Component({
@@ -28,6 +30,7 @@ import { RewardsApi } from '../data/rewards-api';
     RouterLink,
     ButtonDirective,
     ButtonLabel,
+    Paginator,
     Skeleton,
     LucideDynamicIcon,
     LucideFlame,
@@ -44,16 +47,16 @@ export class RewardsPage {
   private readonly toaster = inject(Toaster);
   private readonly confirmer = inject(Confirmer);
 
-  protected readonly catalog = this.api.catalog();
+  protected readonly pageSize = REWARD_PAGE_SIZE;
+  private readonly page = signal(0);
+  protected readonly catalog = this.api.catalog(this.page);
+  /** La última página del catálogo: se sigue viendo mientras carga la siguiente. */
+  protected readonly result = lastValue(this.catalog);
   private readonly streaks = this.api.streaks();
 
   /** Rachas en curso y completadas (de /me/streaks, que incluye las de recompensas retiradas). */
   protected readonly mine = computed(() =>
     this.streaks.hasValue() ? this.streaks.value().filter((reward) => reward.streak) : [],
-  );
-  /** Recompensas activas sin racha todavía. */
-  protected readonly available = computed(() =>
-    this.catalog.hasValue() ? this.catalog.value().filter((reward) => !reward.streak) : [],
   );
   protected readonly starting = signal<string | null>(null);
   protected readonly trophy = LucideTrophy;
@@ -71,6 +74,10 @@ export class RewardsPage {
 
   protected percent(reward: RewardResponse): number {
     return ((reward.streak?.currentDays ?? 0) / reward.requiredStreakDays) * 100;
+  }
+
+  protected changePage(event: PaginatorState): void {
+    this.page.set(event.page ?? 0);
   }
 
   protected async start(reward: RewardResponse): Promise<void> {
