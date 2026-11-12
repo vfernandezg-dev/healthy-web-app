@@ -1,9 +1,21 @@
+import type { PageMetadata } from '@core/api/schema';
 import type { TableLazyLoadEvent } from 'primeng/table';
+
+/** Una página de un listado de la API (`PagedModel`). */
+export interface Paged<T> {
+  readonly content: readonly T[];
+  readonly page: PageMetadata;
+}
 
 /** Página y orden de un listado paginado en la API (`?page=0&size=20&sort=campo,desc`). */
 export interface PageQuery {
   readonly page: number;
   readonly sort: string;
+}
+
+/** Lo que se pide a la API de un listado: página (desde 0), tamaño y orden. */
+export interface PageRequest extends PageQuery {
+  readonly size: number;
 }
 
 /** Igualdad por valor: p-table emite su primer `onLazyLoad` con lo que ya se pidió, y así no se repite la petición. */
@@ -33,21 +45,24 @@ export function pageQueryOf(
   };
 }
 
-/** Parámetros de la petición: página, tamaño, orden y los filtros que tengan valor. */
+/**
+ * Parámetros de la petición: página, tamaño, orden y los filtros que tengan valor (los textos sin espacios a los
+ * lados; los vacíos y los null no se envían).
+ */
 export function pageParams(
-  query: PageQuery,
-  pageSize: number,
-  filters: Record<string, string | null | undefined> = {},
-): Record<string, string | number> {
-  const params: Record<string, string | number> = {
-    page: query.page,
-    size: pageSize,
-    sort: query.sort,
+  request: PageRequest,
+  filters: Readonly<Record<string, string | boolean | null | undefined>> = {},
+): Record<string, string | number | boolean> {
+  const params: Record<string, string | number | boolean> = {
+    page: request.page,
+    size: request.size,
+    sort: request.sort,
   };
   for (const [key, value] of Object.entries(filters)) {
-    const trimmed = value?.trim();
-    if (trimmed) {
-      params[key] = trimmed;
+    if (typeof value === 'boolean') {
+      params[key] = value;
+    } else if (value?.trim()) {
+      params[key] = value.trim();
     }
   }
   return params;

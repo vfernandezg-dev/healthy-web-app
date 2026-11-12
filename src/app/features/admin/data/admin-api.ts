@@ -51,7 +51,7 @@ export class AdminApi {
       const { q, role, status, ...query } = filters();
       return {
         url: `${this.api}/admin/users`,
-        params: pageParams(query, ADMIN_PAGE_SIZE, { q, role, status }),
+        params: pageParams({ ...query, size: ADMIN_PAGE_SIZE }, { q, role, status }),
       };
     });
   }
@@ -78,7 +78,7 @@ export class AdminApi {
   invitations(query: Signal<PageQuery>) {
     return httpResource<PagedModelInvitationResponse>(() => ({
       url: `${this.api}/admin/nutritionist-invitations`,
-      params: pageParams(query(), ADMIN_PAGE_SIZE),
+      params: pageParams({ ...query(), size: ADMIN_PAGE_SIZE }),
     }));
   }
 
@@ -114,7 +114,7 @@ export class AdminApi {
       const { status, ...query } = filters();
       return {
         url: `${this.api}/admin/moderation/reports`,
-        params: pageParams(query, ADMIN_PAGE_SIZE, { status }),
+        params: pageParams({ ...query, size: ADMIN_PAGE_SIZE }, { status }),
       };
     });
   }
@@ -139,7 +139,7 @@ export class AdminApi {
       const { status, tier, ...query } = filters();
       return {
         url: `${this.api}/admin/subscriptions`,
-        params: pageParams(query, ADMIN_PAGE_SIZE, { status, tier }),
+        params: pageParams({ ...query, size: ADMIN_PAGE_SIZE }, { status, tier }),
       };
     });
   }
@@ -149,7 +149,7 @@ export class AdminApi {
       const { status, ...query } = filters();
       return {
         url: `${this.api}/admin/payments`,
-        params: pageParams(query, ADMIN_PAGE_SIZE, { status }),
+        params: pageParams({ ...query, size: ADMIN_PAGE_SIZE }, { status }),
       };
     });
   }

@@ -41,7 +41,10 @@ describe('samePageQuery', () => {
 describe('pageParams', () => {
   it('incluye solo los filtros con valor, sin espacios', () => {
     expect(
-      pageParams({ page: 0, sort: 'createdAt,desc' }, 20, { q: '  ana ', role: null, status: '' }),
-    ).toEqual({ page: 0, size: 20, sort: 'createdAt,desc', q: 'ana' });
+      pageParams(
+        { page: 0, size: 20, sort: 'createdAt,desc' },
+        { q: '  ana ', role: null, status: '', active: false },
+      ),
+    ).toEqual({ page: 0, size: 20, sort: 'createdAt,desc', q: 'ana', active: false });
   });
 });

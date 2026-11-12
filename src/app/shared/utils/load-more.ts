@@ -1,11 +1,7 @@
 import { type Signal, computed, linkedSignal, signal } from '@angular/core';
-import type { PageMetadata } from '@core/api/schema';
+import type { Paged } from '../table/page-query';
 
-/** Una página de un listado de la API (`PagedModel`). */
-export interface Paged<T> {
-  readonly content: readonly T[];
-  readonly page: PageMetadata;
-}
+export type { Paged } from '../table/page-query';
 
 /** Lo que la lista usa del recurso de una página (un `httpResource`). */
 export interface PageResource<T> {
