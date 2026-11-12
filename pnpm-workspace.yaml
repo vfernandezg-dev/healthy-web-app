@@ -7,7 +7,10 @@ minimumReleaseAge: 1440
 
 # pnpm no ejecuta scripts de instalación de dependencias salvo los que se aprueban aquí.
 # Los usa el CLI de Angular: esbuild (binario del bundler) y lmdb/msgpackr-extract (caché persistente).
+# nice-napi (opcional de piscina, solo en Linux/macOS) se deniega: compila código nativo y piscina
+# funciona igual sin él.
 allowBuilds:
   esbuild: true
   lmdb: true
   msgpackr-extract: true
+  nice-napi: false
