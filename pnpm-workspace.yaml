@@ -1,0 +1,16 @@
+# Configuración de pnpm para este proyecto (no es un monorepo).
+
+# Protección de supply chain: solo se instalan versiones publicadas hace al menos 24 h
+# (1440 minutos). Así, una versión comprometida tiene tiempo de detectarse y retirarse
+# antes de llegar aquí. Debe coincidir en local y en CI.
+minimumReleaseAge: 1440
+
+# pnpm no ejecuta scripts de instalación de dependencias salvo los que se aprueban aquí.
+# Los usa el CLI de Angular: esbuild (binario del bundler) y lmdb/msgpackr-extract (caché persistente).
+# nice-napi (opcional de piscina, solo en Linux/macOS) se deniega: compila código nativo y piscina
+# funciona igual sin él.
+allowBuilds:
+  esbuild: true
+  lmdb: true
+  msgpackr-extract: true
+  nice-napi: false
