@@ -1,0 +1,5 @@
+# Falsos positivos revisados de gitleaks (huella exacta: commit, fichero, regla y línea).
+# Solo datos de prueba: ningún secreto real. Un secreto real nunca se ignora: se rota y se saca del repositorio.
+
+# Token inventado de un test unitario de la lectura del enlace de restablecimiento (#token=…).
+1d8afe22e1ee3b51eb850a01dd0bda5aaf26ef3b:src/app/core/services/password-reset.service.spec.ts:generic-api-key:45
