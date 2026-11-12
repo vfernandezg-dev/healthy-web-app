@@ -111,6 +111,7 @@ interface RewardModel {
           hint="Solo aparecen tus contenidos y planes publicados."
         >
           <p-select
+            appendTo="body"
             inputId="reward-prize"
             ariaLabelledBy="reward-prize-label"
             [options]="prizeOptions()"
@@ -175,24 +176,35 @@ export class RewardDialog {
     required(path.prizeId, { message: 'Elige el premio' });
   });
 
-  protected readonly prizeOptions = computed(() => {
-    if (this.model().prizeType === 'CONTENT') {
-      const items = this.content.hasValue() ? this.content.value().content : [];
-      return items
-        .filter((item) => item.status === 'PUBLISHED')
-        .map((item) => ({ label: item.title, value: item.id }));
-    }
-    const plans = this.plans.hasValue() ? this.plans.value().content : [];
-    return plans
-      .filter((plan) => plan.status === 'PUBLISHED')
-      .map((plan) => ({ label: plan.title, value: plan.id }));
-  });
+  /**
+   * Opciones del premio. Si una recarga trae lo mismo, conserva el array anterior: así el desplegable no se vuelve a
+   * pintar (ni pierde la opción que se está pulsando) cuando llega la respuesta con la lista abierta.
+   */
+  protected readonly prizeOptions = computed(
+    () => {
+      if (this.model().prizeType === 'CONTENT') {
+        const items = this.content.hasValue() ? this.content.value().content : [];
+        return items
+          .filter((item) => item.status === 'PUBLISHED')
+          .map((item) => ({ label: item.title, value: item.id }));
+      }
+      const plans = this.plans.hasValue() ? this.plans.value().content : [];
+      return plans
+        .filter((plan) => plan.status === 'PUBLISHED')
+        .map((plan) => ({ label: plan.title, value: plan.id }));
+    },
+    {
+      equal: (a, b) =>
+        a.length === b.length &&
+        a.every(
+          (option, index) => option.value === b[index].value && option.label === b[index].label,
+        ),
+    },
+  );
 
   open(reward: RewardResponse | null): void {
     this.reward.set(reward);
     this.failure.set(null);
-    this.content.reload();
-    this.plans.reload();
     this.rewardForm().reset({
       title: reward?.title ?? '',
       description: reward?.description ?? '',

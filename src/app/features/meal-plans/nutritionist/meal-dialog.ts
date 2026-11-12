@@ -53,6 +53,7 @@ interface MealModel {
         <div class="grid gap-5 sm:grid-cols-2">
           <app-field label="Día" inputId="meal-day" [field]="mealForm.dayNumber">
             <p-select
+              appendTo="body"
               inputId="meal-day"
               ariaLabelledBy="meal-day-label"
               [options]="dayOptions()"
@@ -64,6 +65,7 @@ interface MealModel {
           </app-field>
           <app-field label="Momento del día" inputId="meal-category" [field]="mealForm.category">
             <p-select
+              appendTo="body"
               inputId="meal-category"
               ariaLabelledBy="meal-category-label"
               [options]="categoryOptions"
