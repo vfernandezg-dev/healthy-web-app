@@ -1,0 +1,48 @@
+<app-form-dialog
+  [(open)]="open"
+  [header]="editing() ? 'Editar la meta' : 'Nueva meta'"
+  formId="goal-form"
+  [submitLabel]="editing() ? 'Guardar' : 'Crear la meta'"
+  [submitting]="goalForm().submitting()"
+  [failure]="failure()"
+  (closed)="closed.emit()"
+>
+  <form id="goal-form" class="space-y-5" novalidate (submit)="save($event)">
+    <app-field label="Nombre de la meta" inputId="goal-title" [field]="goalForm.title">
+      <input
+        pInputText
+        id="goal-title"
+        class="w-full"
+        placeholder="Por ejemplo: llegar a 70 kg en verano"
+        [formField]="goalForm.title"
+        [attr.aria-describedby]="describe('goal-title', goalForm.title)"
+      />
+    </app-field>
+    <app-field label="Peso objetivo" inputId="goal-target" [field]="goalForm.targetWeightKg">
+      <p-inputnumber
+        inputId="goal-target"
+        suffix=" kg"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="1"
+        [fluid]="true"
+        [formField]="goalForm.targetWeightKg"
+        [ariaDescribedBy]="describe('goal-target', goalForm.targetWeightKg) ?? undefined"
+      />
+    </app-field>
+    <app-field
+      label="Por qué te la propones"
+      inputId="goal-description"
+      [field]="goalForm.description"
+      [optional]="true"
+    >
+      <textarea
+        pTextarea
+        id="goal-description"
+        rows="3"
+        class="w-full"
+        [formField]="goalForm.description"
+        [attr.aria-describedby]="describe('goal-description', goalForm.description)"
+      ></textarea>
+    </app-field>
+  </form>
+</app-form-dialog>

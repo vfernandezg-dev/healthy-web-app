@@ -13,14 +13,8 @@ import { focusFirstInvalid } from '@shared/forms/server-errors';
 import { MediaUrlPipe } from '@shared/pipes/media-url.pipe';
 import { PersonAvatar } from '@shared/ui/person-avatar';
 import { loadMore } from '@shared/utils/load-more';
-import { CommunityApi } from './data/community-api';
+import { CommunityApi, type ReportTarget } from './data/community-api';
 import type { Viewer } from './data/membership';
-
-/** Publicación o comentario que se quiere denunciar. */
-export interface ReportTarget {
-  readonly kind: 'posts' | 'comments';
-  readonly id: string;
-}
 
 type Author = PostResponse['author'];
 

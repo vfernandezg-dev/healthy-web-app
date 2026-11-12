@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { form, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -26,8 +26,9 @@ import {
 import { LoadError } from '@shared/ui/load-error';
 import { MealPlansApi } from '../data/meal-plans-api';
 import { mealsByDay } from '../data/meals-by-day';
-import { MealDialog } from './meal-dialog';
+import { MealDialog, type MealTarget } from './meal-dialog';
 import { PlanFields, emptyPlan, planModelOf, planSchema, toPlanRequest } from '../ui/plan-fields';
+import { dialogState } from '@shared/ui/dialog-state';
 
 /** Editor de un plan del nutricionista: datos, comidas por día y publicación. */
 @Component({
@@ -55,7 +56,7 @@ export class PlanEditor {
   private readonly router = inject(Router);
   private readonly toaster = inject(Toaster);
   private readonly confirmer = inject(Confirmer);
-  private readonly mealDialog = viewChild(MealDialog);
+  protected readonly mealDialog = dialogState<MealTarget>();
 
   /** Id del plan (parámetro de la ruta). */
   readonly id = input.required<string>();
@@ -79,14 +80,6 @@ export class PlanEditor {
   });
   protected readonly planForm = form(this.model, planSchema);
 
-  /** Siguiente posición libre del día: las comidas nuevas van al final. */
-  protected readonly positionFor = (day: number): number => {
-    const positions = (this.current()?.meals ?? [])
-      .filter((meal) => meal.dayNumber === day)
-      .map((meal) => meal.position);
-    return Math.min(20, positions.length === 0 ? 1 : Math.max(...positions) + 1);
-  };
-
   protected async savePlan(event: Event): Promise<void> {
     event.preventDefault();
     await submit(this.planForm, {
@@ -107,14 +100,6 @@ export class PlanEditor {
       },
       onInvalid: (tree) => focusFirstInvalid(tree),
     });
-  }
-
-  protected addMeal(day: number): void {
-    this.mealDialog()?.open(null, day);
-  }
-
-  protected editMeal(meal: MealResponse): void {
-    this.mealDialog()?.open(meal);
   }
 
   protected mealSaved(): void {

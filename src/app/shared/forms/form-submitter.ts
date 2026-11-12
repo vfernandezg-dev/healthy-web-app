@@ -14,6 +14,11 @@ export interface SubmitOptions<T> {
    * él, el error sale en un aviso.
    */
   readonly failure?: WritableSignal<string | null>;
+  /**
+   * Errores de la API que son de un campo aunque no sean un 422, por su `code`: por ejemplo, 409 `email-taken` va
+   * al campo del correo, con el mensaje de la API.
+   */
+  readonly codeFields?: Readonly<Record<string, FieldTree<unknown>>>;
 }
 
 /** Envía un formulario de Signal Forms (ver {@link formSubmitter}). */
@@ -44,6 +49,10 @@ export function formSubmitter(): FormSubmitter {
           result = await options.save();
         } catch (error) {
           const problem = toProblem(error);
+          const codeField = options.codeFields?.[problem.code];
+          if (codeField) {
+            return { kind: 'server', message: problem.detail, fieldTree: codeField };
+          }
           const fieldErrors = serverFieldErrors(form, problem);
           if (fieldErrors) {
             return fieldErrors;

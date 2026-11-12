@@ -43,7 +43,7 @@
               type="button"
               severity="secondary"
               variant="outlined"
-              (click)="groupDialog()?.open(g)"
+              (click)="groupDialog.open(g)"
             >
               <svg lucidePencil></svg>
               Editar
@@ -95,7 +95,7 @@
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 id="posts-title" class="text-xl font-bold">Publicaciones</h2>
           @if (viewer().member) {
-            <button pButton type="button" (click)="postDialog()?.open(g.id, null)">
+            <button pButton type="button" (click)="postDialog.open({ groupId: g.id, post: null })">
               <svg lucidePlus></svg>
               Publicar
             </button>
@@ -133,9 +133,9 @@
                   <app-post-card
                     [post]="post"
                     [viewer]="viewer()"
-                    (edit)="postDialog()?.open(g.id, post)"
+                    (edit)="postDialog.open({ groupId: g.id, post })"
                     (remove)="deletePost(post)"
-                    (report)="reportDialog()?.open($event.kind, $event.id)"
+                    (report)="reportDialog.open($event)"
                   />
                 </li>
               }
@@ -170,6 +170,31 @@
   </div>
 }
 
-<app-group-dialog (saved)="groupSaved($event)" />
-<app-post-dialog (saved)="postSaved($event)" />
-<app-report-dialog (reported)="reported()" />
+<!-- Diálogos: se crean al abrirlos, cada uno en su propio chunk (precargado en idle). -->
+@defer (when groupDialog.isOpen(); prefetch on idle) {
+  @if (groupDialog.data(); as dialog) {
+    <app-group-dialog
+      [group]="dialog.value"
+      (saved)="groupSaved($event)"
+      (closed)="groupDialog.close()"
+    />
+  }
+}
+@defer (when postDialog.isOpen(); prefetch on idle) {
+  @if (postDialog.data(); as dialog) {
+    <app-post-dialog
+      [target]="dialog.value"
+      (saved)="postSaved($event)"
+      (closed)="postDialog.close()"
+    />
+  }
+}
+@defer (when reportDialog.isOpen(); prefetch on idle) {
+  @if (reportDialog.data(); as dialog) {
+    <app-report-dialog
+      [target]="dialog.value"
+      (reported)="reported()"
+      (closed)="reportDialog.close()"
+    />
+  }
+}

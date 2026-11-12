@@ -1,0 +1,40 @@
+<app-form-dialog
+  [(open)]="open"
+  [header]="editing() ? 'Editar la publicación' : 'Nueva publicación'"
+  formId="post-form"
+  [submitLabel]="editing() ? 'Guardar' : 'Publicar'"
+  [submitting]="postForm().submitting()"
+  [failure]="failure()"
+  width="lg"
+  (closed)="closed.emit()"
+>
+  <form id="post-form" class="space-y-5" novalidate (submit)="save($event)">
+    <app-field label="Título" inputId="post-title" [field]="postForm.title">
+      <input
+        pInputText
+        id="post-title"
+        class="w-full"
+        [formField]="postForm.title"
+        [attr.aria-describedby]="describe('post-title', postForm.title)"
+      />
+    </app-field>
+    <app-field label="Texto" inputId="post-body" [field]="postForm.body">
+      <textarea
+        pTextarea
+        id="post-body"
+        rows="5"
+        class="w-full"
+        [formField]="postForm.body"
+        [attr.aria-describedby]="describe('post-body', postForm.body)"
+      ></textarea>
+    </app-field>
+    <app-media-upload
+      inputId="post-image"
+      label="Imagen"
+      purpose="POST_IMAGE"
+      [hasCurrent]="model().imageMediaId !== null"
+      [currentPath]="currentImage()"
+      (changed)="postForm.imageMediaId().value.set($event?.id ?? null)"
+    />
+  </form>
+</app-form-dialog>

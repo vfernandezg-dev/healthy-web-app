@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { LucideEyeOff, LucideShieldCheck } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Paginator } from 'primeng/paginator';
@@ -11,10 +11,11 @@ import { EmptyState } from '@shared/ui/empty-state';
 import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
 import { AdminApi, type ReportFilters } from '../data/admin-api';
-import { ResolveDialog } from './resolve-dialog';
+import { ResolveDialog, type Resolution, type Resolved } from './resolve-dialog';
 import { FormField, form } from '@angular/forms/signals';
 import { pagedQuery } from '@shared/table/paged-query';
 import { PAGE_SIZE } from '@shared/table/page-size';
+import { dialogState } from '@shared/ui/dialog-state';
 
 /** Denuncias de la comunidad: las abiertas se atienden por orden de llegada; las cerradas, de la más reciente. */
 @Component({
@@ -38,7 +39,7 @@ export class ModerationPage {
   private readonly api = inject(AdminApi);
   private readonly toaster = inject(Toaster);
 
-  protected readonly dialog = viewChild(ResolveDialog);
+  protected readonly resolveDialog = dialogState<Resolution>();
   protected readonly targets = REPORT_TARGET_LABELS;
   protected readonly statusOptions = optionsOf(REPORT_STATUS_LABELS);
   protected readonly doneIcon = LucideShieldCheck;
@@ -54,7 +55,7 @@ export class ModerationPage {
     load: (request) => this.api.reports(request),
   });
 
-  protected resolved(event: { action: 'HIDE' | 'DISMISS'; alreadyClosed: boolean }): void {
+  protected resolved(event: Resolved): void {
     if (event.alreadyClosed) {
       this.toaster.info('Ya estaba resuelta', 'Otra persona la cerró antes.');
     } else if (event.action === 'HIDE') {

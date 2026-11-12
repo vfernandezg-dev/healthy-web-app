@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LucidePlus, LucideSearch, LucideUsers } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
@@ -18,6 +18,7 @@ import { PagedGrid } from '@shared/table/paged-grid';
 import { RowTemplate } from '@shared/table/row-template';
 import { FormField, form } from '@angular/forms/signals';
 import { debouncedSearch } from '@shared/utils/debounced';
+import { dialogState } from '@shared/ui/dialog-state';
 
 /** Directorio de grupos de la comunidad, con búsqueda; desde aquí se crea un grupo nuevo. */
 @Component({
@@ -42,7 +43,7 @@ import { debouncedSearch } from '@shared/utils/debounced';
       title="Comunidad"
       description="Grupos para compartir avances, dudas y recetas. En los públicos entra quien quiera; en los privados, quien los creó aprueba cada solicitud."
     >
-      <button pButton type="button" (click)="dialog()?.open(null)">
+      <button pButton type="button" (click)="groupDialog.open(null)">
         <svg lucidePlus></svg>
         Nuevo grupo
       </button>
@@ -79,7 +80,7 @@ import { debouncedSearch } from '@shared/utils/debounced';
               title="Aún no hay grupos"
               description="Crea el primero e invita a la comunidad a participar."
             >
-              <button pButton type="button" (click)="dialog()?.open(null)">
+              <button pButton type="button" (click)="groupDialog.open(null)">
                 <svg lucidePlus></svg>
                 Crear un grupo
               </button>
@@ -89,7 +90,15 @@ import { debouncedSearch } from '@shared/utils/debounced';
       </app-paged-grid>
     </section>
 
-    <app-group-dialog (saved)="created($event)" />
+    @defer (when groupDialog.isOpen(); prefetch on idle) {
+      @if (groupDialog.data(); as dialog) {
+        <app-group-dialog
+          [group]="dialog.value"
+          (saved)="created($event)"
+          (closed)="groupDialog.close()"
+        />
+      }
+    }
   `,
 })
 export class CommunityDirectory {
@@ -98,7 +107,7 @@ export class CommunityDirectory {
   private readonly route = inject(ActivatedRoute);
   private readonly toaster = inject(Toaster);
 
-  protected readonly dialog = viewChild(GroupDialog);
+  protected readonly groupDialog = dialogState<GroupResponse | null>();
   protected readonly usersIcon = LucideUsers;
 
   protected readonly filterModel = signal<DirectoryFilters>({ q: '' });

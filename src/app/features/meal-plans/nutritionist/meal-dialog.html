@@ -1,0 +1,73 @@
+<app-form-dialog
+  [(open)]="open"
+  [header]="editing() ? 'Editar comida' : 'Nueva comida'"
+  formId="meal-form"
+  [submitLabel]="editing() ? 'Guardar' : 'Añadir'"
+  [submitting]="mealForm().submitting()"
+  [failure]="failure()"
+  width="lg"
+  (closed)="closed.emit()"
+>
+  <form id="meal-form" class="space-y-5" novalidate (submit)="save($event)">
+    <div class="grid gap-5 sm:grid-cols-2">
+      <app-field label="Día" inputId="meal-day" [field]="mealForm.dayNumber">
+        <p-select
+          appendTo="body"
+          inputId="meal-day"
+          ariaLabelledBy="meal-day-label"
+          [options]="dayOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [fluid]="true"
+          [formField]="mealForm.dayNumber"
+        />
+      </app-field>
+      <app-field label="Momento del día" inputId="meal-category" [field]="mealForm.category">
+        <p-select
+          appendTo="body"
+          inputId="meal-category"
+          ariaLabelledBy="meal-category-label"
+          [options]="categoryOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Elige uno"
+          [fluid]="true"
+          [formField]="mealForm.category"
+        />
+      </app-field>
+    </div>
+    <app-field label="Plato" inputId="meal-name" [field]="mealForm.name">
+      <input
+        pInputText
+        id="meal-name"
+        class="w-full"
+        [formField]="mealForm.name"
+        [attr.aria-describedby]="describe('meal-name', mealForm.name)"
+      />
+    </app-field>
+    <app-field label="Calorías" inputId="meal-calories" [field]="mealForm.calories">
+      <p-inputnumber
+        inputId="meal-calories"
+        suffix=" kcal"
+        [fluid]="true"
+        [formField]="mealForm.calories"
+        [ariaDescribedBy]="describe('meal-calories', mealForm.calories) ?? undefined"
+      />
+    </app-field>
+    <app-field
+      label="Ingredientes o preparación"
+      inputId="meal-description"
+      [field]="mealForm.description"
+      [optional]="true"
+    >
+      <textarea
+        pTextarea
+        id="meal-description"
+        rows="3"
+        class="w-full"
+        [formField]="mealForm.description"
+        [attr.aria-describedby]="describe('meal-description', mealForm.description)"
+      ></textarea>
+    </app-field>
+  </form>
+</app-form-dialog>

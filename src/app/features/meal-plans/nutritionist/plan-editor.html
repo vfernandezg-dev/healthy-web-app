@@ -80,7 +80,7 @@
               type="button"
               size="small"
               variant="text"
-              (click)="addMeal(day.day)"
+              (click)="mealDialog.open({ meal: null, day: day.day })"
               [attr.aria-label]="`Añadir comida al día ${day.day}`"
             >
               <svg lucidePlus></svg>
@@ -107,7 +107,7 @@
                       variant="text"
                       [iconOnly]="true"
                       [attr.aria-label]="`Editar ${meal.name}`"
-                      (click)="editMeal(meal)"
+                      (click)="mealDialog.open({ meal })"
                     >
                       <svg lucidePencil></svg>
                     </button>
@@ -145,12 +145,16 @@
     </section>
   </div>
 
-  <app-meal-dialog
-    [planId]="current.plan.id"
-    [durationDays]="current.plan.durationDays"
-    [positionFor]="positionFor"
-    (saved)="mealSaved()"
-  />
+  @defer (when mealDialog.isOpen(); prefetch on idle) {
+    @if (mealDialog.data(); as dialog) {
+      <app-meal-dialog
+        [plan]="current"
+        [target]="dialog.value"
+        (saved)="mealSaved()"
+        (closed)="mealDialog.close()"
+      />
+    }
+  }
 } @else {
   <div class="space-y-4" aria-busy="true">
     <p-skeleton height="2.5rem" width="50%" />

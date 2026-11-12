@@ -1,5 +1,5 @@
 import { DatePipe, I18nPluralPipe } from '@angular/common';
-import { Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   LucideArrowLeft,
@@ -21,15 +21,16 @@ import { Confirmer } from '@core/ui/confirmer';
 import { Toaster } from '@core/ui/toaster';
 import { EmptyState } from '@shared/ui/empty-state';
 import { LoadError } from '@shared/ui/load-error';
-import { CommunityApi, POST_PAGE_SIZE } from './data/community-api';
+import { CommunityApi, POST_PAGE_SIZE, type ReportTarget } from './data/community-api';
 import { GroupDialog } from './group-dialog';
 import { GroupMembers } from './group-members';
 import { PostCard } from './post-card';
-import { PostDialog } from './post-dialog';
+import { PostDialog, type PostTarget } from './post-dialog';
 import { ReportDialog } from './report-dialog';
 import { MEMBERS_PLURAL, type Viewer, membershipLabel, viewerOf } from './data/membership';
 import { VisibilityBadge } from './ui/visibility-badge';
 import { titleFrom } from '@core/routing/title-strategy';
+import { dialogState } from '@shared/ui/dialog-state';
 
 type Relation = 'owner' | 'member' | 'pending' | 'none';
 
@@ -75,9 +76,9 @@ export class GroupPage {
   /** Id del grupo (parámetro de la ruta). */
   readonly id = input.required<string>();
 
-  protected readonly groupDialog = viewChild(GroupDialog);
-  protected readonly postDialog = viewChild(PostDialog);
-  protected readonly reportDialog = viewChild(ReportDialog);
+  protected readonly groupDialog = dialogState<GroupResponse>();
+  protected readonly postDialog = dialogState<PostTarget>();
+  protected readonly reportDialog = dialogState<ReportTarget>();
   protected readonly pageSize = POST_PAGE_SIZE;
   protected readonly membersPlural = MEMBERS_PLURAL;
   protected readonly lockIcon = LucideLock;

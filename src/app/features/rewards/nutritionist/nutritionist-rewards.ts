@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChild, computed } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import {
   LucideBookOpen,
   LucideDynamicIcon,
@@ -22,6 +22,7 @@ import { lastValue } from '@shared/utils/last-value';
 import { RewardsApi } from '../data/rewards-api';
 import { RewardDialog } from './reward-dialog';
 import { PAGE_SIZE } from '@shared/table/page-size';
+import { dialogState } from '@shared/ui/dialog-state';
 
 /** Recompensas del nutricionista: rachas de hábitos que desbloquean un contenido o un plan suyo. */
 @Component({
@@ -45,7 +46,7 @@ import { PAGE_SIZE } from '@shared/table/page-size';
       title="Tus recompensas"
       description="Premia la constancia: cuando un cliente registra sus hábitos los días que pidas, desbloquea un contenido o un plan tuyo."
     >
-      <button pButton type="button" (click)="dialog()?.open(null)">
+      <button pButton type="button" (click)="rewardDialog.open(null)">
         <svg lucidePlus></svg>
         Nueva recompensa
       </button>
@@ -102,7 +103,7 @@ import { PAGE_SIZE } from '@shared/table/page-size';
                     type="button"
                     size="small"
                     severity="secondary"
-                    (click)="dialog()?.open(reward)"
+                    (click)="rewardDialog.open(reward)"
                   >
                     <svg lucidePencil></svg>
                     Editar
@@ -130,7 +131,15 @@ import { PAGE_SIZE } from '@shared/table/page-size';
       </div>
     }
 
-    <app-reward-dialog (saved)="saved($event)" />
+    @defer (when rewardDialog.isOpen(); prefetch on idle) {
+      @if (rewardDialog.data(); as dialog) {
+        <app-reward-dialog
+          [reward]="dialog.value"
+          (saved)="saved($event)"
+          (closed)="rewardDialog.close()"
+        />
+      }
+    }
   `,
 })
 export class NutritionistRewards {
@@ -138,7 +147,7 @@ export class NutritionistRewards {
   private readonly toaster = inject(Toaster);
   private readonly confirmer = inject(Confirmer);
 
-  protected readonly dialog = viewChild(RewardDialog);
+  protected readonly rewardDialog = dialogState<RewardResponse | null>();
   protected readonly pageSize = PAGE_SIZE.grid;
   private readonly page = signal(0);
   protected readonly rewards = this.api.mine(

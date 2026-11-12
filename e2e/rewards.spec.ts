@@ -153,6 +153,25 @@ test.describe('recompensas del cliente', () => {
 });
 
 test.describe('recompensas del nutricionista', () => {
+  test('no pide los premios posibles hasta abrir el diálogo', async ({ page }) => {
+    const prizeRequests: string[] = [];
+    page.on('request', (request) => {
+      if (/\/nutritionist\/(content-items|meal-plans)/.test(request.url())) {
+        prizeRequests.push(request.url());
+      }
+    });
+    await mockApi(page, {
+      session: 'NUTRITIONIST',
+      routes: { '/nutritionist/rewards?*': (route) => route.fulfill({ json: paged([], 12) }) },
+    });
+
+    await page.goto('/nutritionist/rewards');
+    await expect(page.getByRole('heading', { level: 1, name: 'Tus recompensas' })).toBeVisible();
+    await page.waitForLoadState('networkidle');
+
+    expect(prizeRequests).toEqual([]);
+  });
+
   test('crea una recompensa con uno de sus planes publicados como premio', async ({ page }) => {
     let created: unknown;
     let mine: ReturnType<typeof reward>[] = [];

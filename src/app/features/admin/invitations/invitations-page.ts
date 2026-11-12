@@ -1,5 +1,5 @@
 import { DatePipe, NgTemplateOutlet, formatDate } from '@angular/common';
-import { Component, LOCALE_ID, inject, viewChild } from '@angular/core';
+import { Component, LOCALE_ID, inject } from '@angular/core';
 import { LucideMailPlus } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
@@ -18,6 +18,7 @@ import { RowTemplate } from '@shared/table/row-template';
 import { pagedQuery } from '@shared/table/paged-query';
 import { PAGE_SIZE } from '@shared/table/page-size';
 import { mutation } from '@shared/utils/mutation';
+import { dialogState } from '@shared/ui/dialog-state';
 
 const DEFAULT_SORT = 'createdAt,desc';
 
@@ -48,7 +49,7 @@ export class InvitationsPage {
   private readonly toaster = inject(Toaster);
   private readonly locale = inject(LOCALE_ID);
 
-  protected readonly dialog = viewChild(InviteDialog);
+  protected readonly inviteDialog = dialogState();
   protected readonly statuses = INVITATION_STATUS_LABELS;
   protected readonly severities = INVITATION_STATUS_SEVERITY;
   protected readonly mailIcon = LucideMailPlus;

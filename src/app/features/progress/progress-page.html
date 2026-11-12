@@ -3,7 +3,7 @@
   description="Tu meta de peso, tus pesajes y cómo vas. Registra tu peso una vez por semana para ver la tendencia."
 >
   @if (goals.hasValue() && !activeGoal()) {
-    <button pButton type="button" (click)="newGoal()">
+    <button pButton type="button" (click)="goalDialog.open(null)">
       <svg lucidePlus></svg>
       Nueva meta
     </button>
@@ -38,7 +38,7 @@
                 size="small"
                 severity="secondary"
                 variant="text"
-                (click)="editGoal(goal)"
+                (click)="goalDialog.open(goal)"
               >
                 <svg lucidePencil></svg>
                 Editar
@@ -328,7 +328,7 @@
       title="Aún no tienes una meta activa"
       description="Marca tu peso objetivo y registra tus pesajes: verás tu evolución y una recomendación de peso saludable."
     >
-      <button pButton type="button" (click)="newGoal()">Crear una meta</button>
+      <button pButton type="button" (click)="goalDialog.open(null)">Crear una meta</button>
     </app-empty-state>
     @if (pastGoals().length > 0) {
       <section class="card mt-8 p-6" aria-labelledby="past-only-title">
@@ -346,4 +346,8 @@
   }
 }
 
-<app-goal-dialog (saved)="goalSaved()" />
+@defer (when goalDialog.isOpen(); prefetch on idle) {
+  @if (goalDialog.data(); as dialog) {
+    <app-goal-dialog [goal]="dialog.value" (saved)="goalSaved()" (closed)="goalDialog.close()" />
+  }
+}

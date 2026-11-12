@@ -2,7 +2,7 @@
   title="Invitaciones"
   description="Los nutricionistas se dan de alta por invitación: reciben un enlace por correo para crear su cuenta."
 >
-  <button pButton type="button" (click)="dialog()?.open()">
+  <button pButton type="button" (click)="inviteDialog.open()">
     <svg lucideMailPlus></svg>
     Invitar
   </button>
@@ -17,7 +17,9 @@
       title="Aún no has invitado a nadie"
       description="Invita a un nutricionista para que pueda publicar planes y contenido."
     >
-      <button pButton type="button" (click)="dialog()?.open()">Invitar a un nutricionista</button>
+      <button pButton type="button" (click)="inviteDialog.open()">
+        Invitar a un nutricionista
+      </button>
     </app-empty-state>
   } @else {
     <div class="card overflow-hidden">
@@ -94,7 +96,11 @@
   </div>
 }
 
-<app-invite-dialog (invited)="invited($event)" />
+@defer (when inviteDialog.isOpen(); prefetch on idle) {
+  @if (inviteDialog.isOpen()) {
+    <app-invite-dialog (invited)="invited($event)" (closed)="inviteDialog.close()" />
+  }
+}
 
 <ng-template #who let-invitation [appRow]="invitations.items()">
   <p class="font-semibold">{{ invitation.firstName }} {{ invitation.lastName }}</p>

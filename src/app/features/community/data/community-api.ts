@@ -25,6 +25,12 @@ export const POST_PAGE_SIZE = 10;
 export const COMMENT_PAGE_SIZE = 20;
 export const MEMBER_PAGE_SIZE = 20;
 
+/** Publicación o comentario que se denuncia. */
+export interface ReportTarget {
+  readonly kind: 'posts' | 'comments';
+  readonly id: string;
+}
+
 /** Comunidad: grupos, membresías, publicaciones, comentarios y denuncias. */
 @Injectable({ providedIn: 'root' })
 export class CommunityApi {
@@ -155,10 +161,10 @@ export class CommunityApi {
   }
 
   /** 409 `already-reported` si ya lo denunció. Lo revisa un ADMIN. */
-  report(target: 'posts' | 'comments', id: string, reason: string): Promise<void> {
+  report({ kind, id }: ReportTarget, reason: string): Promise<void> {
     return firstValueFrom(
       this.http.post<void>(
-        `${this.api}/${target}/${id}/reports`,
+        `${this.api}/${kind}/${id}/reports`,
         { reason },
         { context: silentErrors() },
       ),

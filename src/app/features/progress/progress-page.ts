@@ -1,5 +1,5 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import {
   FormField,
   form,
@@ -33,6 +33,7 @@ import { todayIso } from '@shared/utils/date';
 import { ProgressApi } from './data/progress-api';
 import { GoalDialog } from './goal-dialog';
 import { goalProgress } from './data/progress-math';
+import { dialogState } from '@shared/ui/dialog-state';
 
 interface EntryModel {
   measuredOn: string;
@@ -71,7 +72,7 @@ export class ProgressPage {
   private readonly api = inject(ProgressApi);
   private readonly toaster = inject(Toaster);
   private readonly confirmer = inject(Confirmer);
-  private readonly goalDialog = viewChild(GoalDialog);
+  protected readonly goalDialog = dialogState<GoalResponse | null>();
 
   protected readonly goals = this.api.goals();
   private readonly allGoals = computed(() => (this.goals.hasValue() ? this.goals.value() : []));
@@ -109,14 +110,6 @@ export class ProgressPage {
   protected readonly busy = signal(false);
 
   // ---------------------------------------------------------------- metas
-
-  protected newGoal(): void {
-    this.goalDialog()?.open(null);
-  }
-
-  protected editGoal(goal: GoalResponse): void {
-    this.goalDialog()?.open(goal);
-  }
 
   protected goalSaved(): void {
     this.goals.reload();

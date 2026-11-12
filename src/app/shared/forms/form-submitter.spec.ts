@@ -102,4 +102,19 @@ describe('formSubmitter', () => {
 
     expect(event.defaultPrevented).toBe(true);
   });
+
+  it('un error con code de un campo (409 email-taken) se marca en ese campo', async () => {
+    const { submitForm, tree, toaster } = setup();
+    const taken = new HttpErrorResponse({
+      status: 409,
+      error: { code: 'name-taken', detail: 'Ya existe un grupo con ese nombre' },
+    });
+
+    await submitForm(null, tree, { save: failing(taken), codeFields: { 'name-taken': tree.name } });
+
+    expect(tree.name().errors()).toEqual([
+      expect.objectContaining({ kind: 'server', message: 'Ya existe un grupo con ese nombre' }),
+    ]);
+    expect(toaster.problem).not.toHaveBeenCalled();
+  });
 });

@@ -30,7 +30,7 @@ const WIDTHS = {
       (onHide)="closed.emit()"
     >
       @if (failure(); as message) {
-        <p-message severity="error" class="mb-4 block">{{ message }}</p-message>
+        <p-message [severity]="failureSeverity()" class="mb-4 block">{{ message }}</p-message>
       }
       <ng-content />
       <ng-template #footer>
@@ -58,6 +58,8 @@ export class FormDialog {
   readonly submitting = input(false);
   /** Error que no es de un campo (ver `formSubmitter`). */
   readonly failure = input<string | null>(null);
+  /** `warn` para lo que no es un fallo (por ejemplo, «ya lo habías denunciado»). */
+  readonly failureSeverity = input<'error' | 'warn'>('error');
   /** Acción destructiva (ocultar, denunciar): el botón de enviar va en rojo. */
   readonly danger = input(false);
   readonly width = input<keyof typeof WIDTHS>('md');
