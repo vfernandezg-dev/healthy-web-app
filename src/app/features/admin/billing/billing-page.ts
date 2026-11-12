@@ -7,13 +7,12 @@ import {
 } from '@lucide/angular';
 import { Skeleton } from 'primeng/skeleton';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import type { Money } from '../../../core/api/schema';
-import { TIER_LABELS, type Tier } from '../../../shared/i18n/labels';
 import { MoneyPipe } from '../../../shared/pipes/money.pipe';
 import { LoadError } from '../../../shared/ui/load-error';
 import { PageHeader } from '../../../shared/ui/page-header';
 import { StatCard } from '../../../shared/ui/stat-card';
 import { AdminApi } from '../data/admin-api';
+import { activeSubscriptions, formatAmounts } from './billing-summary';
 import { PaymentsTable } from './payments-table';
 import { SubscriptionsTable } from './subscriptions-table';
 
@@ -118,25 +117,13 @@ export class BillingPage {
   protected readonly tab = signal<string | number | undefined>('subscriptions');
 
   protected readonly summary = this.api.billingSummary();
-  private readonly activeByTier = computed(() =>
-    this.summary.hasValue()
-      ? (this.summary.value().activeByTier as Partial<Record<Tier, number>>)
-      : {},
+  private readonly active = computed(() =>
+    this.summary.hasValue() ? activeSubscriptions(this.summary.value()) : null,
   );
-  protected readonly activeTotal = computed(() =>
-    Object.values(this.activeByTier()).reduce((sum, count) => sum + (count ?? 0), 0),
-  );
-  protected readonly activeDetail = computed(() => {
-    const parts = (Object.entries(this.activeByTier()) as [Tier, number][])
-      .filter(([, count]) => count > 0)
-      .map(([tier, count]) => `${TIER_LABELS[tier] ?? tier}: ${count}`);
-    return parts.length > 0 ? parts.join(' · ') : null;
-  });
+  protected readonly activeTotal = computed(() => this.active()?.total ?? 0);
+  protected readonly activeDetail = computed(() => this.active()?.detail ?? null);
 
-  /** Importes por moneda («12,98 US$ · 4,00 €»); sin importes, cero. */
-  protected format(amounts: readonly Money[]): string {
-    return amounts.length > 0
-      ? amounts.map((amount) => this.money.transform(amount)).join(' · ')
-      : '0';
+  protected format(amounts: Parameters<typeof formatAmounts>[0]): string {
+    return formatAmounts(amounts, (money) => this.money.transform(money));
   }
 }

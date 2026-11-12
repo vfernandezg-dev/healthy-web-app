@@ -4,7 +4,6 @@ import { AuthStore } from './core/auth/auth-store';
 import { roleGuard } from './core/auth/guards';
 
 const shell = () => import('./layout/app-shell/app-shell').then((m) => m.AppShell);
-const roleHome = () => import('./features/home/role-home').then((m) => m.RoleHome);
 const profile = () => import('./features/profile/profile-page').then((m) => m.ProfilePage);
 const mealPlans = () => import('./features/meal-plans/meal-plans.routes');
 const content = () => import('./features/content/content.routes');
@@ -27,7 +26,12 @@ export const routes: Routes = [
     canMatch: [roleGuard('CLIENT')],
     loadComponent: shell,
     children: [
-      { path: '', title: 'Inicio', loadComponent: roleHome },
+      {
+        path: '',
+        title: 'Inicio',
+        loadComponent: () =>
+          import('./features/dashboard/client-dashboard').then((m) => m.ClientDashboard),
+      },
       { path: 'profile', title: 'Tu perfil', loadComponent: profile },
       {
         path: 'subscription',
@@ -63,7 +67,14 @@ export const routes: Routes = [
     canMatch: [roleGuard('NUTRITIONIST')],
     loadComponent: shell,
     children: [
-      { path: '', title: 'Inicio', loadComponent: roleHome },
+      {
+        path: '',
+        title: 'Inicio',
+        loadComponent: () =>
+          import('./features/dashboard/nutritionist-dashboard').then(
+            (m) => m.NutritionistDashboard,
+          ),
+      },
       { path: 'profile', title: 'Tu perfil', loadComponent: profile },
       {
         path: 'meal-plans',
@@ -95,7 +106,12 @@ export const routes: Routes = [
     canMatch: [roleGuard('ADMIN')],
     loadComponent: shell,
     children: [
-      { path: '', title: 'Resumen', loadComponent: roleHome },
+      {
+        path: '',
+        title: 'Resumen',
+        loadComponent: () =>
+          import('./features/admin/overview/overview-page').then((m) => m.OverviewPage),
+      },
       {
         path: '',
         loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
