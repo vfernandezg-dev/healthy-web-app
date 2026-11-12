@@ -55,12 +55,11 @@
   </p-tablist>
   <p-tabpanels class="px-0!">
     <p-tabpanel value="subscriptions">
-      @if (tab() === 'subscriptions') {
-        <app-subscriptions-table />
-      }
+      <app-subscriptions-table />
     </p-tabpanel>
     <p-tabpanel value="payments">
-      @if (tab() === 'payments') {
+      <!-- La tabla de pagos va en su propio chunk: se carga al abrir la pestaña y conserva su estado. -->
+      @defer (when tab() === 'payments'; prefetch on idle) {
         <app-payments-table />
       }
     </p-tabpanel>
