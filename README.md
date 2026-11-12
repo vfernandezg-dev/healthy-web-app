@@ -32,9 +32,9 @@ Las variables se leen en tiempo de compilación con [@ngx-env/builder](https://g
 desde `.env` o desde el entorno del build. Solo las que empiezan por `NG_APP_` llegan al código y acaban en el
 bundle: **aquí nunca va un secreto**.
 
-| Variable         | Por defecto | Uso                                                                        |
-| ---------------- | ----------- | -------------------------------------------------------------------------- |
-| `NG_APP_API_URL` | `/api/v1`   | URL base de la API. Completa si la API vive en otro origen en producción   |
+| Variable         | Por defecto | Uso                                                                      |
+| ---------------- | ----------- | ------------------------------------------------------------------------ |
+| `NG_APP_API_URL` | `/api/v1`   | URL base de la API. Completa si la API vive en otro origen en producción |
 
 ## Sesión
 
@@ -47,12 +47,12 @@ bundle: **aquí nunca va un secreto**.
 
 ## Scripts
 
-| Script            | Qué hace                                       |
-| ----------------- | ---------------------------------------------- |
-| `pnpm start`      | Servidor de desarrollo en el puerto 4210       |
-| `pnpm build`      | Build de producción en `dist/`                 |
-| `pnpm test`       | Tests unitarios (Vitest) una vez               |
-| `pnpm test:watch` | Tests unitarios en modo observación            |
+| Script            | Qué hace                                 |
+| ----------------- | ---------------------------------------- |
+| `pnpm start`      | Servidor de desarrollo en el puerto 4210 |
+| `pnpm build`      | Build de producción en `dist/`           |
+| `pnpm test`       | Tests unitarios (Vitest) una vez         |
+| `pnpm test:watch` | Tests unitarios en modo observación      |
 
 CI ejecuta `pnpm install --frozen-lockfile`, `pnpm test` y `pnpm build` en cada pull request
 ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).

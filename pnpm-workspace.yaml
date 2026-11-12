@@ -18,3 +18,9 @@ allowBuilds:
   msgpackr-extract: true
   nice-napi: false
   '@parcel/watcher': false
+
+# La app es zoneless, pero zone.js llega como peer opcional de @angular/core. Sin izarlo, el builder de
+# tests (que busca zone.js para cargar zone.js/testing) no lo encuentra y arranca TestBed sin zone.js.
+hoistPattern:
+  - '*'
+  - '!zone.js'

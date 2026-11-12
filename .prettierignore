@@ -1,0 +1,9 @@
+dist/
+.angular/
+coverage/
+playwright-report/
+test-results/
+pnpm-lock.yaml
+# Contrato de la API (copiado) y tipos generados a partir de él.
+src/app/core/api/openapi.yaml
+src/app/core/api/schema.d.ts

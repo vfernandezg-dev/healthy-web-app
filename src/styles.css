@@ -1,9 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globales mínimos. El sistema de diseño (Tailwind 4 + PrimeNG) se monta encima. */
+html,
+body {
+  height: 100%;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-a {
-    text-decoration: none;
-    transition: all 0.5s ease;
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
 }
