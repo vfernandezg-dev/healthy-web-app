@@ -10,8 +10,8 @@
 
 @if (invitations.error()) {
   <app-load-error [error]="invitations.error()" (retry)="invitations.reload()" />
-} @else if (result()) {
-  @if (total() === 0) {
+} @else if (invitations.page()) {
+  @if (invitations.total() === 0) {
     <app-empty-state
       [icon]="mailIcon"
       title="Aún no has invitado a nadie"
@@ -22,20 +22,20 @@
   } @else {
     <div class="card overflow-hidden">
       <p-table
-        [value]="items()"
+        [value]="invitations.items()"
         [lazy]="true"
         dataKey="id"
-        [totalRecords]="total()"
-        [rows]="pageSize"
-        [first]="first()"
-        [paginator]="total() > pageSize"
+        [totalRecords]="invitations.total()"
+        [rows]="invitations.pageSize"
+        [first]="invitations.first()"
+        [paginator]="invitations.total() > invitations.pageSize"
         sortField="createdAt"
         [sortOrder]="-1"
-        [loading]="invitations.isLoading()"
+        [loading]="invitations.loading()"
         [scrollable]="true"
         [rowHover]="true"
         tableStyleClass="md:min-w-[52rem]"
-        (onLazyLoad)="load($event)"
+        (onLazyLoad)="invitations.onLazyLoad($event)"
       >
         <ng-template #header>
           <tr class="max-md:hidden">
@@ -50,7 +50,7 @@
             <th scope="col"><span class="sr-only">Acciones</span></th>
           </tr>
         </ng-template>
-        <ng-template #body let-invitation [appRow]="items()">
+        <ng-template #body let-invitation [appRow]="invitations.items()">
           <tr>
             <td class="md:hidden" colspan="5">
               <ng-container *ngTemplateOutlet="who; context: { $implicit: invitation }" />
@@ -96,7 +96,7 @@
 
 <app-invite-dialog (invited)="invited($event)" />
 
-<ng-template #who let-invitation [appRow]="items()">
+<ng-template #who let-invitation [appRow]="invitations.items()">
   <p class="font-semibold">{{ invitation.firstName }} {{ invitation.lastName }}</p>
   <p class="text-sm text-muted">{{ invitation.email }}</p>
   <p-tag
@@ -106,7 +106,7 @@
   />
 </ng-template>
 
-<ng-template #deadline let-invitation [appRow]="items()">
+<ng-template #deadline let-invitation [appRow]="invitations.items()">
   @switch (invitation.status) {
     @case ('ACCEPTED') {
       Aceptada el {{ invitation.acceptedAt | date: 'mediumDate' }}
@@ -123,7 +123,7 @@
   }
 </ng-template>
 
-<ng-template #actions let-invitation [appRow]="items()">
+<ng-template #actions let-invitation [appRow]="invitations.items()">
   @if (canResend(invitation)) {
     <button
       pButton
@@ -132,7 +132,7 @@
       severity="secondary"
       variant="outlined"
       [attr.aria-label]="`Reenviar la invitación de ${invitation.firstName} ${invitation.lastName}`"
-      (click)="resend(invitation)"
+      (click)="resend.run(invitation)"
     >
       Reenviar
     </button>
@@ -145,7 +145,7 @@
       severity="danger"
       variant="text"
       [attr.aria-label]="`Revocar la invitación de ${invitation.firstName} ${invitation.lastName}`"
-      (click)="revoke(invitation)"
+      (click)="revoke.run(invitation)"
     >
       Revocar
     </button>

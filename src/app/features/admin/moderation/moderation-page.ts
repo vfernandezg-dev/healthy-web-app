@@ -1,29 +1,26 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject, linkedSignal, signal, viewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { LucideEyeOff, LucideShieldCheck } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
-import { type PaginatorState, Paginator } from 'primeng/paginator';
+import { Paginator } from 'primeng/paginator';
 import { SelectButton } from 'primeng/selectbutton';
 import { Skeleton } from 'primeng/skeleton';
 import { Toaster } from '@core/ui/toaster';
-import {
-  REPORT_STATUS_LABELS,
-  REPORT_TARGET_LABELS,
-  type ReportStatus,
-  optionsOf,
-} from '@shared/i18n/labels';
+import { REPORT_STATUS_LABELS, REPORT_TARGET_LABELS, optionsOf } from '@shared/i18n/labels';
 import { EmptyState } from '@shared/ui/empty-state';
 import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
-import { ADMIN_PAGE_SIZE, AdminApi } from '../data/admin-api';
+import { AdminApi, type ReportFilters } from '../data/admin-api';
 import { ResolveDialog } from './resolve-dialog';
+import { FormField, form } from '@angular/forms/signals';
+import { pagedQuery } from '@shared/table/paged-query';
+import { PAGE_SIZE } from '@shared/table/page-size';
 
 /** Denuncias de la comunidad: las abiertas se atienden por orden de llegada; las cerradas, de la más reciente. */
 @Component({
   selector: 'app-moderation-page',
   imports: [
-    FormsModule,
+    FormField,
     DatePipe,
     SelectButton,
     Paginator,
@@ -42,24 +39,20 @@ export class ModerationPage {
   private readonly toaster = inject(Toaster);
 
   protected readonly dialog = viewChild(ResolveDialog);
-  protected readonly pageSize = ADMIN_PAGE_SIZE;
   protected readonly targets = REPORT_TARGET_LABELS;
   protected readonly statusOptions = optionsOf(REPORT_STATUS_LABELS);
   protected readonly doneIcon = LucideShieldCheck;
 
-  protected readonly status = signal<ReportStatus>('OPEN');
-  protected readonly page = linkedSignal({ source: this.status, computation: () => 0 });
-  protected readonly reports = this.api.reports(
-    computed(() => ({
-      status: this.status(),
-      page: this.page(),
-      sort: this.status() === 'OPEN' ? 'createdAt,asc' : 'createdAt,desc',
-    })),
-  );
-
-  protected changePage(event: PaginatorState): void {
-    this.page.set(event.page ?? 0);
-  }
+  private readonly filterModel = signal<ReportFilters>({ status: 'OPEN' });
+  protected readonly filters = form(this.filterModel);
+  protected readonly status = computed(() => this.filterModel().status);
+  /** Las abiertas se atienden por orden de llegada; las cerradas, de la más reciente. */
+  protected readonly reports = pagedQuery({
+    filters: this.filterModel,
+    defaultSort: ({ status }) => (status === 'OPEN' ? 'createdAt,asc' : 'createdAt,desc'),
+    pageSize: PAGE_SIZE.table,
+    load: (request) => this.api.reports(request),
+  });
 
   protected resolved(event: { action: 'HIDE' | 'DISMISS'; alreadyClosed: boolean }): void {
     if (event.alreadyClosed) {
@@ -69,11 +62,7 @@ export class ModerationPage {
     } else {
       this.toaster.success('Denuncia descartada');
     }
-    const lastOnPage = this.reports.hasValue() && this.reports.value().content.length === 1;
-    if (lastOnPage && this.page() > 0) {
-      this.page.update((page) => page - 1);
-    } else {
-      this.reports.reload();
-    }
+    // Ya no está entre las abiertas.
+    this.reports.afterRemove();
   }
 }

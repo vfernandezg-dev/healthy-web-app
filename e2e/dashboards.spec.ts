@@ -260,10 +260,10 @@ test.describe('inicio del nutricionista', () => {
     await expectNoA11yViolations(page);
 
     expect(queries).toEqual({
-      clients: { size: '4' },
-      rewards: { active: 'true', size: '1' },
-      plans: { status: 'DRAFT', size: '5', sort: 'updatedAt,desc' },
-      content: { status: 'DRAFT', size: '5', sort: 'updatedAt,desc' },
+      clients: { page: '0', size: '4' },
+      rewards: { active: 'true', page: '0', size: '1', sort: 'createdAt,desc' },
+      plans: { status: 'DRAFT', page: '0', size: '5', sort: 'updatedAt,desc' },
+      content: { status: 'DRAFT', page: '0', size: '5', sort: 'updatedAt,desc' },
     });
   });
 

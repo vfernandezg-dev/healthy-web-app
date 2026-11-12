@@ -13,6 +13,9 @@ import type { RewardResponse } from '@core/api/schema';
 import { LabeledField, fieldDescription } from '@shared/forms/labeled-field';
 import { focusFirstInvalid, serverFieldErrors } from '@shared/forms/server-errors';
 import { RewardsApi } from '../data/rewards-api';
+import { PAGE_SIZE } from '@shared/table/page-size';
+import { ContentApi } from '@features/content/data/content-api';
+import { MealPlansApi } from '@features/meal-plans/data/meal-plans-api';
 
 type PrizeType = 'CONTENT' | 'MEAL_PLAN';
 
@@ -159,8 +162,13 @@ export class RewardDialog {
     { label: 'Un plan', value: 'MEAL_PLAN' },
   ];
 
-  private readonly content = this.api.ownContent();
-  private readonly plans = this.api.ownMealPlans();
+  /** Premios posibles: sus contenidos y sus planes publicados (todos de una vez). */
+  private readonly content = inject(ContentApi).mine(
+    signal({ status: 'PUBLISHED', page: 0, size: PAGE_SIZE.options, sort: 'updatedAt,desc' }),
+  );
+  private readonly plans = inject(MealPlansApi).mine(
+    signal({ status: 'PUBLISHED', page: 0, size: PAGE_SIZE.options, sort: 'title,asc' }),
+  );
 
   protected readonly model = signal<RewardModel>({
     title: '',

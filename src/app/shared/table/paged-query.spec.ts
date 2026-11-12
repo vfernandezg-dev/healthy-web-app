@@ -24,7 +24,7 @@ const pageOf = (request: Request, total: number, ids: string[]): Paged<Item> => 
 });
 
 /** Un listado contra una «API» controlada a mano: cada petición queda pendiente hasta `respond`. */
-function setup() {
+function setup(defaultSort: string | ((filters: Filters) => string) = 'createdAt,desc') {
   const filters = signal<Filters>({ status: null });
   const requests: Request[] = [];
   const pending: ((page: Paged<Item>) => void)[] = [];
@@ -32,7 +32,7 @@ function setup() {
   TestBed.runInInjectionContext(() => {
     list = pagedQuery<Item, Filters>({
       filters,
-      defaultSort: 'createdAt,desc',
+      defaultSort,
       pageSize: 2,
       load: (request: Signal<Request>) =>
         resource({
@@ -146,5 +146,18 @@ describe('pagedQuery', () => {
     list.afterCreate();
     await settle();
     expect(requests.at(-1)).toMatchObject({ page: 0 });
+  });
+
+  it('el orden por defecto puede depender de los filtros, mientras no se elija otro', async () => {
+    const { filters, requests, settle } = setup(({ status }) =>
+      status === 'OPEN' ? 'createdAt,asc' : 'createdAt,desc',
+    );
+    filters.set({ status: 'OPEN' });
+    await settle();
+    expect(requests.at(-1)).toMatchObject({ sort: 'createdAt,asc' });
+
+    filters.set({ status: 'RESOLVED' });
+    await settle();
+    expect(requests.at(-1)).toMatchObject({ page: 0, sort: 'createdAt,desc' });
   });
 });

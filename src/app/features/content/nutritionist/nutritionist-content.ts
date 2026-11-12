@@ -2,29 +2,29 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideBookOpen, LucidePlus } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
-import { type PaginatorState, Paginator } from 'primeng/paginator';
-import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
 import { PUBLICATION_STATUS_LABELS, PUBLICATION_STATUS_SEVERITY } from '@shared/i18n/labels';
 import { EmptyState } from '@shared/ui/empty-state';
-import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
-import { ContentApi } from '../data/content-api';
+import { ContentApi, type OwnContentFilters } from '../data/content-api';
 import { ContentCard } from '../ui/content-card';
+import { pagedQuery } from '@shared/table/paged-query';
+import { PAGE_SIZE } from '@shared/table/page-size';
+import { PagedGrid } from '@shared/table/paged-grid';
+import { RowTemplate } from '@shared/table/row-template';
 
 /** El contenido del nutricionista, en cualquier estado. */
 @Component({
   selector: 'app-nutritionist-content',
   imports: [
+    PagedGrid,
+    RowTemplate,
     RouterLink,
     ButtonDirective,
-    Paginator,
-    Skeleton,
     Tag,
     LucidePlus,
     ContentCard,
     EmptyState,
-    LoadError,
     PageHeader,
   ],
   template: `
@@ -38,11 +38,13 @@ import { ContentCard } from '../ui/content-card';
       </a>
     </app-page-header>
 
-    @if (items.error()) {
-      <app-load-error [error]="items.error()" (retry)="items.reload()" />
-    } @else if (items.hasValue()) {
-      @let result = items.value();
-      @if (result.content.length === 0) {
+    <app-paged-grid [query]="items" label="Tu contenido" skeletonHeight="18rem">
+      <ng-template [appRow]="items.items()" let-item>
+        <app-content-card [item]="item" [link]="item.id">
+          <p-tag [value]="statusLabels[item.status]" [severity]="statusSeverity[item.status]" />
+        </app-content-card>
+      </ng-template>
+      <div empty>
         <app-empty-state
           [icon]="emptyIcon"
           title="Aún no has publicado contenido"
@@ -50,48 +52,19 @@ import { ContentCard } from '../ui/content-card';
         >
           <a pButton routerLink="new">Crear contenido</a>
         </app-empty-state>
-      } @else {
-        <ul class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" role="list">
-          @for (item of result.content; track item.id) {
-            <li>
-              <app-content-card [item]="item" [link]="item.id">
-                <p-tag
-                  [value]="statusLabels[item.status]"
-                  [severity]="statusSeverity[item.status]"
-                />
-              </app-content-card>
-            </li>
-          }
-        </ul>
-        @if (result.page.totalPages > 1) {
-          <p-paginator
-            class="mt-6 block"
-            [first]="result.page.number * 20"
-            [rows]="20"
-            [totalRecords]="result.page.totalElements"
-            (onPageChange)="changePage($event)"
-          />
-        }
-      }
-    } @else {
-      <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true">
-        @for (placeholder of [1, 2, 3]; track placeholder) {
-          <p-skeleton height="18rem" borderRadius="1.5rem" />
-        }
       </div>
-    }
+    </app-paged-grid>
   `,
 })
 export class NutritionistContent {
   private readonly api = inject(ContentApi);
-  private readonly page = signal(0);
-
-  protected readonly items = this.api.mine(this.page);
+  protected readonly items = pagedQuery({
+    filters: signal<OwnContentFilters>({ status: null }),
+    defaultSort: 'updatedAt,desc',
+    pageSize: PAGE_SIZE.grid,
+    load: (request) => this.api.mine(request),
+  });
   protected readonly statusLabels = PUBLICATION_STATUS_LABELS;
   protected readonly statusSeverity = PUBLICATION_STATUS_SEVERITY;
   protected readonly emptyIcon = LucideBookOpen;
-
-  protected changePage(event: PaginatorState): void {
-    this.page.set(event.page ?? 0);
-  }
 }

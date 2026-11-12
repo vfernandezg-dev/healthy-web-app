@@ -14,8 +14,13 @@ import type {
   PostRequest,
   PostResponse,
 } from '@core/api/schema';
+import { type PageRequest, pageParams } from '@shared/table/page-query';
 
-export const GROUP_PAGE_SIZE = 12;
+export interface DirectoryFilters {
+  /** Busca por nombre. */
+  readonly q: string;
+}
+
 export const POST_PAGE_SIZE = 10;
 export const COMMENT_PAGE_SIZE = 20;
 export const MEMBER_PAGE_SIZE = 20;
@@ -28,18 +33,10 @@ export class CommunityApi {
 
   // ---------------------------------------------------------------- grupos
 
-  directory(query: Signal<{ search: string; page: number }>) {
+  directory(request: Signal<DirectoryFilters & PageRequest>) {
     return httpResource<PagedModelGroupResponse>(() => {
-      const { search, page } = query();
-      return {
-        url: `${this.api}/groups`,
-        params: {
-          page,
-          size: GROUP_PAGE_SIZE,
-          sort: 'createdAt,desc',
-          ...(search.trim() ? { q: search.trim() } : {}),
-        },
-      };
+      const { q, ...page } = request();
+      return { url: `${this.api}/groups`, params: pageParams(page, { q }) };
     });
   }
 

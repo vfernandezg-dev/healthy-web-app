@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, inject, signal, viewChild, computed } from '@angular/core';
 import {
   LucideBookOpen,
   LucideDynamicIcon,
@@ -19,8 +19,9 @@ import { EmptyState } from '@shared/ui/empty-state';
 import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
 import { lastValue } from '@shared/utils/last-value';
-import { REWARD_PAGE_SIZE, RewardsApi } from '../data/rewards-api';
+import { RewardsApi } from '../data/rewards-api';
 import { RewardDialog } from './reward-dialog';
+import { PAGE_SIZE } from '@shared/table/page-size';
 
 /** Recompensas del nutricionista: rachas de hábitos que desbloquean un contenido o un plan suyo. */
 @Component({
@@ -138,9 +139,16 @@ export class NutritionistRewards {
   private readonly confirmer = inject(Confirmer);
 
   protected readonly dialog = viewChild(RewardDialog);
-  protected readonly pageSize = REWARD_PAGE_SIZE;
+  protected readonly pageSize = PAGE_SIZE.grid;
   private readonly page = signal(0);
-  protected readonly rewards = this.api.mine(this.page);
+  protected readonly rewards = this.api.mine(
+    computed(() => ({
+      active: null,
+      page: this.page(),
+      size: PAGE_SIZE.grid,
+      sort: 'createdAt,desc',
+    })),
+  );
   /** La última página: se sigue viendo mientras carga la siguiente. */
   protected readonly result = lastValue(this.rewards);
   protected readonly trophy = LucideTrophy;

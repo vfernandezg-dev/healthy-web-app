@@ -202,8 +202,8 @@ test.describe('recompensas del nutricionista', () => {
     await expect(page.getByRole('heading', { name: 'Una semana constante' })).toBeVisible();
     expect(queries).toEqual({
       rewards: { page: '0', size: '12', sort: 'createdAt,desc' },
-      content: { status: 'PUBLISHED', size: '100', sort: 'updatedAt,desc' },
-      plans: { status: 'PUBLISHED', size: '100', sort: 'title,asc' },
+      content: { status: 'PUBLISHED', page: '0', size: '100', sort: 'updatedAt,desc' },
+      plans: { status: 'PUBLISHED', page: '0', size: '100', sort: 'title,asc' },
     });
     expect(created).toEqual({
       title: 'Una semana constante',

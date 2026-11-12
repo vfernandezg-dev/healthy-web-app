@@ -17,25 +17,33 @@ import type {
   ResolveRequest,
   UserSummaryResponse,
 } from '@core/api/schema';
-import { type PageQuery, pageParams } from '@shared/table/page-query';
+import { type PageRequest, pageParams } from '@shared/table/page-query';
 import type { Role } from '@core/auth/roles';
-import type { ReportStatus, UserStatus } from '@shared/i18n/labels';
+import type {
+  PaymentStatus,
+  ReportStatus,
+  SubscriptionStatus,
+  Tier,
+  UserStatus,
+} from '@shared/i18n/labels';
 
-export const ADMIN_PAGE_SIZE = 20;
-
-export interface UserFilters extends PageQuery {
+export interface UserFilters {
   readonly q: string;
   readonly role: Role | null;
   readonly status: UserStatus | null;
 }
 
-export interface SubscriptionFilters extends PageQuery {
-  readonly status: string | null;
-  readonly tier: string | null;
+export interface SubscriptionFilters {
+  readonly status: SubscriptionStatus | null;
+  readonly tier: Tier | null;
 }
 
-export interface PaymentFilters extends PageQuery {
-  readonly status: string | null;
+export interface PaymentFilters {
+  readonly status: PaymentStatus | null;
+}
+
+export interface ReportFilters {
+  readonly status: ReportStatus;
 }
 
 /** Panel de administración: cuentas, invitaciones de nutricionistas, moderación y facturación. */
@@ -46,13 +54,10 @@ export class AdminApi {
 
   // ---------------------------------------------------------------- cuentas
 
-  users(filters: Signal<UserFilters>) {
+  users(request: Signal<UserFilters & PageRequest>) {
     return httpResource<PagedModelAdminUserResponse>(() => {
-      const { q, role, status, ...query } = filters();
-      return {
-        url: `${this.api}/admin/users`,
-        params: pageParams({ ...query, size: ADMIN_PAGE_SIZE }, { q, role, status }),
-      };
+      const { q, role, status, ...page } = request();
+      return { url: `${this.api}/admin/users`, params: pageParams(page, { q, role, status }) };
     });
   }
 
@@ -75,10 +80,10 @@ export class AdminApi {
 
   // ---------------------------------------------------------------- invitaciones
 
-  invitations(query: Signal<PageQuery>) {
+  invitations(request: Signal<PageRequest>) {
     return httpResource<PagedModelInvitationResponse>(() => ({
       url: `${this.api}/admin/nutritionist-invitations`,
-      params: pageParams({ ...query(), size: ADMIN_PAGE_SIZE }),
+      params: pageParams(request()),
     }));
   }
 
@@ -109,13 +114,10 @@ export class AdminApi {
 
   // ---------------------------------------------------------------- moderación
 
-  reports(filters: Signal<PageQuery & { readonly status: ReportStatus }>) {
+  reports(request: Signal<ReportFilters & PageRequest>) {
     return httpResource<PagedModelReportResponse>(() => {
-      const { status, ...query } = filters();
-      return {
-        url: `${this.api}/admin/moderation/reports`,
-        params: pageParams({ ...query, size: ADMIN_PAGE_SIZE }, { status }),
-      };
+      const { status, ...page } = request();
+      return { url: `${this.api}/admin/moderation/reports`, params: pageParams(page, { status }) };
     });
   }
 
@@ -134,23 +136,20 @@ export class AdminApi {
     return httpResource<BillingSummaryResponse>(() => `${this.api}/admin/billing/summary`);
   }
 
-  subscriptions(filters: Signal<SubscriptionFilters>) {
+  subscriptions(request: Signal<SubscriptionFilters & PageRequest>) {
     return httpResource<PagedModelAdminSubscriptionResponse>(() => {
-      const { status, tier, ...query } = filters();
+      const { status, tier, ...page } = request();
       return {
         url: `${this.api}/admin/subscriptions`,
-        params: pageParams({ ...query, size: ADMIN_PAGE_SIZE }, { status, tier }),
+        params: pageParams(page, { status, tier }),
       };
     });
   }
 
-  payments(filters: Signal<PaymentFilters>) {
+  payments(request: Signal<PaymentFilters & PageRequest>) {
     return httpResource<PagedModelAdminPaymentResponse>(() => {
-      const { status, ...query } = filters();
-      return {
-        url: `${this.api}/admin/payments`,
-        params: pageParams({ ...query, size: ADMIN_PAGE_SIZE }, { status }),
-      };
+      const { status, ...page } = request();
+      return { url: `${this.api}/admin/payments`, params: pageParams(page, { status }) };
     });
   }
 }

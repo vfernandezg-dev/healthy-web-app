@@ -1,36 +1,38 @@
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
-import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
 import { Select } from 'primeng/select';
 import { Skeleton } from 'primeng/skeleton';
-import {
-  SortIcon as TableSortIcon,
-  SortableColumn,
-  Table,
-  type TableLazyLoadEvent,
-} from 'primeng/table';
+import { SortIcon as TableSortIcon, SortableColumn, Table } from 'primeng/table';
 import { Tag } from 'primeng/tag';
 import {
   SUBSCRIPTION_STATUS_LABELS,
   SUBSCRIPTION_STATUS_SEVERITY,
   TIER_LABELS,
-  optionsOf,
+  withAllOption,
+  type Tier,
 } from '@shared/i18n/labels';
-import { type PageQuery, pageQueryOf, samePageQuery } from '@shared/table/page-query';
 import { LoadError } from '@shared/ui/load-error';
 import { SortIcon } from '@shared/ui/sort-icon';
 import { TierBadge } from '@shared/ui/tier-badge';
-import { ADMIN_PAGE_SIZE, AdminApi } from '../data/admin-api';
+import { AdminApi, type SubscriptionFilters } from '../data/admin-api';
 import { RowTemplate } from '@shared/table/row-template';
-import { lastValue, sameValues } from '@shared/utils/last-value';
+import { FormField, form } from '@angular/forms/signals';
+import { pagedQuery } from '@shared/table/paged-query';
+import { PAGE_SIZE } from '@shared/table/page-size';
 
 const DEFAULT_SORT = 'createdAt,desc';
+
+/** Niveles de pago (las suscripciones son de PREMIUM o VIP). */
+const PAID_TIERS: Readonly<Record<Exclude<Tier, 'BASIC'>, string>> = {
+  PREMIUM: TIER_LABELS.PREMIUM,
+  VIP: TIER_LABELS.VIP,
+};
 
 /** Suscripciones con su titular, nivel, estado y período; filtros por estado y nivel. */
 @Component({
   selector: 'app-subscriptions-table',
   imports: [
-    FormsModule,
+    FormField,
     DatePipe,
     NgTemplateOutlet,
     Select,
@@ -52,36 +54,36 @@ const DEFAULT_SORT = 'createdAt,desc';
         optionLabel="label"
         optionValue="value"
         ariaLabel="Estado de la suscripción"
-        [(ngModel)]="status"
+        [formField]="filters.status"
       />
       <p-select
         [options]="tierOptions"
         optionLabel="label"
         optionValue="value"
         ariaLabel="Nivel"
-        [(ngModel)]="tier"
+        [formField]="filters.tier"
       />
     </div>
 
     @if (subscriptions.error()) {
       <app-load-error [error]="subscriptions.error()" (retry)="subscriptions.reload()" />
-    } @else if (result()) {
+    } @else if (subscriptions.page()) {
       <div class="card overflow-hidden">
         <p-table
-          [value]="items()"
+          [value]="subscriptions.items()"
           [lazy]="true"
           dataKey="id"
-          [totalRecords]="total()"
-          [rows]="pageSize"
-          [first]="first()"
-          [paginator]="total() > pageSize"
+          [totalRecords]="subscriptions.total()"
+          [rows]="subscriptions.pageSize"
+          [first]="subscriptions.first()"
+          [paginator]="subscriptions.total() > subscriptions.pageSize"
           sortField="createdAt"
           [sortOrder]="-1"
-          [loading]="subscriptions.isLoading()"
+          [loading]="subscriptions.loading()"
           [scrollable]="true"
           [rowHover]="true"
           tableStyleClass="md:min-w-[52rem]"
-          (onLazyLoad)="load($event)"
+          (onLazyLoad)="subscriptions.onLazyLoad($event)"
         >
           <ng-template #header>
             <tr class="max-md:hidden">
@@ -96,7 +98,7 @@ const DEFAULT_SORT = 'createdAt,desc';
               </th>
             </tr>
           </ng-template>
-          <ng-template #body let-subscription [appRow]="items()">
+          <ng-template #body let-subscription [appRow]="subscriptions.items()">
             <tr>
               <td class="md:hidden" colspan="5">
                 <ng-container
@@ -154,7 +156,7 @@ const DEFAULT_SORT = 'createdAt,desc';
       }
     </ng-template>
 
-    <ng-template #period let-subscription [appRow]="items()">
+    <ng-template #period let-subscription [appRow]="subscriptions.items()">
       @if (subscription.currentPeriodStart && subscription.currentPeriodEnd) {
         {{ subscription.currentPeriodStart | date: 'mediumDate' }} –
         {{ subscription.currentPeriodEnd | date: 'mediumDate' }}
@@ -167,39 +169,17 @@ const DEFAULT_SORT = 'createdAt,desc';
 export class SubscriptionsTable {
   private readonly api = inject(AdminApi);
 
-  protected readonly pageSize = ADMIN_PAGE_SIZE;
   protected readonly statuses = SUBSCRIPTION_STATUS_LABELS;
   protected readonly severities = SUBSCRIPTION_STATUS_SEVERITY;
-  protected readonly statusOptions = [
-    { label: 'Todos los estados', value: null },
-    ...optionsOf(SUBSCRIPTION_STATUS_LABELS),
-  ];
-  protected readonly tierOptions = [
-    { label: 'Todos los niveles', value: null },
-    { label: TIER_LABELS.PREMIUM, value: 'PREMIUM' },
-    { label: TIER_LABELS.VIP, value: 'VIP' },
-  ];
+  protected readonly statusOptions = withAllOption('Todos los estados', SUBSCRIPTION_STATUS_LABELS);
+  protected readonly tierOptions = withAllOption('Todos los niveles', PAID_TIERS);
 
-  protected readonly status = signal<string | null>(null);
-  protected readonly tier = signal<string | null>(null);
-  private readonly query = linkedSignal<unknown, PageQuery>({
-    source: () => [this.status(), this.tier()],
-    computation: (_, previous) => ({ page: 0, sort: previous?.value.sort ?? DEFAULT_SORT }),
-    equal: samePageQuery,
+  private readonly filterModel = signal<SubscriptionFilters>({ status: null, tier: null });
+  protected readonly filters = form(this.filterModel);
+  protected readonly subscriptions = pagedQuery({
+    filters: this.filterModel,
+    defaultSort: DEFAULT_SORT,
+    pageSize: PAGE_SIZE.table,
+    load: (request) => this.api.subscriptions(request),
   });
-  protected readonly first = computed(() => this.query().page * this.pageSize);
-
-  protected readonly subscriptions = this.api.subscriptions(
-    computed(() => ({ status: this.status(), tier: this.tier(), ...this.query() }), {
-      equal: sameValues,
-    }),
-  );
-  /** La última página recibida: la tabla la conserva mientras carga la siguiente. */
-  protected readonly result = lastValue(this.subscriptions);
-  protected readonly items = computed(() => this.result()?.content ?? []);
-  protected readonly total = computed(() => this.result()?.page.totalElements ?? 0);
-
-  protected load(event: TableLazyLoadEvent): void {
-    this.query.set(pageQueryOf(event, this.pageSize, DEFAULT_SORT));
-  }
 }

@@ -1,29 +1,21 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { LucideUtensils } from '@lucide/angular';
-import { type PaginatorState, Paginator } from 'primeng/paginator';
 import { SelectButton } from 'primeng/selectbutton';
-import { Skeleton } from 'primeng/skeleton';
-import { GOAL_LABELS, type MealPlanGoal, optionsOf } from '@shared/i18n/labels';
+import { GOAL_LABELS, withAllOption } from '@shared/i18n/labels';
 import { EmptyState } from '@shared/ui/empty-state';
-import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
-import { CATALOG_PAGE_SIZE, MealPlansApi } from '../data/meal-plans-api';
+import { MealPlansApi, type CatalogFilters } from '../data/meal-plans-api';
 import { PlanCard } from '../ui/plan-card';
+import { pagedQuery } from '@shared/table/paged-query';
+import { PAGE_SIZE } from '@shared/table/page-size';
+import { PagedGrid } from '@shared/table/paged-grid';
+import { RowTemplate } from '@shared/table/row-template';
+import { FormField, form } from '@angular/forms/signals';
 
 /** Catálogo de planes publicados, con los que sigue el cliente arriba. */
 @Component({
   selector: 'app-meal-plan-catalog',
-  imports: [
-    FormsModule,
-    SelectButton,
-    Paginator,
-    Skeleton,
-    PlanCard,
-    EmptyState,
-    LoadError,
-    PageHeader,
-  ],
+  imports: [PagedGrid, RowTemplate, FormField, SelectButton, PlanCard, EmptyState, PageHeader],
   template: `
     <app-page-header
       title="Planes alimenticios"
@@ -59,70 +51,41 @@ import { PlanCard } from '../ui/plan-card';
           optionValue="value"
           [allowEmpty]="false"
           ariaLabelledBy="catalog-title"
-          [ngModel]="goal()"
-          (ngModelChange)="filter($event)"
+          [formField]="filters.goal"
         />
       </div>
 
-      @if (catalog.error()) {
-        <app-load-error [error]="catalog.error()" (retry)="catalog.reload()" />
-      } @else if (catalog.hasValue()) {
-        @let page = catalog.value();
-        @if (page.content.length === 0) {
+      <app-paged-grid [query]="catalog" skeletonHeight="15rem">
+        <ng-template [appRow]="catalog.items()" let-plan>
+          <app-plan-card [plan]="plan" [link]="plan.id" />
+        </ng-template>
+        <div empty>
           <app-empty-state
             [icon]="emptyIcon"
             title="No hay planes con ese objetivo"
             description="Prueba con otro objetivo: los nutricionistas publican planes nuevos a menudo."
           />
-        } @else {
-          <ul class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" role="list">
-            @for (plan of page.content; track plan.id) {
-              <li><app-plan-card [plan]="plan" [link]="plan.id" /></li>
-            }
-          </ul>
-          @if (page.page.totalPages > 1) {
-            <p-paginator
-              class="mt-6 block"
-              [first]="page.page.number * pageSize"
-              [rows]="pageSize"
-              [totalRecords]="page.page.totalElements"
-              (onPageChange)="changePage($event)"
-            />
-          }
-        }
-      } @else {
-        <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true">
-          @for (placeholder of [1, 2, 3]; track placeholder) {
-            <p-skeleton height="15rem" borderRadius="1.5rem" />
-          }
         </div>
-      }
+      </app-paged-grid>
     </section>
   `,
 })
 export class MealPlanCatalog {
   private readonly api = inject(MealPlansApi);
 
-  protected readonly pageSize = CATALOG_PAGE_SIZE;
   protected readonly emptyIcon = LucideUtensils;
-  protected readonly goalOptions = [{ label: 'Todos', value: null }, ...optionsOf(GOAL_LABELS)];
+  protected readonly goalOptions = withAllOption('Todos', GOAL_LABELS);
 
-  protected readonly goal = signal<MealPlanGoal | null>(null);
-  private readonly page = signal(0);
-  protected readonly catalog = this.api.catalog(
-    computed(() => ({ goal: this.goal(), page: this.page() })),
-  );
+  private readonly filterModel = signal<CatalogFilters>({ goal: null });
+  protected readonly filters = form(this.filterModel);
+  protected readonly catalog = pagedQuery({
+    filters: this.filterModel,
+    defaultSort: 'publishedAt,desc',
+    pageSize: PAGE_SIZE.grid,
+    load: (request) => this.api.catalog(request),
+  });
   private readonly enrollments = this.api.enrollments();
   protected readonly following = computed(() =>
     this.enrollments.hasValue() ? this.enrollments.value() : [],
   );
-
-  protected filter(goal: MealPlanGoal | null): void {
-    this.goal.set(goal);
-    this.page.set(0);
-  }
-
-  protected changePage(event: PaginatorState): void {
-    this.page.set(event.page ?? 0);
-  }
 }

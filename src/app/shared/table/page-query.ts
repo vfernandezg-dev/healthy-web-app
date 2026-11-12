@@ -29,6 +29,12 @@ export function pageOf(event: TableLazyLoadEvent, pageSize: number): number {
   return Math.floor((event.first ?? 0) / rows);
 }
 
+/** Orden que pide el evento de p-table (`campo,asc|desc`), o null si no se ordena por ninguna columna. */
+export function sortOf(event: TableLazyLoadEvent): string | null {
+  const field = typeof event.sortField === 'string' && event.sortField ? event.sortField : null;
+  return field ? `${field},${event.sortOrder === 1 ? 'asc' : 'desc'}` : null;
+}
+
 /**
  * Traduce el evento de p-table en modo lazy (`first`, `rows`, `sortField`, `sortOrder`) a página y orden de la API.
  * Sin columna de orden, usa `fallbackSort`.
@@ -38,11 +44,7 @@ export function pageQueryOf(
   pageSize: number,
   fallbackSort: string,
 ): PageQuery {
-  const field = typeof event.sortField === 'string' && event.sortField ? event.sortField : null;
-  return {
-    page: pageOf(event, pageSize),
-    sort: field ? `${field},${event.sortOrder === 1 ? 'asc' : 'desc'}` : fallbackSort,
-  };
+  return { page: pageOf(event, pageSize), sort: sortOf(event) ?? fallbackSort };
 }
 
 /**

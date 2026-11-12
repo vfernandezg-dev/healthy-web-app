@@ -39,7 +39,7 @@ import { RowTemplate } from './row-template';
           [attr.aria-busy]="query().loading()"
         >
           @for (item of page.content; track item.id) {
-            <li class="flex">
+            <li>
               <ng-container
                 [ngTemplateOutlet]="card()"
                 [ngTemplateOutletContext]="{ $implicit: item }"

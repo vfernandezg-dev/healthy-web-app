@@ -18,13 +18,14 @@ export const TIER_LABELS: Readonly<Record<Tier, string>> = {
   VIP: 'VIP',
 };
 
-export const PAYMENT_STATUS_LABELS: Readonly<Record<Schemas['PaymentResponse']['status'], string>> =
-  {
-    CREATED: 'Pendiente',
-    CAPTURED: 'Pagado',
-    FAILED: 'Fallido',
-    CANCELED: 'Cancelado',
-  };
+export type PaymentStatus = Schemas['PaymentResponse']['status'];
+
+export const PAYMENT_STATUS_LABELS: Readonly<Record<PaymentStatus, string>> = {
+  CREATED: 'Pendiente',
+  CAPTURED: 'Pagado',
+  FAILED: 'Fallido',
+  CANCELED: 'Cancelado',
+};
 
 /** Severidad de p-tag para cada estado de pago. */
 export const PAYMENT_STATUS_SEVERITY: Readonly<
@@ -111,6 +112,13 @@ export const ROLE_LABELS: Readonly<Record<Role, string>> = {
   ADMIN: 'Administración',
 };
 
+/** Los roles en plural (filtros y recuentos por rol). */
+export const ROLE_PLURAL_LABELS: Readonly<Record<Role, string>> = {
+  CLIENT: 'Clientes',
+  NUTRITIONIST: 'Nutricionistas',
+  ADMIN: 'Administración',
+};
+
 export const ROLE_SEVERITY: Readonly<Record<Role, 'info' | 'success' | 'warn'>> = {
   CLIENT: 'info',
   NUTRITIONIST: 'success',
@@ -175,9 +183,21 @@ export const REPORT_TARGET_LABELS: Readonly<
   COMMENT: 'Comentario',
 };
 
+/** Una opción de un p-select o p-selectbutton. */
+export interface Option<T> {
+  readonly label: string;
+  readonly value: T;
+}
+
 /** Opciones para un p-select o p-selectbutton a partir de un mapa de etiquetas. */
-export function optionsOf<T extends string>(
-  labels: Readonly<Record<T, string>>,
-): { label: string; value: T }[] {
+export function optionsOf<T extends string>(labels: Readonly<Record<T, string>>): Option<T>[] {
   return (Object.keys(labels) as T[]).map((value) => ({ label: labels[value], value }));
+}
+
+/** Las opciones de un filtro, con una primera opción «todos» (valor null) que no filtra. */
+export function withAllOption<T extends string>(
+  allLabel: string,
+  labels: Readonly<Record<T, string>>,
+): Option<T | null>[] {
+  return [{ label: allLabel, value: null }, ...optionsOf(labels)];
 }

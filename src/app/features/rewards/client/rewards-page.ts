@@ -20,7 +20,8 @@ import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
 import { ProgressBar } from '@shared/ui/progress-bar';
 import { lastValue } from '@shared/utils/last-value';
-import { REWARD_PAGE_SIZE, RewardsApi } from '../data/rewards-api';
+import { RewardsApi } from '../data/rewards-api';
+import { PAGE_SIZE } from '@shared/table/page-size';
 
 /** Rachas del cliente hacia las recompensas y las que puede empezar. */
 @Component({
@@ -46,9 +47,11 @@ export class RewardsPage {
   private readonly toaster = inject(Toaster);
   private readonly confirmer = inject(Confirmer);
 
-  protected readonly pageSize = REWARD_PAGE_SIZE;
+  protected readonly pageSize = PAGE_SIZE.grid;
   private readonly page = signal(0);
-  protected readonly catalog = this.api.catalog(this.page);
+  protected readonly catalog = this.api.catalog(
+    computed(() => ({ page: this.page(), size: PAGE_SIZE.grid, sort: 'requiredStreakDays,asc' })),
+  );
   /** La última página del catálogo: se sigue viendo mientras carga la siguiente. */
   protected readonly result = lastValue(this.catalog);
   private readonly streaks = this.api.streaks();

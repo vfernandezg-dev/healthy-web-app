@@ -12,7 +12,7 @@
       class="w-full"
       placeholder="Buscar por nombre o correo"
       aria-label="Buscar cuentas por nombre o correo"
-      [(ngModel)]="searchText"
+      [formField]="filters.q"
     />
   </p-iconfield>
   <div class="flex flex-wrap gap-3">
@@ -21,42 +21,42 @@
       optionLabel="label"
       optionValue="value"
       ariaLabel="Rol"
-      [(ngModel)]="role"
+      [formField]="filters.role"
     />
     <p-select
       [options]="statusOptions"
       optionLabel="label"
       optionValue="value"
       ariaLabel="Estado de la cuenta"
-      [(ngModel)]="status"
+      [formField]="filters.status"
     />
   </div>
-  @if (result()) {
+  @if (users.page()) {
     <p class="text-sm font-medium text-muted lg:ml-auto" aria-live="polite">
-      {{ total() | i18nPlural: accountsPlural }}
+      {{ users.total() | i18nPlural: accountsPlural }}
     </p>
   }
 </div>
 
 @if (users.error()) {
   <app-load-error [error]="users.error()" (retry)="users.reload()" />
-} @else if (result()) {
+} @else if (users.page()) {
   <div class="card overflow-hidden">
     <p-table
-      [value]="items()"
+      [value]="users.items()"
       [lazy]="true"
       dataKey="id"
-      [totalRecords]="total()"
-      [rows]="pageSize"
-      [first]="first()"
-      [paginator]="total() > pageSize"
+      [totalRecords]="users.total()"
+      [rows]="users.pageSize"
+      [first]="users.first()"
+      [paginator]="users.total() > users.pageSize"
       sortField="createdAt"
       [sortOrder]="-1"
-      [loading]="users.isLoading()"
+      [loading]="users.loading()"
       [scrollable]="true"
       [rowHover]="true"
       tableStyleClass="md:min-w-[58rem]"
-      (onLazyLoad)="load($event)"
+      (onLazyLoad)="users.onLazyLoad($event)"
     >
       <ng-template #header>
         <tr class="max-md:hidden">
@@ -70,7 +70,7 @@
           <th scope="col"><span class="sr-only">Acciones</span></th>
         </tr>
       </ng-template>
-      <ng-template #body let-user [appRow]="items()">
+      <ng-template #body let-user [appRow]="users.items()">
         <tr>
           <td class="md:hidden" colspan="6">
             <ng-container *ngTemplateOutlet="person; context: { $implicit: user }" />
@@ -128,7 +128,7 @@
   </div>
 }
 
-<ng-template #person let-user [appRow]="items()">
+<ng-template #person let-user [appRow]="users.items()">
   <div class="flex items-center gap-3">
     <app-person-avatar [name]="`${user.firstName} ${user.lastName}`" />
     <div class="min-w-0">
@@ -138,7 +138,7 @@
   </div>
 </ng-template>
 
-<ng-template #tags let-user [appRow]="items()">
+<ng-template #tags let-user [appRow]="users.items()">
   <p-tag [value]="roles[user.role]" [severity]="roleSeverity[user.role]" />
   <p-tag
     [value]="statuses[user.status]"
@@ -146,7 +146,7 @@
   />
 </ng-template>
 
-<ng-template #actions let-user [appRow]="items()">
+<ng-template #actions let-user [appRow]="users.items()">
   @if (isMe(user)) {
     <span class="text-sm text-muted">Tu cuenta</span>
   } @else if (user.status === 'ACTIVE') {
@@ -157,7 +157,7 @@
       severity="danger"
       variant="text"
       [attr.aria-label]="`Desactivar la cuenta de ${user.firstName} ${user.lastName}`"
-      (click)="deactivate(user)"
+      (click)="deactivate.run(user)"
     >
       Desactivar
     </button>
@@ -169,7 +169,7 @@
       severity="secondary"
       variant="outlined"
       [attr.aria-label]="`Reactivar la cuenta de ${user.firstName} ${user.lastName}`"
-      (click)="activate(user)"
+      (click)="activate.run(user)"
     >
       Reactivar
     </button>

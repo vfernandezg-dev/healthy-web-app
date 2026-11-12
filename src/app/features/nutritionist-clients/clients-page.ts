@@ -1,7 +1,5 @@
 import { DatePipe, DecimalPipe, I18nPluralPipe, NgTemplateOutlet } from '@angular/common';
-import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideSearch, LucideUsers } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
@@ -9,18 +7,19 @@ import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
 import { Skeleton } from 'primeng/skeleton';
-import { Table, type TableLazyLoadEvent } from 'primeng/table';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { Table } from 'primeng/table';
 import type { NutritionistClientResponse } from '@core/api/schema';
-import { pageOf } from '@shared/table/page-query';
 import { RowTemplate } from '@shared/table/row-template';
 import { EmptyState } from '@shared/ui/empty-state';
 import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
 import { PersonAvatar } from '@shared/ui/person-avatar';
-import { lastValue, sameValues } from '@shared/utils/last-value';
 import { bmiCategory, bmiOf } from './data/bmi';
-import { CLIENTS_PAGE_SIZE, ClientsApi } from './data/clients-api';
+import { ClientsApi, type ClientFilters } from './data/clients-api';
+import { FormField, form, maxLength } from '@angular/forms/signals';
+import { pagedQuery } from '@shared/table/paged-query';
+import { PAGE_SIZE } from '@shared/table/page-size';
+import { debouncedSearch } from '@shared/utils/debounced';
 
 /** Fila de la tabla: los datos de la API más el IMC y su categoría. */
 interface ClientRow {
@@ -57,7 +56,7 @@ function toRow(client: NutritionistClientResponse): ClientRow {
 @Component({
   selector: 'app-clients-page',
   imports: [
-    FormsModule,
+    FormField,
     RouterLink,
     NgTemplateOutlet,
     DatePipe,
@@ -92,7 +91,7 @@ function toRow(client: NutritionistClientResponse): ClientRow {
       >
         <a pButton routerLink="/nutritionist/meal-plans">Ver tus planes</a>
       </app-empty-state>
-    } @else if (result()) {
+    } @else if (clients.page()) {
       <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p-iconfield class="sm:w-96">
           <p-inputicon><svg lucideSearch class="size-4.5"></svg></p-inputicon>
@@ -100,14 +99,13 @@ function toRow(client: NutritionistClientResponse): ClientRow {
             pInputText
             type="search"
             class="w-full"
-            maxlength="100"
             placeholder="Buscar por nombre o correo"
             aria-label="Buscar clientes por nombre o correo"
-            [(ngModel)]="searchText"
+            [formField]="filters.q"
           />
         </p-iconfield>
         <p class="text-sm font-medium text-muted" aria-live="polite">
-          {{ total() | i18nPlural: clientsPlural }}
+          {{ clients.total() | i18nPlural: clientsPlural }}
         </p>
       </div>
 
@@ -116,15 +114,15 @@ function toRow(client: NutritionistClientResponse): ClientRow {
           [value]="rows()"
           [lazy]="true"
           dataKey="id"
-          [totalRecords]="total()"
-          [rows]="pageSize"
-          [first]="first()"
-          [paginator]="total() > pageSize"
-          [loading]="clients.isLoading()"
+          [totalRecords]="clients.total()"
+          [rows]="clients.pageSize"
+          [first]="clients.first()"
+          [paginator]="clients.total() > clients.pageSize"
+          [loading]="clients.loading()"
           [scrollable]="true"
           [rowHover]="true"
           tableStyleClass="md:min-w-[52rem]"
-          (onLazyLoad)="load($event)"
+          (onLazyLoad)="clients.onLazyLoad($event)"
         >
           <ng-template #header>
             <!-- En móvil cada fila es una ficha y no hay cabecera. -->
@@ -266,7 +264,6 @@ function toRow(client: NutritionistClientResponse): ClientRow {
 export class ClientsPage {
   private readonly api = inject(ClientsApi);
 
-  protected readonly pageSize = CLIENTS_PAGE_SIZE;
   protected readonly usersIcon = LucideUsers;
   protected readonly clientsPlural = {
     '=0': 'Ningún cliente',
@@ -274,32 +271,21 @@ export class ClientsPage {
     other: '# clientes',
   };
 
-  protected readonly searchText = signal('');
-  /** Búsqueda aplicada: 300 ms después de dejar de escribir. */
-  private readonly search = toSignal(
-    toObservable(this.searchText).pipe(debounceTime(300), distinctUntilChanged()),
-    { initialValue: '' },
-  );
-  /** Vuelve a la primera página al cambiar la búsqueda. */
-  private readonly page = linkedSignal({ source: this.search, computation: () => 0 });
-  protected readonly first = computed(() => this.page() * this.pageSize);
-
-  protected readonly clients = this.api.clients(
-    computed(() => ({ q: this.search().trim(), page: this.page() }), { equal: sameValues }),
-  );
-  /** La última página recibida: la tabla la conserva mientras carga la siguiente. */
-  protected readonly result = lastValue(this.clients);
-  protected readonly rows = computed(() => (this.result()?.content ?? []).map(toRow));
-  protected readonly total = computed(() => this.result()?.page.totalElements ?? 0);
+  private readonly filterModel = signal<ClientFilters>({ q: '' });
+  /** La API admite búsquedas de hasta 100 caracteres. */
+  protected readonly filters = form(this.filterModel, (path) => {
+    maxLength(path.q, 100);
+  });
+  /** Los más recientes primero: la API no admite otro orden. */
+  protected readonly clients = pagedQuery({
+    filters: debouncedSearch(this.filterModel, 'q'),
+    defaultSort: '',
+    pageSize: PAGE_SIZE.table,
+    load: (request) => this.api.clients(request),
+  });
+  protected readonly rows = computed(() => this.clients.items().map(toRow));
   /** Sin búsqueda, la API no devuelve a nadie: aún no tiene clientes (no es que no coincida ninguno). */
   protected readonly noClients = computed(
-    () =>
-      this.clients.hasValue() &&
-      this.clients.value().page.totalElements === 0 &&
-      !this.search().trim(),
+    () => this.clients.page()?.page.totalElements === 0 && !this.filterModel().q.trim(),
   );
-
-  protected load(event: TableLazyLoadEvent): void {
-    this.page.set(pageOf(event, this.pageSize));
-  }
 }

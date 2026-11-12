@@ -10,13 +10,12 @@
   optionValue="value"
   [allowEmpty]="false"
   ariaLabel="Estado de las denuncias"
-  [(ngModel)]="status"
+  [formField]="filters.status"
 />
 
 @if (reports.error()) {
   <app-load-error [error]="reports.error()" (retry)="reports.reload()" />
-} @else if (reports.hasValue()) {
-  @let result = reports.value();
+} @else if (reports.page(); as result) {
   @if (result.content.length === 0) {
     <app-empty-state
       [icon]="doneIcon"
@@ -104,10 +103,10 @@
     @if (result.page.totalPages > 1) {
       <p-paginator
         class="mt-6 block"
-        [first]="result.page.number * pageSize"
-        [rows]="pageSize"
+        [first]="reports.first()"
+        [rows]="reports.pageSize"
         [totalRecords]="result.page.totalElements"
-        (onPageChange)="changePage($event)"
+        (onPageChange)="reports.onPage($event)"
       />
     }
   }

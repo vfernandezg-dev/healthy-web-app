@@ -2,22 +2,19 @@ import { type Resource, type Signal, computed, linkedSignal, signal } from '@ang
 import type { PaginatorState } from 'primeng/paginator';
 import type { TableLazyLoadEvent } from 'primeng/table';
 import { lastValue, sameValues } from '../utils/last-value';
-import {
-  type PageQuery,
-  type PageRequest,
-  type Paged,
-  pageQueryOf,
-  samePageQuery,
-} from './page-query';
+import { type PageRequest, type Paged, pageOf, sortOf } from './page-query';
 
 /** El recurso de una página (un `httpResource`): lo que el listado lee de él y `reload()` para reintentar. */
 export type PagedResource<T> = Resource<Paged<T> | undefined> & { reload(): boolean };
 
 export interface PagedQueryOptions<T, F extends object> {
-  /** Filtros del listado. Al cambiar, se vuelve a la primera página (con el mismo orden). */
+  /** Filtros del listado. Al cambiar, se vuelve a la primera página (con el orden que hubiera elegido la tabla). */
   readonly filters?: Signal<F>;
-  /** Orden inicial, y el que se usa si la tabla no tiene ninguna columna de orden (`campo,asc|desc`). */
-  readonly defaultSort: string;
+  /**
+   * Orden mientras no se ordene por una columna de la tabla (`campo,asc|desc`). Puede depender de los filtros: las
+   * denuncias abiertas, de la más antigua; las cerradas, de la más reciente.
+   */
+  readonly defaultSort: string | ((filters: F) => string);
   /** Elementos por página (ver `PAGE_SIZE`). */
   readonly pageSize: number;
   /**
@@ -36,7 +33,8 @@ export interface PagedQuery<T> {
    * página o de orden, solo muestra que está cargando.
    */
   readonly page: Signal<Paged<T> | undefined>;
-  readonly items: Signal<readonly T[]>;
+  /** Los elementos de la página (un array propio: p-table lo pide mutable). */
+  readonly items: Signal<T[]>;
   readonly total: Signal<number>;
   /** Índice del primer elemento de la página (`first` de p-table y p-paginator). */
   readonly first: Signal<number>;
@@ -53,6 +51,11 @@ export interface PagedQuery<T> {
   reload(): void;
 }
 
+interface ChosenPage {
+  readonly page: number;
+  readonly sort: string | null;
+}
+
 /**
  * Estado de un listado paginado en la API: filtros, página y orden, el recurso que los pide y la última página
  * recibida. Llamar en el contexto de inyección (al declarar el campo del componente).
@@ -61,16 +64,25 @@ export function pagedQuery<T, F extends object = Record<never, never>>(
   options: PagedQueryOptions<T, F>,
 ): PagedQuery<T> {
   const { pageSize, defaultSort, filters = signal({} as F) } = options;
-  const query = linkedSignal<F, PageQuery>({
+  /** Página y el orden elegido en la tabla (null: el de por defecto). Al cambiar los filtros, a la página 0. */
+  const query = linkedSignal<F, ChosenPage>({
     source: filters,
-    computation: (_, previous) => ({ page: 0, sort: previous?.value.sort ?? defaultSort }),
-    equal: samePageQuery,
+    computation: (_, previous) => ({ page: 0, sort: previous?.value.sort ?? null }),
+    equal: (a, b) => a.page === b.page && a.sort === b.sort,
   });
   const resource = options.load(
-    computed(() => ({ ...filters(), ...query(), size: pageSize }), { equal: sameValues }),
+    computed(
+      () => {
+        const current = filters();
+        const { page, sort } = query();
+        const fallback = typeof defaultSort === 'function' ? defaultSort(current) : defaultSort;
+        return { ...current, page, size: pageSize, sort: sort ?? fallback };
+      },
+      { equal: sameValues },
+    ),
   );
   const page = lastValue(resource);
-  const items = computed(() => page()?.content ?? []);
+  const items = computed(() => page()?.content.slice() ?? []);
 
   return {
     resource,
@@ -81,7 +93,7 @@ export function pagedQuery<T, F extends object = Record<never, never>>(
     first: computed(() => query().page * pageSize),
     loading: resource.isLoading,
     error: resource.error,
-    onLazyLoad: (event) => query.set(pageQueryOf(event, pageSize, defaultSort)),
+    onLazyLoad: (event) => query.set({ page: pageOf(event, pageSize), sort: sortOf(event) }),
     onPage: (event) => query.update((current) => ({ ...current, page: event.page ?? 0 })),
     afterCreate: () => {
       const current = query();
