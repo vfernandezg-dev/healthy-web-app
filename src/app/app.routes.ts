@@ -47,6 +47,12 @@ export const routes: Routes = [
         title: 'Tus hábitos',
         loadComponent: () => import('./features/habits/habits-page').then((m) => m.HabitsPage),
       },
+      {
+        path: 'rewards',
+        title: 'Recompensas',
+        loadComponent: () =>
+          import('./features/rewards/client/rewards-page').then((m) => m.RewardsPage),
+      },
     ],
   },
   {
@@ -63,6 +69,14 @@ export const routes: Routes = [
       {
         path: 'content',
         loadChildren: () => content().then((m) => m.NUTRITIONIST_CONTENT_ROUTES),
+      },
+      {
+        path: 'rewards',
+        title: 'Tus recompensas',
+        loadComponent: () =>
+          import('./features/rewards/nutritionist/nutritionist-rewards').then(
+            (m) => m.NutritionistRewards,
+          ),
       },
     ],
   },
