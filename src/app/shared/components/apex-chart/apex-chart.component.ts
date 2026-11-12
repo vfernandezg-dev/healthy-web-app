@@ -1,5 +1,23 @@
-import { Component, DestroyRef, ElementRef, afterRenderEffect, inject, input, viewChild, ChangeDetectionStrategy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  InjectionToken,
+  afterRenderEffect,
+  inject,
+  input,
+  viewChild,
+} from '@angular/core';
 import type ApexCharts from 'apexcharts';
+
+type ApexChartsConstructor = new (el: HTMLElement, options: ApexCharts.ApexOptions) => ApexCharts;
+
+/** Carga diferida de la librería; los tests la sustituyen por una implementación falsa. */
+export const APEXCHARTS_LOADER = new InjectionToken<() => Promise<ApexChartsConstructor>>('APEXCHARTS_LOADER', {
+  providedIn: 'root',
+  factory: () => async () => (await import('apexcharts')).default,
+});
 
 /**
  * Envoltorio mínimo de ApexCharts 4 para Angular 21+.
@@ -21,33 +39,44 @@ export class ApexChartComponent {
   readonly title = input<ApexTitleSubtitle>();
 
   private readonly host = viewChild.required<ElementRef<HTMLElement>>('host');
-  private instance?: ApexCharts;
-  private renderCount = 0;
+  private readonly loadApexCharts = inject(APEXCHARTS_LOADER);
+
+  /**
+   * El gráfico se crea una sola vez y los cambios se aplican con updateOptions(), encadenados sobre esta
+   * promesa. Destruir y recrear la instancia en cada cambio provocaba una carrera: el render() asíncrono
+   * (animado) de la instancia anterior terminaba después y dejaba en pantalla el gráfico sin datos.
+   */
+  private instance?: Promise<ApexCharts>;
 
   constructor() {
     // Se vuelve a ejecutar cada vez que cambia un input; siempre después de renderizar la vista.
     afterRenderEffect(() => {
-      const options = {
+      const options: ApexCharts.ApexOptions = {
         series: this.series(),
         chart: this.chart(),
         xaxis: this.xaxis(),
         title: this.title(),
       };
-      void this.render(options);
+      void this.apply(options);
     });
 
-    inject(DestroyRef).onDestroy(() => this.instance?.destroy());
+    inject(DestroyRef).onDestroy(() => void this.instance?.then((instance) => instance.destroy()));
   }
 
-  private async render(options: ApexCharts.ApexOptions): Promise<void> {
-    const current = ++this.renderCount;
-    const { default: ApexChartsLib } = await import('apexcharts');
-    // Si llegó otro cambio mientras se cargaba la librería, gana el más reciente.
-    if (current !== this.renderCount) {
+  private async apply(options: ApexCharts.ApexOptions): Promise<void> {
+    if (!this.instance) {
+      this.instance = this.create(options);
+      await this.instance;
       return;
     }
-    this.instance?.destroy();
-    this.instance = new ApexChartsLib(this.host().nativeElement, options);
-    await this.instance.render();
+    const instance = await this.instance;
+    await instance.updateOptions(options);
+  }
+
+  private async create(options: ApexCharts.ApexOptions): Promise<ApexCharts> {
+    const ApexChartsLib = await this.loadApexCharts();
+    const instance = new ApexChartsLib(this.host().nativeElement, options);
+    await instance.render();
+    return instance;
   }
 }
