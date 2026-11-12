@@ -12,18 +12,17 @@ import { UnirseService } from '../../../core/services/unirse.service';
 import { GrupoListComponent } from "./grupo-list/grupo-list.component";
 
 @Component({
-  selector: 'app-grupo',
-  standalone: true,
-  imports: [
-    RouterLink,
-    MatListModule,
-    MatMenuModule,
-    MatIconModule,
-    CommonModule,
-    GrupoListComponent
-  ],
-  templateUrl: './grupo.component.html',
-  styleUrl: './grupo.component.css'
+    selector: 'app-grupo',
+    imports: [
+        RouterLink,
+        MatListModule,
+        MatMenuModule,
+        MatIconModule,
+        CommonModule,
+        GrupoListComponent
+    ],
+    templateUrl: './grupo.component.html',
+    styleUrl: './grupo.component.css'
 })
 export class GrupoComponent {
   grupo: GrupoResponse[] = [];

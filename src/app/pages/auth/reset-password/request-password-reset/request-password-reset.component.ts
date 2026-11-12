@@ -8,18 +8,17 @@ import {MatInput} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
 
 @Component({
-  selector: 'app-reset-password',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatError,
-    MatButton
-  ],
-  templateUrl: './request-password-reset.component.html',
-  styleUrl: './request-password-reset.component.css'
+    selector: 'app-reset-password',
+    imports: [
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        MatError,
+        MatButton
+    ],
+    templateUrl: './request-password-reset.component.html',
+    styleUrl: './request-password-reset.component.css'
 })
 export class RequestPasswordResetComponent {
   resetForm: FormGroup;

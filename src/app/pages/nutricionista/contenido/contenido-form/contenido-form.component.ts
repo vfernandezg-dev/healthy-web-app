@@ -23,25 +23,24 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
-  selector: 'app-contenido-form',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    ApiImgPipe,
-    RouterModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    FormsModule,
-    MatOptionModule,
-    MatRadioModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatSnackBarModule,
-  ],
-  templateUrl: './contenido-form.component.html',
-  styleUrls: ['./contenido-form.component.css'],
+    selector: 'app-contenido-form',
+    imports: [
+        ReactiveFormsModule,
+        ApiImgPipe,
+        RouterModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCardModule,
+        FormsModule,
+        MatOptionModule,
+        MatRadioModule,
+        MatSelectModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatSnackBarModule,
+    ],
+    templateUrl: './contenido-form.component.html',
+    styleUrls: ['./contenido-form.component.css']
 })
 export class ContenidoFormComponent {
   private contenidoService = inject(ContenidoService);

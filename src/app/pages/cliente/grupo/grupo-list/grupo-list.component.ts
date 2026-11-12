@@ -15,19 +15,18 @@ import { ComentarioService } from '../../../../core/services/comentario.service'
 import { PublicacionService } from '../../../../core/services/publicacion.service';
 
 @Component({
-  selector: 'app-grupo-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule, 
-    MatButtonModule,
-    ApiImgPipe,
-    FormsModule,
-    MatMenuModule,
-    MatIconModule,
-  ],
-  templateUrl: './grupo-list.component.html',
-  styleUrl: './grupo-list.component.css'
+    selector: 'app-grupo-list',
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatButtonModule,
+        ApiImgPipe,
+        FormsModule,
+        MatMenuModule,
+        MatIconModule,
+    ],
+    templateUrl: './grupo-list.component.html',
+    styleUrl: './grupo-list.component.css'
 })
 export class GrupoListComponent {
   publicaciones: PublicacionResponse[] = [];

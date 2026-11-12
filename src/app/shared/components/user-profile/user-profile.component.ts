@@ -8,11 +8,10 @@ import { UserProfile } from '../../models/user-profile.model';
 import { SuscripcionListComponent } from "../../../pages/cliente/suscripcion/suscripcion-list/suscripcion-list.component";
 
 @Component({
-  selector: 'app-user-profile',
-  standalone: true,
-  imports: [CommonModule, SuscripcionListComponent],
-  templateUrl: './user-profile.component.html',
-  styleUrl: './user-profile.component.css'
+    selector: 'app-user-profile',
+    imports: [CommonModule, SuscripcionListComponent],
+    templateUrl: './user-profile.component.html',
+    styleUrl: './user-profile.component.css'
 })
 export class UserProfileComponent {
   profile!: UserProfile;

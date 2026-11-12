@@ -10,19 +10,18 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { SeguimientoService } from '../../../../core/services/seguimiento.service';
 
 @Component({
-  selector: 'app-meta-seguimiento-form',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatSnackBarModule,
-    MatOptionModule,
-    MatSelectModule,
-  ],
-  templateUrl: './meta-seguimiento-form.component.html',
-  styleUrl: './meta-seguimiento-form.component.css'
+    selector: 'app-meta-seguimiento-form',
+    imports: [
+        CommonModule,
+        MatInputModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatSnackBarModule,
+        MatOptionModule,
+        MatSelectModule,
+    ],
+    templateUrl: './meta-seguimiento-form.component.html',
+    styleUrl: './meta-seguimiento-form.component.css'
 })
 export class MetaSeguimientoFormComponent implements OnInit {
   seguimientoForm!: FormGroup;

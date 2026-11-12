@@ -16,20 +16,19 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-comida-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-    FormsModule,
-    FormatPlanObjetivoPipe,
-    FormatCategoriaComida,
-  ],
-  templateUrl: './comida-list.component.html',
-  styleUrls: ['./comida-list.component.css']
+    selector: 'app-comida-list',
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatInputModule,
+        FormsModule,
+        FormatPlanObjetivoPipe,
+        FormatCategoriaComida,
+    ],
+    templateUrl: './comida-list.component.html',
+    styleUrls: ['./comida-list.component.css']
 })
 export class ComidaListComponent {
   comida: ComidaResponse[] = [];

@@ -18,25 +18,24 @@ import { PublicacionCreateRequest } from '../../../../shared/models/publicacion-
 import { GrupoService } from '../../../../core/services/grupo.service';
 
 @Component({
-  selector: 'app-publicacion-form',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    ApiImgPipe,
-    RouterModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    FormsModule,
-    MatOptionModule,
-    MatRadioModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatSnackBarModule,
-  ],
-  templateUrl: './publicacion-form.component.html',
-  styleUrl: './publicacion-form.component.css'
+    selector: 'app-publicacion-form',
+    imports: [
+        ReactiveFormsModule,
+        ApiImgPipe,
+        RouterModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCardModule,
+        FormsModule,
+        MatOptionModule,
+        MatRadioModule,
+        MatSelectModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatSnackBarModule,
+    ],
+    templateUrl: './publicacion-form.component.html',
+    styleUrl: './publicacion-form.component.css'
 })
 export class PublicacionFormComponent implements OnInit {
   private publicacionService = inject(PublicacionService);

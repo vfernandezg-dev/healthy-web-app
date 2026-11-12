@@ -13,23 +13,22 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { GrupoService } from '../../../../core/services/grupo.service';
 
 @Component({
-  selector: 'app-grupo-form',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    FormsModule,
-    MatOptionModule,
-    MatRadioModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatSnackBarModule,
-  ],
-  templateUrl: './grupo-form.component.html',
-  styleUrl: './grupo-form.component.css'
+    selector: 'app-grupo-form',
+    imports: [
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCardModule,
+        FormsModule,
+        MatOptionModule,
+        MatRadioModule,
+        MatSelectModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatSnackBarModule,
+    ],
+    templateUrl: './grupo-form.component.html',
+    styleUrl: './grupo-form.component.css'
 })
 export class GrupoFormComponent {
 

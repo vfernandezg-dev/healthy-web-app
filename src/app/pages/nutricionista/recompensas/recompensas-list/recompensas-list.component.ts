@@ -13,19 +13,18 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { RecompensaService } from '../../../../core/services/recompensa.service';
 
 @Component({
-  selector: 'app-recompensas-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-    FormsModule,
-    FormatPlanObjetivoPipe,
-  ],
-  templateUrl: './recompensas-list.component.html',
-  styleUrl: './recompensas-list.component.css'
+    selector: 'app-recompensas-list',
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatInputModule,
+        FormsModule,
+        FormatPlanObjetivoPipe,
+    ],
+    templateUrl: './recompensas-list.component.html',
+    styleUrl: './recompensas-list.component.css'
 })
 export class RecompensasListComponent {
   recompensa: RecompensaResponse[] = [];

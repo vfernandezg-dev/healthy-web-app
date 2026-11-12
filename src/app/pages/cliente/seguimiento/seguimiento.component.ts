@@ -13,19 +13,18 @@ import { RecompensaResponse } from '../../../shared/models/recompensa-response.m
 import { RachaService } from '../../../core/services/racha.service';
 
 @Component({
-  selector: 'app-seguimiento',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    RouterLink,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-  ],
-  templateUrl: './seguimiento.component.html',
-  styleUrls: ['./seguimiento.component.css']
+    selector: 'app-seguimiento',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        RouterLink,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCardModule,
+    ],
+    templateUrl: './seguimiento.component.html',
+    styleUrls: ['./seguimiento.component.css']
 })
 export class SeguimientoComponent implements OnInit {
 

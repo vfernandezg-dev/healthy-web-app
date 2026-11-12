@@ -15,20 +15,19 @@ import { PlanAlimenticioService } from '../../../../core/services/plan-alimentic
 import { ContenidoService } from '../../../../core/services/contenido.service';
 
 @Component({
-  selector: 'app-recompensas-form',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatInputModule,
-    MatCardModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatSnackBarModule,
-    MatOptionModule,
-    MatSelectModule,
-  ],
-  templateUrl: './recompensas-form.component.html',
-  styleUrl: './recompensas-form.component.css'
+    selector: 'app-recompensas-form',
+    imports: [
+        CommonModule,
+        MatInputModule,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatSnackBarModule,
+        MatOptionModule,
+        MatSelectModule,
+    ],
+    templateUrl: './recompensas-form.component.html',
+    styleUrl: './recompensas-form.component.css'
 })
 export class RecompensasFormComponent implements OnInit {
   recompensaForm!: FormGroup;

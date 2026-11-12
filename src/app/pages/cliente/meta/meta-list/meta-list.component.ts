@@ -32,18 +32,17 @@ export type ChartOptions = {
 };
 
 @Component({
-  selector: 'app-meta-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatFormFieldModule,
-    FormatTimePipe,
-    MatPaginatorModule,
-    NgApexchartsModule
-  ],
-  templateUrl: './meta-list.component.html',
-  styleUrls: ['./meta-list.component.css']
+    selector: 'app-meta-list',
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatFormFieldModule,
+        FormatTimePipe,
+        MatPaginatorModule,
+        NgApexchartsModule
+    ],
+    templateUrl: './meta-list.component.html',
+    styleUrls: ['./meta-list.component.css']
 })
 export class MetaListComponent implements OnInit {
 

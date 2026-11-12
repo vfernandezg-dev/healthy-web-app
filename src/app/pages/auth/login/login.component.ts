@@ -10,12 +10,11 @@ import { AuthRequest } from '../../../shared/models/auth-request.model';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, MatInputModule, MatCardModule,
-    MatSnackBarModule, MatButtonModule, RouterLink],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+    selector: 'app-login',
+    imports: [FormsModule, ReactiveFormsModule, MatInputModule, MatCardModule,
+        MatSnackBarModule, MatButtonModule, RouterLink],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.css'
 })
 
 export class LoginComponent {

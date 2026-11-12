@@ -22,17 +22,16 @@ export type ChartOptions = {
 };
 
 @Component({
-  selector: 'app-grafico-peso',
-  standalone: true,
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    FormsModule,
-    ReactiveFormsModule,
-    NgApexchartsModule
-  ],
-  templateUrl: './grafico-peso.component.html',
-  styleUrl: './grafico-peso.component.css'
+    selector: 'app-grafico-peso',
+    imports: [
+        RouterOutlet,
+        RouterLink,
+        FormsModule,
+        ReactiveFormsModule,
+        NgApexchartsModule
+    ],
+    templateUrl: './grafico-peso.component.html',
+    styleUrl: './grafico-peso.component.css'
 })
 
 

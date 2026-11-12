@@ -9,18 +9,17 @@ import { MetaService } from '../../../../core/services/meta.service';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-meta-form',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatInputModule,
-    MatCardModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatSnackBarModule,
-  ],
-  templateUrl: './meta-form.component.html',
-  styleUrl: './meta-form.component.css',
+    selector: 'app-meta-form',
+    imports: [
+        CommonModule,
+        MatInputModule,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatSnackBarModule,
+    ],
+    templateUrl: './meta-form.component.html',
+    styleUrl: './meta-form.component.css'
 })
 export class MetaFormComponent {
   metaForm!: FormGroup;

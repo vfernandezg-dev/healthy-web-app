@@ -6,11 +6,10 @@ import { AuthService } from '../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-cliente-layout',
-  standalone: true,
-  imports: [FooterComponent, NavbarComponent, RouterLink, RouterOutlet],
-  templateUrl: './cliente-layout.component.html',
-  styleUrl: './cliente-layout.component.css'
+    selector: 'app-cliente-layout',
+    imports: [FooterComponent, NavbarComponent, RouterLink, RouterOutlet],
+    templateUrl: './cliente-layout.component.html',
+    styleUrl: './cliente-layout.component.css'
 })
 export class ClienteLayoutComponent {
 

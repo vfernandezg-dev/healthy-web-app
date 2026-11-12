@@ -13,18 +13,17 @@ import { RecompensaResponse } from '../../../../shared/models/recompensa-respons
 import { RecompensaService } from '../../../../core/services/recompensa.service';
 
 @Component({
-  selector: 'app-racha-form',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCardModule
-  ],
-  templateUrl: './racha-form.component.html',
-  styleUrls: ['./racha-form.component.css']
+    selector: 'app-racha-form',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatCardModule
+    ],
+    templateUrl: './racha-form.component.html',
+    styleUrls: ['./racha-form.component.css']
 })
 export class RachaFormComponent implements OnInit {
 

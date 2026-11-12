@@ -11,19 +11,18 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'app-gestionar-clientes-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatSnackBarModule,
-    MatInputModule,
-    FormsModule
-  ],
-  templateUrl: './gestionar-clientes-list.component.html',
-  styleUrl: './gestionar-clientes-list.component.css'
+    selector: 'app-gestionar-clientes-list',
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatSnackBarModule,
+        MatInputModule,
+        FormsModule
+    ],
+    templateUrl: './gestionar-clientes-list.component.html',
+    styleUrl: './gestionar-clientes-list.component.css'
 })
 export class GestionarClientesListComponent {
 

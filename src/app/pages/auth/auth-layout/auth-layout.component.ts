@@ -5,11 +5,10 @@ import { FooterComponent } from "../../../shared/components/footer/footer.compon
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-auth-layout',
-  standalone: true,
-  imports: [NavbarComponent, FooterComponent, RouterOutlet],
-  templateUrl: './auth-layout.component.html',
-  styleUrl: './auth-layout.component.css'
+    selector: 'app-auth-layout',
+    imports: [NavbarComponent, FooterComponent, RouterOutlet],
+    templateUrl: './auth-layout.component.html',
+    styleUrl: './auth-layout.component.css'
 })
 export class AuthLayoutComponent {
 

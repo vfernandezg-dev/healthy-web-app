@@ -15,20 +15,19 @@ import { FormatPlanObjetivoPipe } from '../../../../core/pipes/format-plan-objet
 import { ComidaService } from '../../../../core/services/comida.service';
 
 @Component({
-  selector: 'app-plan-alimenticio-list',
-  standalone: true,
-  imports: [
-    CommonModule, 
-    MatTableModule, 
-    MatCardModule, 
-    MatSnackBarModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
-    FormsModule,
-    FormatPlanObjetivoPipe 
-  ],
-  templateUrl: './plan-alimenticio-list.component.html',
-  styleUrl: './plan-alimenticio-list.component.css'
+    selector: 'app-plan-alimenticio-list',
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatCardModule,
+        MatSnackBarModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        FormatPlanObjetivoPipe
+    ],
+    templateUrl: './plan-alimenticio-list.component.html',
+    styleUrl: './plan-alimenticio-list.component.css'
 })
 export class PlanAlimenticioListComponent {
   planAlimenticio: PlanAlimenticioResponse[] = [];

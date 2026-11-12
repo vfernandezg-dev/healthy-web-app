@@ -11,19 +11,18 @@ import { HabitoService } from '../../../../core/services/habito.service';
 import { FormatTimePipe } from '../../../../core/pipes/format-time.pipe';
 
 @Component({
-  selector: 'app-habitos-form',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatSnackBarModule,
-    MatOptionModule,
-    MatSelectModule,
-  ],
-  templateUrl: './habitos-form.component.html',
-  styleUrl: './habitos-form.component.css'
+    selector: 'app-habitos-form',
+    imports: [
+        CommonModule,
+        MatInputModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatSnackBarModule,
+        MatOptionModule,
+        MatSelectModule,
+    ],
+    templateUrl: './habitos-form.component.html',
+    styleUrl: './habitos-form.component.css'
 })
 export class HabitosFormComponent {
   habitosForm!: FormGroup;

@@ -15,22 +15,21 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-contenido-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    ApiImgPipe,
-    RouterModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatSnackBarModule,
-    MatCardModule
-  ],
-  templateUrl: './contenido-list.component.html',
-  styleUrl: './contenido-list.component.css'
+    selector: 'app-contenido-list',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        ApiImgPipe,
+        RouterModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatSnackBarModule,
+        MatCardModule
+    ],
+    templateUrl: './contenido-list.component.html',
+    styleUrl: './contenido-list.component.css'
 })
 export class ContenidoListComponent {
   contenido: ContenidoResponse[] = [];

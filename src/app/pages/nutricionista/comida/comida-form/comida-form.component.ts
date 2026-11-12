@@ -12,22 +12,21 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 
 @Component({
-  selector: 'app-comida-form',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatInputModule,
-    MatCardModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatSnackBarModule,
-    MatOptionModule,
-    MatRadioModule,
-    MatSelectModule,
-    ReactiveFormsModule, 
-  ],
-  templateUrl: './comida-form.component.html',
-  styleUrls: ['./comida-form.component.css'],
+    selector: 'app-comida-form',
+    imports: [
+        CommonModule,
+        MatInputModule,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatSnackBarModule,
+        MatOptionModule,
+        MatRadioModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './comida-form.component.html',
+    styleUrls: ['./comida-form.component.css']
 })
 export class ComidaFormComponent implements OnInit {
   comidaForm!: FormGroup;

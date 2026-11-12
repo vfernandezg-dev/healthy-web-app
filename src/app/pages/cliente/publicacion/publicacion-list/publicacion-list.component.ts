@@ -18,19 +18,18 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-publicacion-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule, 
-    MatButtonModule,
-    ApiImgPipe,
-    FormsModule,
-    MatMenuModule,
-    MatIconModule,
-  ],
-  templateUrl: './publicacion-list.component.html',
-  styleUrl: './publicacion-list.component.css'
+    selector: 'app-publicacion-list',
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatButtonModule,
+        ApiImgPipe,
+        FormsModule,
+        MatMenuModule,
+        MatIconModule,
+    ],
+    templateUrl: './publicacion-list.component.html',
+    styleUrl: './publicacion-list.component.css'
 })
 export class PublicacionListComponent {
   publicaciones: PublicacionResponse[] = [];

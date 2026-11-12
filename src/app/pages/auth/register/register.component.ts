@@ -9,20 +9,19 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [
-    MatButtonModule, 
-    MatInputModule, 
-    MatCardModule, 
-    RouterLink, 
-    FormsModule, 
-    ReactiveFormsModule, 
-    MatSnackBarModule,
-    MatRadioModule
-  ],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+    selector: 'app-register',
+    imports: [
+        MatButtonModule,
+        MatInputModule,
+        MatCardModule,
+        RouterLink,
+        FormsModule,
+        ReactiveFormsModule,
+        MatSnackBarModule,
+        MatRadioModule
+    ],
+    templateUrl: './register.component.html',
+    styleUrl: './register.component.css'
 })
 
 export class RegisterComponent {

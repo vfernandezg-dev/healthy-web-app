@@ -9,11 +9,10 @@ import { SuscripcionCreateRequest, TipoSuscripcion } from '../../../../shared/mo
 import { SuscripcionResponse } from '../../../../shared/models/suscripcion-response.model';
 
 @Component({
-  selector: 'app-suscripcion-list',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './suscripcion-list.component.html',
-  styleUrls: ['./suscripcion-list.component.css']
+    selector: 'app-suscripcion-list',
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './suscripcion-list.component.html',
+    styleUrls: ['./suscripcion-list.component.css']
 })
 export class SuscripcionListComponent implements OnInit {
   total: number = 0;

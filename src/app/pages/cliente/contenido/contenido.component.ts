@@ -16,18 +16,17 @@ import { AuthService } from '../../../core/services/auth.service';
 import { AccesoPlanService } from '../../../core/services/acceso-plan.service';
 
 @Component({
-  selector: 'app-contenido',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatSelectModule,
-    ApiImgPipe,
-    FormatPlanObjetivoPipe
-  ],
-  templateUrl: './contenido.component.html',
-  styleUrl: './contenido.component.css'
+    selector: 'app-contenido',
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatButtonModule,
+        MatSelectModule,
+        ApiImgPipe,
+        FormatPlanObjetivoPipe
+    ],
+    templateUrl: './contenido.component.html',
+    styleUrl: './contenido.component.css'
 })
 export class ContenidoComponent {
   contenido: ContenidoResponse[] = [];

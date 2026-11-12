@@ -12,12 +12,11 @@ import { StorageService } from '../../../core/services/storage.service';
 import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
 
 @Component({
-  selector: 'app-update-profile',
-  standalone: true,
-  imports: [MatRadioModule, MatButtonModule, MatInputModule, MatCardModule, MatSnackBarModule,
-    FormsModule, ReactiveFormsModule],
-  templateUrl: './update-profile.component.html',
-  styleUrl: './update-profile.component.css'
+    selector: 'app-update-profile',
+    imports: [MatRadioModule, MatButtonModule, MatInputModule, MatCardModule, MatSnackBarModule,
+        FormsModule, ReactiveFormsModule],
+    templateUrl: './update-profile.component.html',
+    styleUrl: './update-profile.component.css'
 })
 export class UpdateProfileComponent {
 
