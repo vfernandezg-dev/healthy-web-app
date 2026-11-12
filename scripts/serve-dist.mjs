@@ -1,12 +1,22 @@
 // Sirve el build de producción para los tests E2E, con la misma regla que el hosting: cualquier ruta
-// sin fichero devuelve index.html (la app resuelve la ruta). Las peticiones a la API las simula
-// Playwright con page.route, así que aquí nunca llegan. Uso: node scripts/serve-dist.mjs [puerto]
+// sin fichero devuelve index.html (la app resuelve la ruta).
+//
+// - Sin más argumentos, las peticiones a la API las simula Playwright con page.route y aquí no llegan.
+// - Con `--api <url>`, reenvía /api/* a esa API (pruebas contra el backend real): mismo origen, así que la cookie de
+//   sesión funciona igual que en producción.
+//
+// Uso: node scripts/serve-dist.mjs [puerto] [--api http://127.0.0.1:8090]
 import { readFile, stat } from 'node:fs/promises';
-import { createServer } from 'node:http';
+import { createServer, request as httpRequest } from 'node:http';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 
 const ROOT = resolve('dist/healthybites-app/browser');
-const PORT = Number(process.argv[2] ?? 4300);
+const args = process.argv.slice(2);
+const apiIndex = args.indexOf('--api');
+const API = apiIndex >= 0 ? new URL(args[apiIndex + 1]) : null;
+const rest =
+  apiIndex >= 0 ? args.filter((_, index) => index < apiIndex || index > apiIndex + 1) : args;
+const PORT = Number(rest[0] ?? 4300);
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -34,8 +44,37 @@ async function resolveFile(pathname) {
   }
 }
 
+/** Reenvía la petición a la API tal cual (método, cabeceras, cuerpo) y devuelve su respuesta. */
+function proxy(request, response) {
+  const upstream = httpRequest(
+    {
+      protocol: API.protocol,
+      hostname: API.hostname,
+      port: API.port,
+      method: request.method,
+      path: request.url,
+      headers: request.headers,
+    },
+    (answer) => {
+      response.writeHead(answer.statusCode ?? 502, answer.headers);
+      answer.pipe(response);
+    },
+  );
+  upstream.on('error', () => {
+    if (!response.headersSent) {
+      response.writeHead(502, { 'Content-Type': 'text/plain; charset=utf-8' });
+    }
+    response.end('La API no responde');
+  });
+  request.pipe(upstream);
+}
+
 createServer(async (request, response) => {
   const { pathname } = new URL(request.url ?? '/', 'http://localhost');
+  if (API && pathname.startsWith('/api/')) {
+    proxy(request, response);
+    return;
+  }
   const file = await resolveFile(pathname);
   if (!file) {
     response.writeHead(404).end();
@@ -48,4 +87,6 @@ createServer(async (request, response) => {
   } catch {
     response.writeHead(404).end();
   }
-}).listen(PORT, () => console.warn(`dist/ servido en http://localhost:${PORT}`));
+}).listen(PORT, () =>
+  console.warn(`dist/ servido en http://localhost:${PORT}${API ? ` (API: ${API.origin})` : ''}`),
+);

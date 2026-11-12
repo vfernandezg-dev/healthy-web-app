@@ -23,7 +23,9 @@ son difíciles de provocar con datos reales.
   las rutas con datos mínimos válidos (`e2e/support/fixtures.ts`) y comprueba el título de la pestaña, un solo `h1`,
   que no haya errores ni peticiones sin simular, y la accesibilidad.
 - **axe** (`@axe-core/playwright`) con las reglas WCAG 2.2 AA en cada pantalla y en los diálogos abiertos.
-- La prueba completa contra la API real queda para la release.
+- **Contra la API real, antes de cada release:** unos pocos recorridos largos
+  ([`e2e-fullstack/`](../../e2e-fullstack/README.md)) con los datos de demostración comprueban lo que el
+  simulacro no ve: la cookie de sesión, los parámetros que la API acepta, los correos y el contrato con la landing.
 
 ## Consecuencias
 

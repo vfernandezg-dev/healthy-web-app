@@ -152,24 +152,28 @@ falla si no está; en CI va en el secreto `PRIMENG_LICENSE_KEY`.
 
 ## Pruebas y calidad
 
-| Script               | Qué hace                                                                        |
-| -------------------- | ------------------------------------------------------------------------------- |
-| `pnpm start`         | Servidor de desarrollo en el puerto 4210, con proxy a la API                    |
-| `pnpm build`         | Build de producción en `dist/`                                                  |
-| `pnpm build:release` | Build de producción que exige la clave de PrimeNG                               |
-| `pnpm lint`          | ESLint (TypeScript y plantillas, con reglas de accesibilidad)                   |
-| `pnpm format`        | Prettier (y `format:check` para comprobarlo)                                    |
-| `pnpm test`          | Tests unitarios (Vitest)                                                        |
-| `pnpm test:e2e`      | E2E con Playwright y axe sobre el build, en escritorio y móvil                  |
-| `pnpm api:sync`      | Copia `docs/openapi.yaml` de la API hermana y regenera los tipos                |
-| `pnpm api:check`     | Falla si los tipos generados no coinciden con el contrato commiteado            |
-| `pnpm theme:check`   | Falla si el preset no trae los tokens de algún componente de PrimeNG que se usa |
-| `pnpm verify`        | Lint, formato, contrato, tema, tests y build: lo mismo que CI antes de los E2E  |
+| Script                    | Qué hace                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------- |
+| `pnpm start`              | Servidor de desarrollo en el puerto 4210, con proxy a la API                    |
+| `pnpm build`              | Build de producción en `dist/`                                                  |
+| `pnpm build:release`      | Build de producción que exige la clave de PrimeNG                               |
+| `pnpm lint`               | ESLint (TypeScript y plantillas, con reglas de accesibilidad)                   |
+| `pnpm format`             | Prettier (y `format:check` para comprobarlo)                                    |
+| `pnpm test`               | Tests unitarios (Vitest)                                                        |
+| `pnpm test:e2e`           | E2E con Playwright y axe sobre el build, en escritorio y móvil                  |
+| `pnpm test:e2e:fullstack` | Recorridos contra la API real, antes de cada release (`e2e-fullstack/`)         |
+| `pnpm api:sync`           | Copia `docs/openapi.yaml` de la API hermana y regenera los tipos                |
+| `pnpm api:check`          | Falla si los tipos generados no coinciden con el contrato commiteado            |
+| `pnpm theme:check`        | Falla si el preset no trae los tokens de algún componente de PrimeNG que se usa |
+| `pnpm verify`             | Lint, formato, contrato, tema, tests y build: lo mismo que CI antes de los E2E  |
 
 - **E2E con la API simulada** (`page.route`): cada funcionalidad tiene su recorrido por rol, y
   [`e2e/routes.spec.ts`](e2e/routes.spec.ts) visita todas las rutas comprobando el título, el `h1`, que no queden
   peticiones sin simular ni errores y que axe no encuentre fallos WCAG 2.2 AA
   ([ADR 0005](docs/adr/0005-pruebas-e2e-con-api-simulada.md)).
+- **Contra la API real** ([`e2e-fullstack/`](e2e-fullstack/README.md)): antes de cada release, los recorridos de
+  cliente, nutricionista y ADMIN se ejecutan contra la API con sus datos de demostración, incluidos el correo de
+  invitación (Mailpit) y el contrato de contacto con la landing.
 - **Presupuestos:** el bundle inicial ronda los 556 kB (150 kB comprimido); el build avisa a partir de 600 kB y
   falla a partir de 700 kB.
 - **CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): instalación con lockfile, lint, formato,

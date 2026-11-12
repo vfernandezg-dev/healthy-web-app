@@ -20,6 +20,7 @@
     "test": "ng test --watch=false",
     "test:watch": "ng test",
     "test:e2e": "playwright test",
+    "test:e2e:fullstack": "playwright test -c playwright.fullstack.config.ts",
     "api:sync": "node scripts/api-sync.mjs && pnpm api:gen",
     "api:gen": "node scripts/api-gen.mjs",
     "api:check": "node scripts/api-gen.mjs --check",
