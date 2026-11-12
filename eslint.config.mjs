@@ -43,7 +43,10 @@ export default defineConfig(
       '@angular-eslint/prefer-output-readonly': 'error',
       '@angular-eslint/no-async-lifecycle-method': 'error',
       '@typescript-eslint/consistent-type-imports': ['error', { fixStyle: 'inline-type-imports' }],
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', ignoreRestSiblings: true },
+      ],
       'no-console': ['error', { allow: ['warn', 'error'] }],
     },
   },

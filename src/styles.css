@@ -37,6 +37,18 @@
     @apply bg-mint text-brand-950;
   }
 
+  /*
+   * Iconos Lucide: 20 px por defecto y 18 px dentro de los botones. Para otro tamaño, una clase size-* (las
+   * utilidades van en una capa posterior y ganan).
+   */
+  svg.lucide {
+    @apply size-5 shrink-0;
+  }
+
+  .p-button svg.lucide {
+    @apply size-4.5;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -53,5 +65,28 @@
   /* Tarjeta de la marca (como en la landing): esquinas grandes y sombra suave. */
   .card {
     @apply rounded-3xl border border-brand-100 bg-white shadow-card;
+  }
+}
+
+@layer components {
+  /*
+   * Un campo sin tocar no se pinta como inválido aunque lo sea (por ejemplo, uno obligatorio vacío): Signal Forms
+   * marca el control con .hb-untouched y aquí los colores de error de PrimeNG vuelven a los normales. Son
+   * variables CSS, así que también llegan a los inputs internos de los controles compuestos.
+   */
+  .hb-untouched {
+    --p-inputtext-invalid-border-color: var(--p-inputtext-border-color);
+    --p-inputtext-invalid-placeholder-color: var(--p-inputtext-placeholder-color);
+    --p-textarea-invalid-border-color: var(--p-textarea-border-color);
+    --p-textarea-invalid-placeholder-color: var(--p-textarea-placeholder-color);
+    --p-select-invalid-border-color: var(--p-select-border-color);
+    --p-select-invalid-placeholder-color: var(--p-select-placeholder-color);
+    --p-multiselect-invalid-border-color: var(--p-multiselect-border-color);
+    --p-inputnumber-invalid-border-color: var(--p-inputtext-border-color);
+    --p-datepicker-invalid-border-color: var(--p-inputtext-border-color);
+    --p-checkbox-invalid-border-color: var(--p-checkbox-border-color);
+    --p-radiobutton-invalid-border-color: var(--p-radiobutton-border-color);
+    --p-toggleswitch-invalid-border-color: var(--p-toggleswitch-border-color);
+    --p-floatlabel-invalid-color: var(--p-floatlabel-color);
   }
 }

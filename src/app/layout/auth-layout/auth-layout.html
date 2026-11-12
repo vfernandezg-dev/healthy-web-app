@@ -1,0 +1,62 @@
+<div class="grid min-h-dvh lg:grid-cols-2">
+  <section
+    class="relative hidden overflow-hidden bg-brand-800 text-white lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16"
+  >
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute -top-32 -right-24 size-96 rounded-full bg-brand-600/60 blur-3xl"
+    ></div>
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute -bottom-40 -left-24 size-112 rounded-full bg-mint/15 blur-3xl"
+    ></div>
+
+    <a [href]="landingUrl" class="relative w-fit rounded-lg">
+      <app-brand-logo [inverse]="true" [priority]="true" />
+    </a>
+
+    <div class="relative max-w-md">
+      <p class="text-4xl leading-tight font-bold tracking-tight text-balance">
+        Come mejor, un hábito cada día.
+      </p>
+      <p class="mt-4 text-lg text-brand-100">
+        Planes de nutricionistas, metas con seguimiento, rachas con premios y una comunidad que te
+        acompaña.
+      </p>
+      <ul class="mt-10 space-y-4 text-brand-50" role="list">
+        <li class="flex items-center gap-3">
+          <span class="grid size-10 shrink-0 place-items-center rounded-full bg-white/10">
+            <svg lucideSalad></svg>
+          </span>
+          Planes alimenticios creados por nutricionistas
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="grid size-10 shrink-0 place-items-center rounded-full bg-white/10">
+            <svg lucideTarget></svg>
+          </span>
+          Metas de peso con su gráfico de progreso
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="grid size-10 shrink-0 place-items-center rounded-full bg-white/10">
+            <svg lucideFlame></svg>
+          </span>
+          Rachas de hábitos que desbloquean premios
+        </li>
+      </ul>
+    </div>
+
+    <p class="relative text-sm text-brand-100">© {{ year }} Healthy Bites</p>
+  </section>
+
+  <main id="main" tabindex="-1" class="flex min-h-dvh flex-col px-6 py-8 sm:px-10">
+    <div class="flex items-center justify-between gap-4 lg:justify-end">
+      <app-brand-logo class="lg:hidden" [priority]="true" />
+      <a [href]="landingUrl" class="text-sm font-semibold text-brand-700 hover:underline">
+        Volver a la web
+      </a>
+    </div>
+    <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-10">
+      <router-outlet />
+    </div>
+  </main>
+</div>

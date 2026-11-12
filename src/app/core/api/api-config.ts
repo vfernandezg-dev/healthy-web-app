@@ -9,9 +9,12 @@ export interface AppConfig {
    * sin ella, PrimeNG muestra un aviso. El build de release la exige (pnpm build:release).
    */
   readonly primengLicenseKey: string | undefined;
+  /** Web pública (la landing), para el enlace «Volver a la web». */
+  readonly landingUrl: string;
 }
 
 const DEFAULT_API_URL = '/api/v1';
+const DEFAULT_LANDING_URL = 'https://healthybites.vfernandezg.dev';
 
 export function normalizeBaseUrl(value: string | undefined, fallback: string): string {
   const candidate = value?.trim() || fallback;
@@ -27,6 +30,7 @@ export function readAppConfig(env: Partial<Env> = environment()): AppConfig {
   return {
     apiUrl: normalizeBaseUrl(env.NG_APP_API_URL, DEFAULT_API_URL),
     primengLicenseKey: env.NG_APP_PRIMENG_LICENSE_KEY?.trim() || undefined,
+    landingUrl: normalizeBaseUrl(env.NG_APP_LANDING_URL, DEFAULT_LANDING_URL),
   };
 }
 

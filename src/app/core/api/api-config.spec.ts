@@ -17,7 +17,11 @@ describe('readAppConfig', () => {
   it('lee la URL de la API y la clave de PrimeNG del entorno', () => {
     expect(
       readAppConfig({ NG_APP_API_URL: '/api/v1/', NG_APP_PRIMENG_LICENSE_KEY: ' clave ' }),
-    ).toEqual({ apiUrl: '/api/v1', primengLicenseKey: 'clave' });
+    ).toEqual({
+      apiUrl: '/api/v1',
+      primengLicenseKey: 'clave',
+      landingUrl: 'https://healthybites.vfernandezg.dev',
+    });
   });
 
   it('sin clave de PrimeNG la deja sin definir', () => {

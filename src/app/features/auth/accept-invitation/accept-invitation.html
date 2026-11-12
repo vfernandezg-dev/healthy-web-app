@@ -1,0 +1,81 @@
+@if (!token || invitation.error()) {
+  <div class="text-center">
+    <span class="mx-auto grid size-14 place-items-center rounded-full bg-red-50 text-red-700">
+      <svg lucideLink2Off class="size-7"></svg>
+    </span>
+    <h1 class="mt-6 text-3xl font-bold tracking-tight">La invitación no es válida</h1>
+    <p class="mt-3 text-muted">
+      @if (token) {
+        {{ invitationError() }}
+      } @else {
+        Abre el enlace completo del correo de invitación.
+      }
+      Si ha caducado, pide al equipo de Healthy Bites que te la reenvíe.
+    </p>
+    <a
+      routerLink="/auth/login"
+      class="mt-8 inline-block font-semibold text-brand-700 hover:underline"
+      >Ir a iniciar sesión</a
+    >
+  </div>
+} @else if (invitation.value(); as invited) {
+  <h1 class="text-3xl font-bold tracking-tight">Hola, {{ invited.firstName }}</h1>
+  <p class="mt-2 text-muted">
+    Crea tu contraseña para entrar en Healthy Bites como nutricionista con
+    <strong class="text-ink">{{ invited.email }}</strong
+    >.
+  </p>
+
+  @if (failure(); as message) {
+    <p-message severity="error" styleClass="mt-6">{{ message }}</p-message>
+  }
+
+  <form class="mt-8 space-y-5" novalidate (submit)="onSubmit($event)">
+    <app-field
+      label="Contraseña"
+      inputId="invitation-password"
+      [field]="acceptForm.password"
+      [hint]="hint"
+    >
+      <app-password-field>
+        <input
+          pInputText
+          appPassword
+          id="invitation-password"
+          autocomplete="new-password"
+          class="w-full"
+          [formField]="acceptForm.password"
+          [attr.aria-describedby]="describe('invitation-password', acceptForm.password, true)"
+        />
+      </app-password-field>
+    </app-field>
+
+    <app-field
+      label="Preséntate a tus clientes"
+      inputId="invitation-bio"
+      [field]="acceptForm.bio"
+      [optional]="true"
+      hint="Tu experiencia y en qué te especializas. Puedes cambiarlo más adelante."
+    >
+      <textarea
+        pTextarea
+        id="invitation-bio"
+        rows="4"
+        class="w-full"
+        [formField]="acceptForm.bio"
+        [attr.aria-describedby]="describe('invitation-bio', acceptForm.bio, true)"
+      ></textarea>
+    </app-field>
+
+    <button pButton type="submit" class="w-full" [loading]="acceptForm().submitting()">
+      <span pButtonLabel>Crear mi cuenta</span>
+    </button>
+  </form>
+} @else {
+  <div class="space-y-4" aria-busy="true" aria-label="Comprobando la invitación">
+    <p-skeleton height="2.5rem" width="60%" />
+    <p-skeleton height="1.25rem" />
+    <p-skeleton height="3rem" />
+    <p-skeleton height="3rem" />
+  </div>
+}
