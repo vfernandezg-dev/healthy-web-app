@@ -49,7 +49,7 @@ import { MESSAGES } from '../../../shared/forms/validation';
         Escribe el correo de tu cuenta y te enviaremos un enlace para elegir una contraseña nueva.
       </p>
       @if (failure(); as message) {
-        <p-message severity="error" styleClass="mt-6">{{ message }}</p-message>
+        <p-message severity="error" class="mt-6 block">{{ message }}</p-message>
       }
       <form class="mt-8 space-y-5" novalidate (submit)="onSubmit($event)">
         <app-field label="Correo electrónico" inputId="forgot-email" [field]="forgotForm.email">

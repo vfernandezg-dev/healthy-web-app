@@ -83,11 +83,7 @@
 <ng-template #account>
   @if (user(); as user) {
     <div class="flex items-center gap-3">
-      <p-avatar
-        [label]="initials()"
-        shape="circle"
-        styleClass="bg-mint! text-brand-900! font-bold"
-      />
+      <p-avatar [label]="initials()" shape="circle" class="bg-mint! font-bold text-brand-900!" />
       <div class="min-w-0 flex-1">
         <p class="truncate font-semibold">{{ user.firstName }} {{ user.lastName }}</p>
         <p class="text-sm text-muted">{{ roleLabel() }}</p>

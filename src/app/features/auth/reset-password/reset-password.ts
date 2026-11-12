@@ -37,7 +37,7 @@ import { takeFragmentToken } from '../fragment-token';
         Al guardarla se cerrarán tus sesiones abiertas en todos los dispositivos.
       </p>
       @if (failure(); as message) {
-        <p-message severity="error" styleClass="mt-6">
+        <p-message severity="error" class="mt-6 block">
           {{ message }}
           <a routerLink="/auth/forgot-password" class="font-semibold underline">Pide otro enlace</a
           >.

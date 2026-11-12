@@ -5,6 +5,7 @@ import { roleGuard } from './core/auth/guards';
 
 const shell = () => import('./layout/app-shell/app-shell').then((m) => m.AppShell);
 const roleHome = () => import('./features/home/role-home').then((m) => m.RoleHome);
+const profile = () => import('./features/profile/profile-page').then((m) => m.ProfilePage);
 
 /**
  * Rutas por rol (/client, /nutritionist, /admin) con canMatch: el código de las áreas de otros roles ni se
@@ -21,13 +22,19 @@ export const routes: Routes = [
     path: 'client',
     canMatch: [roleGuard('CLIENT')],
     loadComponent: shell,
-    children: [{ path: '', title: 'Inicio', loadComponent: roleHome }],
+    children: [
+      { path: '', title: 'Inicio', loadComponent: roleHome },
+      { path: 'profile', title: 'Tu perfil', loadComponent: profile },
+    ],
   },
   {
     path: 'nutritionist',
     canMatch: [roleGuard('NUTRITIONIST')],
     loadComponent: shell,
-    children: [{ path: '', title: 'Inicio', loadComponent: roleHome }],
+    children: [
+      { path: '', title: 'Inicio', loadComponent: roleHome },
+      { path: 'profile', title: 'Tu perfil', loadComponent: profile },
+    ],
   },
   {
     path: 'admin',

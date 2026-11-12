@@ -5,7 +5,7 @@
 </p>
 
 @if (failure(); as message) {
-  <p-message severity="error" styleClass="mt-6">{{ message }}</p-message>
+  <p-message severity="error" class="mt-6 block">{{ message }}</p-message>
 }
 
 <form class="mt-8 space-y-5" novalidate (submit)="onSubmit($event)">

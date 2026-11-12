@@ -145,6 +145,24 @@ export const HealthyBitesPreset = definePreset(Aura, {
         secondary: { color: '{surface.700}' },
       },
     },
+    // Opciones de p-selectbutton: el gris de Aura (surface-500 sobre surface-100) se queda en 4,3:1.
+    togglebutton: {
+      root: {
+        color: '{surface.700}',
+        hoverColor: '{surface.900}',
+        checkedColor: '{primary.900}',
+        borderRadius: '9999px',
+      },
+      content: {
+        borderRadius: '9999px',
+        padding: '0.25rem 0.875rem',
+      },
+      icon: {
+        color: '{surface.700}',
+        hoverColor: '{surface.900}',
+        checkedColor: '{primary.900}',
+      },
+    },
     card: {
       root: {
         borderRadius: '1.5rem',

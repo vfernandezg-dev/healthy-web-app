@@ -1,0 +1,208 @@
+<app-page-header title="Tu perfil" description="Tus datos personales y tu contraseña." />
+
+@if (me.error()) {
+  <app-load-error [error]="me.error()" (retry)="me.reload()" />
+} @else if (me.hasValue()) {
+  @let account = me.value();
+  <div class="grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] xl:items-start">
+    <section class="card p-6 sm:p-8" aria-labelledby="profile-title">
+      <h2 id="profile-title" class="text-xl font-bold">Datos personales</h2>
+      <p class="mt-1 text-sm text-muted">
+        Inicias sesión con <strong class="text-ink">{{ account.email }}</strong
+        >. Para cambiar el correo, escríbenos.
+      </p>
+
+      <form class="mt-6 space-y-5" novalidate (submit)="saveProfile($event)">
+        <div class="grid gap-5 sm:grid-cols-2">
+          <app-field label="Nombre" inputId="profile-first-name" [field]="profileForm.firstName">
+            <input
+              pInputText
+              id="profile-first-name"
+              autocomplete="given-name"
+              class="w-full"
+              [formField]="profileForm.firstName"
+              [attr.aria-describedby]="describe('profile-first-name', profileForm.firstName)"
+            />
+          </app-field>
+          <app-field label="Apellido" inputId="profile-last-name" [field]="profileForm.lastName">
+            <input
+              pInputText
+              id="profile-last-name"
+              autocomplete="family-name"
+              class="w-full"
+              [formField]="profileForm.lastName"
+              [attr.aria-describedby]="describe('profile-last-name', profileForm.lastName)"
+            />
+          </app-field>
+        </div>
+
+        @if (isClient()) {
+          <div>
+            <span id="profile-sex-label" class="mb-1.5 block text-sm font-semibold text-ink">
+              Sexo <span class="font-normal text-muted">(opcional)</span>
+            </span>
+            <p-selectbutton
+              ariaLabelledBy="profile-sex-label"
+              [options]="sexOptions"
+              optionLabel="label"
+              optionValue="value"
+              [formField]="profileForm.sex"
+            />
+          </div>
+
+          <app-field
+            label="Fecha de nacimiento"
+            inputId="profile-birth-date"
+            [field]="profileForm.birthDate"
+            [optional]="true"
+            [hint]="age() !== null ? 'Tienes ' + age() + ' años.' : undefined"
+          >
+            <input
+              pInputText
+              id="profile-birth-date"
+              type="date"
+              autocomplete="bday"
+              class="w-full sm:w-64"
+              [max]="today"
+              [formField]="profileForm.birthDate"
+              [attr.aria-describedby]="
+                describe('profile-birth-date', profileForm.birthDate, age() !== null)
+              "
+            />
+          </app-field>
+
+          <div class="grid gap-5 sm:grid-cols-2">
+            <app-field
+              label="Altura"
+              inputId="profile-height"
+              [field]="profileForm.heightCm"
+              [optional]="true"
+            >
+              <p-inputnumber
+                inputId="profile-height"
+                suffix=" cm"
+                [minFractionDigits]="0"
+                [maxFractionDigits]="1"
+                [fluid]="true"
+                [formField]="profileForm.heightCm"
+                [ariaDescribedBy]="describe('profile-height', profileForm.heightCm) ?? undefined"
+              />
+            </app-field>
+            <app-field
+              label="Peso"
+              inputId="profile-weight"
+              [field]="profileForm.weightKg"
+              [optional]="true"
+            >
+              <p-inputnumber
+                inputId="profile-weight"
+                suffix=" kg"
+                [minFractionDigits]="0"
+                [maxFractionDigits]="1"
+                [fluid]="true"
+                [formField]="profileForm.weightKg"
+                [ariaDescribedBy]="describe('profile-weight', profileForm.weightKg) ?? undefined"
+              />
+            </app-field>
+          </div>
+          <p class="text-sm text-muted">
+            Con tu altura, peso y edad calculamos el peso saludable recomendado de tus metas.
+          </p>
+        }
+
+        @if (isNutritionist()) {
+          <app-field
+            label="Presentación"
+            inputId="profile-bio"
+            [field]="profileForm.bio"
+            [optional]="true"
+            hint="Lo ven tus clientes junto a tus planes y contenidos."
+          >
+            <textarea
+              pTextarea
+              id="profile-bio"
+              rows="5"
+              class="w-full"
+              [formField]="profileForm.bio"
+              [attr.aria-describedby]="describe('profile-bio', profileForm.bio, true)"
+            ></textarea>
+          </app-field>
+        }
+
+        <div class="flex justify-end">
+          <button pButton type="submit" [loading]="profileForm().submitting()">
+            <span pButtonLabel>Guardar cambios</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card p-6 sm:p-8" aria-labelledby="password-title">
+      <h2 id="password-title" class="text-xl font-bold">Cambiar la contraseña</h2>
+      <p class="mt-1 text-sm text-muted">
+        Al cambiarla se cerrarán tus sesiones en los demás dispositivos.
+      </p>
+
+      <form class="mt-6 space-y-5" novalidate (submit)="changePassword($event)">
+        <app-field
+          label="Contraseña actual"
+          inputId="current-password"
+          [field]="passwordForm.currentPassword"
+        >
+          <app-password-field>
+            <input
+              pInputText
+              appPassword
+              id="current-password"
+              autocomplete="current-password"
+              class="w-full"
+              [formField]="passwordForm.currentPassword"
+              [attr.aria-describedby]="describe('current-password', passwordForm.currentPassword)"
+            />
+          </app-password-field>
+        </app-field>
+        <app-field
+          label="Contraseña nueva"
+          inputId="new-password"
+          [field]="passwordForm.newPassword"
+          [hint]="passwordHint"
+        >
+          <app-password-field>
+            <input
+              pInputText
+              appPassword
+              id="new-password"
+              autocomplete="new-password"
+              class="w-full"
+              [formField]="passwordForm.newPassword"
+              [attr.aria-describedby]="describe('new-password', passwordForm.newPassword, true)"
+            />
+          </app-password-field>
+        </app-field>
+        <div class="flex justify-end">
+          <button
+            pButton
+            type="submit"
+            severity="secondary"
+            [loading]="passwordForm().submitting()"
+          >
+            <span pButtonLabel>Cambiar la contraseña</span>
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+} @else {
+  <div class="grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]" aria-busy="true">
+    <div class="card space-y-4 p-8">
+      <p-skeleton height="1.75rem" width="40%" />
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+    </div>
+    <div class="card space-y-4 p-8">
+      <p-skeleton height="1.75rem" width="60%" />
+      <p-skeleton height="3rem" />
+    </div>
+  </div>
+}
