@@ -1,0 +1,37 @@
+# Actualizaciones automáticas de dependencias (PRs semanales contra main).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # Igual que minimumReleaseAge en pnpm-workspace.yaml: nada publicado hace menos de un día.
+    cooldown:
+      default-days: 1
+    groups:
+      # Angular se actualiza entero a la vez (sus paquetes exigen la misma versión).
+      angular:
+        patterns:
+          - '@angular/*'
+          - '@angular-devkit/*'
+          - '@ngx-env/*'
+          - 'angular-eslint'
+      primeng:
+        patterns:
+          - 'primeng'
+          - '@primeuix/*'
+          - 'tailwindcss-primeui'
+      tooling:
+        patterns:
+          - 'eslint'
+          - '@eslint/*'
+          - 'typescript-eslint'
+          - 'prettier*'
+          - '@playwright/test'
+          - '@axe-core/*'
+          - 'vitest'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

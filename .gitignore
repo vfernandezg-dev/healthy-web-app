@@ -2,6 +2,10 @@
 
 # Compiled output
 /dist
+# Informes de tests
+/coverage
+/playwright-report
+/test-results
 /tmp
 /out-tsc
 /bazel-out
@@ -46,3 +50,5 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+/playwright-report-fullstack/

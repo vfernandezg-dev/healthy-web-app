@@ -1,0 +1,175 @@
+<app-page-header
+  title="Tus hábitos"
+  description="Puntúa del 0 al 10 cómo te ha ido en hidratación, alimentación, ejercicio y sueño. Cada día registrado suma a tus rachas."
+/>
+
+@if (logs.error()) {
+  <app-load-error [error]="logs.error()" (retry)="logs.reload()" />
+} @else if (!logs.hasValue()) {
+  <div class="grid gap-6 xl:grid-cols-2" aria-busy="true">
+    <p-skeleton height="24rem" borderRadius="1.5rem" />
+    <p-skeleton height="24rem" borderRadius="1.5rem" />
+  </div>
+} @else {
+  <div class="grid gap-6 xl:grid-cols-2 xl:items-start">
+    <section class="card p-6 sm:p-8" aria-labelledby="register-title">
+      @if (formOpen()) {
+        <h2 id="register-title" class="text-xl font-bold">
+          {{ editing() ? 'Editar el registro' : '¿Cómo te ha ido?' }}
+        </h2>
+        @if (editing(); as log) {
+          <p class="mt-1 text-muted">Del {{ log.loggedOn | date: 'fullDate' }}.</p>
+        }
+        <form class="mt-6 space-y-6" novalidate (submit)="save($event)">
+          @if (!editing()) {
+            <div>
+              <span id="habit-day-label" class="mb-1.5 block text-sm font-semibold text-ink"
+                >Día</span
+              >
+              <p-selectbutton
+                ariaLabelledBy="habit-day-label"
+                [options]="dayOptions"
+                optionLabel="label"
+                optionValue="value"
+                [allowEmpty]="false"
+                [formField]="habitForm.loggedOn"
+              />
+              @if (model().loggedOn === today && todayLog()) {
+                <p class="mt-1.5 text-sm text-amber-800">Hoy ya está registrado: edítalo abajo.</p>
+              }
+            </div>
+          }
+
+          @for (score of scores; track score.key) {
+            <div>
+              <div class="flex items-baseline justify-between gap-3">
+                <span [id]="'habit-' + score.key" class="text-sm font-semibold text-ink">{{
+                  score.label
+                }}</span>
+                <span class="text-lg font-bold text-brand-800" aria-hidden="true"
+                  >{{ model()[score.key] }}/10</span
+                >
+              </div>
+              <p [id]="'habit-' + score.key + '-hint'" class="mb-3 text-sm text-muted">
+                {{ score.hint }}
+              </p>
+              <p-slider
+                [min]="0"
+                [max]="10"
+                [step]="1"
+                [ariaLabelledBy]="'habit-' + score.key"
+                [formField]="habitForm[score.key]"
+              />
+            </div>
+          }
+
+          <app-field label="Nota" inputId="habit-notes" [field]="habitForm.notes" [optional]="true">
+            <textarea
+              pTextarea
+              id="habit-notes"
+              rows="2"
+              class="w-full"
+              placeholder="Algo que quieras recordar de este día"
+              [formField]="habitForm.notes"
+              [attr.aria-describedby]="describe('habit-notes', habitForm.notes)"
+            ></textarea>
+          </app-field>
+
+          <div class="flex justify-end gap-2">
+            @if (editing() || todayLog()) {
+              <button pButton type="button" severity="secondary" variant="text" (click)="cancel()">
+                <span pButtonLabel>Cancelar</span>
+              </button>
+            }
+            <button pButton type="submit" [loading]="habitForm().submitting()">
+              <span pButtonLabel>{{ editing() ? 'Guardar' : 'Registrar el día' }}</span>
+            </button>
+          </div>
+        </form>
+      } @else if (todayLog(); as log) {
+        <h2 id="register-title" class="text-xl font-bold">Hoy, registrado</h2>
+        <p class="mt-1 text-muted">
+          Media de <strong class="text-ink">{{ log.average | number: '1.0-1' }}</strong> sobre 10.
+          Vuelve mañana para seguir sumando a tus rachas.
+        </p>
+        <dl class="mt-5 grid grid-cols-2 gap-3">
+          @for (score of scores; track score.key) {
+            <div class="rounded-2xl bg-brand-50 p-4">
+              <dt class="text-sm text-muted">{{ score.label }}</dt>
+              <dd class="text-2xl font-bold">{{ log[score.key] }}/10</dd>
+            </div>
+          }
+        </dl>
+        <div class="mt-5 flex flex-wrap justify-end gap-2">
+          @if (!yesterdayLog()) {
+            <button
+              pButton
+              type="button"
+              severity="secondary"
+              variant="outlined"
+              (click)="registerYesterday()"
+            >
+              <span pButtonLabel>Registrar ayer</span>
+            </button>
+          }
+          <button pButton type="button" severity="secondary" (click)="edit(log)">
+            <svg lucidePencil pButtonIcon></svg>
+            <span pButtonLabel>Editar hoy</span>
+          </button>
+        </div>
+      }
+    </section>
+
+    <section class="card p-6 sm:p-8" aria-labelledby="history-title">
+      <h2 id="history-title" class="text-xl font-bold">Últimos 30 días</h2>
+      <app-habit-calendar class="mt-5" [logs]="history()" [until]="today" />
+
+      @if (history().length > 0) {
+        <ul class="mt-6 divide-y divide-brand-50" role="list">
+          @for (log of history(); track log.id) {
+            <li class="flex items-center gap-4 py-3">
+              <div class="min-w-0 flex-1">
+                <p class="font-semibold">{{ log.loggedOn | date: 'EEEE d MMM' }}</p>
+                <p class="text-sm text-muted">
+                  Agua {{ log.hydration }} · Comida {{ log.nutrition }} · Ejercicio
+                  {{ log.exercise }} · Sueño {{ log.sleep }}
+                </p>
+              </div>
+              <p class="shrink-0 text-lg font-bold text-brand-800">
+                {{ log.average | number: '1.0-1' }}
+              </p>
+              <span class="flex shrink-0">
+                <button
+                  pButton
+                  type="button"
+                  size="small"
+                  severity="secondary"
+                  variant="text"
+                  [iconOnly]="true"
+                  [attr.aria-label]="'Editar el registro del ' + (log.loggedOn | date: 'longDate')"
+                  (click)="edit(log)"
+                >
+                  <svg lucidePencil pButtonIcon></svg>
+                </button>
+                <button
+                  pButton
+                  type="button"
+                  size="small"
+                  severity="danger"
+                  variant="text"
+                  [iconOnly]="true"
+                  [attr.aria-label]="'Borrar el registro del ' + (log.loggedOn | date: 'longDate')"
+                  (click)="remove(log)"
+                >
+                  <svg lucideTrash2 pButtonIcon></svg>
+                </button>
+              </span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="mt-6 text-muted">Aún no has registrado ningún día. ¡Empieza hoy!</p>
+      }
+    </section>
+  </div>
+}

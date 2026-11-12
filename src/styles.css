@@ -1,9 +1,92 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+ * Orden de las capas: los estilos de PrimeNG van después de la base de Tailwind y antes de sus utilidades,
+ * así una clase utilitaria siempre puede ajustar un componente de PrimeNG. PrimeNG usa el mismo orden
+ * (cssLayer en src/app/core/theme/ui.config.ts).
+ */
+@layer theme, base, primeng, components, utilities;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+@import '@fontsource-variable/plus-jakarta-sans';
+@import './styles/tokens.css';
 
-a {
-    text-decoration: none;
-    transition: all 0.5s ease;
+@layer base {
+  :root {
+    /* Solo tema claro por ahora: el oscuro se activará con la clase .app-dark. */
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply min-h-dvh bg-surface font-sans text-ink antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+
+  /* Destinos de foco por programa (<main> al navegar): reciben el foco sin mostrar contorno. */
+  [tabindex='-1']:focus {
+    outline: none;
+  }
+
+  ::selection {
+    @apply bg-mint text-brand-950;
+  }
+
+  /*
+   * Iconos Lucide: 20 px por defecto y 18 px dentro de los botones. Para otro tamaño, una clase size-* (las
+   * utilidades van en una capa posterior y ganan).
+   */
+  svg.lucide {
+    @apply size-5 shrink-0;
+  }
+
+  .p-button svg.lucide {
+    @apply size-4.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Tarjeta de la marca (como en la landing): esquinas grandes y sombra suave. */
+  .card {
+    @apply rounded-3xl border border-brand-100 bg-white shadow-card;
+  }
+}
+
+@layer components {
+  /*
+   * Un campo sin tocar no se pinta como inválido aunque lo sea (por ejemplo, uno obligatorio vacío): Signal Forms
+   * marca el control con .hb-untouched y aquí los colores de error de PrimeNG vuelven a los normales. Son
+   * variables CSS, así que también llegan a los inputs internos de los controles compuestos.
+   */
+  .hb-untouched {
+    --p-inputtext-invalid-border-color: var(--p-inputtext-border-color);
+    --p-inputtext-invalid-placeholder-color: var(--p-inputtext-placeholder-color);
+    --p-textarea-invalid-border-color: var(--p-textarea-border-color);
+    --p-textarea-invalid-placeholder-color: var(--p-textarea-placeholder-color);
+    --p-select-invalid-border-color: var(--p-select-border-color);
+    --p-select-invalid-placeholder-color: var(--p-select-placeholder-color);
+    --p-multiselect-invalid-border-color: var(--p-multiselect-border-color);
+    --p-inputnumber-invalid-border-color: var(--p-inputtext-border-color);
+    --p-datepicker-invalid-border-color: var(--p-inputtext-border-color);
+    --p-checkbox-invalid-border-color: var(--p-checkbox-border-color);
+    --p-radiobutton-invalid-border-color: var(--p-radiobutton-border-color);
+    --p-toggleswitch-invalid-border-color: var(--p-toggleswitch-border-color);
+    --p-floatlabel-invalid-color: var(--p-floatlabel-color);
+  }
 }

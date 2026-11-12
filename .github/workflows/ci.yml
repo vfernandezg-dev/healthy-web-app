@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, next]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   quality:
-    name: Tests y build
+    name: Lint, tipos de la API, tests, build y E2E
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -28,5 +28,44 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+
+      # Los tipos generados (schema.d.ts) tienen que coincidir con el contrato commiteado (openapi.yaml).
+      - run: pnpm api:check
+
+      # El preset del tema solo trae los tokens de los componentes de PrimeNG que se usan: que no falte ninguno.
+      - run: pnpm theme:check
+
       - run: pnpm test
       - run: pnpm build
+
+      - name: Instalar Chromium para Playwright
+        run: pnpm exec playwright install --with-deps chromium
+
+      # La API se simula en cada test (page.route): no hace falta el backend.
+      - name: Tests E2E y accesibilidad (axe)
+        run: pnpm test:e2e
+
+      - name: Subir reporte de Playwright
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  secrets:
+    name: Secretos (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # gitleaks revisa los commits del PR o del push, no solo el último.
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Sin comentarios en el PR: el job solo tiene permiso de lectura.
+          GITLEAKS_ENABLE_COMMENTS: false

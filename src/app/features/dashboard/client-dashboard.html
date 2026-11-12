@@ -1,0 +1,177 @@
+<app-page-header [title]="greeting()" description="Así va tu camino hacia una vida más sana." />
+
+<div class="grid gap-5 lg:grid-cols-3">
+  <!-- Meta -->
+  <section class="card flex flex-col p-6" aria-labelledby="goal-title">
+    <h2 id="goal-title" class="flex items-center gap-2 text-lg font-bold">
+      <svg lucideTarget class="text-brand-700"></svg> Tu meta
+    </h2>
+    @if (goals.error() || entries.error()) {
+      <p class="mt-3 text-sm text-red-700">No se ha podido cargar tu meta.</p>
+    } @else if (!goals.hasValue() || (activeGoal() && !entries.hasValue())) {
+      <div class="mt-4 space-y-3" aria-busy="true">
+        <p-skeleton height="1.25rem" width="70%" />
+        <p-skeleton height="0.75rem" />
+      </div>
+    } @else if (activeGoal(); as goal) {
+      <p class="mt-3 font-semibold">{{ goal.title }}</p>
+      @if (goalProgress(); as progress) {
+        @if (progress.currentKg === null) {
+          <p class="mt-1 text-sm text-muted">
+            Objetivo: {{ goal.targetWeightKg | number: '1.0-1' }} kg. Registra tu primer pesaje para
+            ver tu avance.
+          </p>
+        } @else {
+          <p class="mt-1 text-sm text-muted">
+            {{ progress.currentKg | number: '1.0-1' }} kg ahora · objetivo
+            {{ goal.targetWeightKg | number: '1.0-1' }} kg
+          </p>
+          <app-progress-bar class="mt-4" [value]="progress.percent" label="Avance de tu meta" />
+          <p class="mt-2 text-sm font-medium">
+            @if (progress.reached) {
+              ¡Has llegado a tu objetivo!
+            } @else {
+              Te faltan {{ progress.remainingKg | number: '1.0-1' }} kg
+            }
+          </p>
+        }
+      }
+      <a
+        routerLink="progress"
+        class="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold text-brand-700 hover:underline"
+      >
+        Ver tu progreso <svg lucideArrowRight class="size-4"></svg>
+      </a>
+    } @else {
+      <p class="mt-3 text-muted">
+        Aún no tienes una meta. Ponte un objetivo de peso y sigue tu evolución.
+      </p>
+      <a pButton routerLink="progress" size="small" class="mt-auto self-start">
+        <span pButtonLabel>Crear una meta</span>
+      </a>
+    }
+  </section>
+
+  <!-- Hábitos de hoy -->
+  <section class="card flex flex-col p-6" aria-labelledby="today-title">
+    <h2 id="today-title" class="flex items-center gap-2 text-lg font-bold">
+      <svg lucideCalendarCheck class="text-brand-700"></svg> Hábitos de hoy
+    </h2>
+    @if (todayLogs.error()) {
+      <p class="mt-3 text-sm text-red-700">No se han podido cargar tus hábitos.</p>
+    } @else if (!todayLogs.hasValue()) {
+      <div class="mt-4 space-y-3" aria-busy="true">
+        <p-skeleton height="1.25rem" width="60%" />
+        <p-skeleton height="3rem" />
+      </div>
+    } @else if (todayLog(); as log) {
+      <p class="mt-3 text-sm text-muted">
+        Ya los registraste. Media del día:
+        <strong class="text-ink">{{ log.average | number: '1.0-1' }}/10</strong>
+      </p>
+      <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+        @for (score of scores; track score.key) {
+          <div class="flex justify-between gap-2">
+            <dt class="text-muted">{{ score.label }}</dt>
+            <dd class="font-semibold tabular-nums">{{ log[score.key] }}/10</dd>
+          </div>
+        }
+      </dl>
+      <a
+        routerLink="habits"
+        class="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold text-brand-700 hover:underline"
+      >
+        Ver tus hábitos <svg lucideArrowRight class="size-4"></svg>
+      </a>
+    } @else {
+      <p class="mt-3 text-muted">
+        Aún no has registrado los de hoy. Cada día que lo haces suma a tus rachas.
+      </p>
+      <a pButton routerLink="habits" size="small" class="mt-auto self-start">
+        <span pButtonLabel>Registrar hoy</span>
+      </a>
+    }
+  </section>
+
+  <!-- Suscripción -->
+  <section class="card flex flex-col p-6" aria-labelledby="plan-title">
+    <h2 id="plan-title" class="flex items-center gap-2 text-lg font-bold">
+      <svg lucideCreditCard class="text-brand-700"></svg> Tu plan
+    </h2>
+    @if (subscription.error()) {
+      <p class="mt-3 text-sm text-red-700">No se ha podido cargar tu suscripción.</p>
+    } @else if (subscription.hasValue()) {
+      @let plan = subscription.value();
+      <app-tier-badge class="mt-3" [tier]="plan.tier" />
+      <p class="mt-2 text-sm text-muted">
+        @if (plan.tier === 'BASIC') {
+          Con Premium o VIP desbloqueas planes y contenidos exclusivos.
+        } @else if (plan.status === 'ACTIVE' && plan.renews) {
+          Se renueva el {{ plan.currentPeriodEnd | date: 'longDate' }}.
+        } @else if (plan.currentPeriodEnd) {
+          Tienes acceso hasta el {{ plan.currentPeriodEnd | date: 'longDate' }}.
+        } @else if (plan.status === 'PENDING_PAYMENT') {
+          Tienes un pago pendiente.
+        }
+      </p>
+      <a
+        routerLink="subscription"
+        class="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold text-brand-700 hover:underline"
+      >
+        {{ plan.tier === 'BASIC' ? 'Ver los planes' : 'Gestionar tu suscripción' }}
+        <svg lucideArrowRight class="size-4"></svg>
+      </a>
+    } @else {
+      <div class="mt-4 space-y-3" aria-busy="true">
+        <p-skeleton height="1.5rem" width="5rem" borderRadius="1rem" />
+        <p-skeleton height="2.5rem" />
+      </div>
+    }
+  </section>
+</div>
+
+<section class="mt-10" aria-labelledby="streaks-title">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <h2 id="streaks-title" class="text-xl font-bold">Rachas en curso</h2>
+    <a
+      routerLink="rewards"
+      class="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline"
+    >
+      Ver las recompensas <svg lucideArrowRight class="size-4"></svg>
+    </a>
+  </div>
+  @if (streaks.hasValue() && inProgress().length === 0) {
+    <app-empty-state
+      [icon]="flameIcon"
+      title="No tienes rachas en curso"
+      description="Elige una recompensa y registra tus hábitos cada día para conseguirla."
+    />
+  } @else if (streaks.hasValue()) {
+    <ul class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" role="list">
+      @for (reward of inProgress(); track reward.id) {
+        @let days = reward.streak?.currentDays ?? 0;
+        <li class="card p-5">
+          <p class="font-semibold">{{ reward.title }}</p>
+          <app-progress-bar
+            class="mt-3"
+            [value]="percentOf(days, reward.requiredStreakDays)"
+            [label]="'Racha: ' + reward.title"
+          />
+          <p class="mt-2 text-sm text-muted">
+            {{ days }} de {{ reward.requiredStreakDays }} días · premio: {{ reward.target.title }}
+          </p>
+        </li>
+      }
+    </ul>
+  } @else if (!streaks.error()) {
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true">
+      <p-skeleton height="7rem" borderRadius="1.5rem" />
+      <p-skeleton height="7rem" borderRadius="1.5rem" />
+    </div>
+  }
+</section>
+
+<section class="mt-10" aria-labelledby="shortcuts-title">
+  <h2 id="shortcuts-title" class="mb-4 text-xl font-bold">Accesos directos</h2>
+  <app-shortcuts [items]="shortcuts" />
+</section>

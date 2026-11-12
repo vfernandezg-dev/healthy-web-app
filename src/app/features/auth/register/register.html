@@ -1,0 +1,79 @@
+<h1 class="text-3xl font-bold tracking-tight">Crea tu cuenta</h1>
+<p class="mt-2 text-muted">
+  ¿Ya tienes una?
+  <a routerLink="/auth/login" class="font-semibold text-brand-700 hover:underline">Inicia sesión</a>
+</p>
+
+@if (failure(); as message) {
+  <p-message severity="error" class="mt-6 block">{{ message }}</p-message>
+}
+
+<form class="mt-8 space-y-5" novalidate (submit)="onSubmit($event)">
+  <div class="grid gap-5 sm:grid-cols-2">
+    <app-field label="Nombre" inputId="register-first-name" [field]="registerForm.firstName">
+      <input
+        pInputText
+        id="register-first-name"
+        autocomplete="given-name"
+        class="w-full"
+        [formField]="registerForm.firstName"
+        [attr.aria-describedby]="describe('register-first-name', registerForm.firstName)"
+      />
+    </app-field>
+    <app-field label="Apellido" inputId="register-last-name" [field]="registerForm.lastName">
+      <input
+        pInputText
+        id="register-last-name"
+        autocomplete="family-name"
+        class="w-full"
+        [formField]="registerForm.lastName"
+        [attr.aria-describedby]="describe('register-last-name', registerForm.lastName)"
+      />
+    </app-field>
+  </div>
+
+  <app-field label="Correo electrónico" inputId="register-email" [field]="registerForm.email">
+    <input
+      pInputText
+      id="register-email"
+      type="email"
+      autocomplete="email"
+      inputmode="email"
+      class="w-full"
+      [formField]="registerForm.email"
+      [attr.aria-describedby]="describe('register-email', registerForm.email)"
+    />
+  </app-field>
+
+  <app-field label="Contraseña" inputId="register-password" [field]="registerForm.password">
+    <app-password-field>
+      <input
+        pInputText
+        appPassword
+        id="register-password"
+        autocomplete="new-password"
+        class="w-full"
+        [formField]="registerForm.password"
+        [attr.aria-describedby]="
+          (describe('register-password', registerForm.password) ?? '') + ' register-password-rules'
+        "
+      />
+    </app-password-field>
+    <p id="register-password-rules" class="mt-2 flex items-center gap-2 text-sm">
+      @if (passwordLongEnough()) {
+        <svg lucideCheck class="size-4 text-brand-700"></svg>
+        <span class="text-brand-800">Tiene {{ passwordMin }} caracteres o más</span>
+      } @else {
+        <svg lucideCircle class="size-4 text-muted"></svg>
+        <span class="text-muted">Al menos {{ passwordMin }} caracteres</span>
+      }
+    </p>
+  </app-field>
+
+  <button pButton type="submit" class="w-full" [loading]="registerForm().submitting()">
+    <span pButtonLabel>Crear mi cuenta</span>
+  </button>
+  <p class="text-center text-sm text-muted">
+    ¿Eres nutricionista? Te damos de alta por invitación: escríbenos desde la web.
+  </p>
+</form>

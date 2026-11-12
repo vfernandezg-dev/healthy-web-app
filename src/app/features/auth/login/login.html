@@ -1,0 +1,52 @@
+<h1 class="text-3xl font-bold tracking-tight">Inicia sesión</h1>
+<p class="mt-2 text-muted">
+  ¿Aún no tienes cuenta?
+  <a routerLink="/auth/register" class="font-semibold text-brand-700 hover:underline"
+    >Regístrate gratis</a
+  >
+</p>
+
+@if (failure(); as message) {
+  <p-message severity="error" class="mt-6 block">{{ message }}</p-message>
+}
+
+<form class="mt-8 space-y-5" novalidate (submit)="onSubmit($event)">
+  <app-field label="Correo electrónico" inputId="login-email" [field]="loginForm.email">
+    <input
+      pInputText
+      id="login-email"
+      type="email"
+      autocomplete="email"
+      inputmode="email"
+      class="w-full"
+      [formField]="loginForm.email"
+      [attr.aria-describedby]="describe('login-email', loginForm.email)"
+    />
+  </app-field>
+
+  <app-field label="Contraseña" inputId="login-password" [field]="loginForm.password">
+    <app-password-field>
+      <input
+        pInputText
+        appPassword
+        id="login-password"
+        autocomplete="current-password"
+        class="w-full"
+        [formField]="loginForm.password"
+        [attr.aria-describedby]="describe('login-password', loginForm.password)"
+      />
+    </app-password-field>
+  </app-field>
+
+  <div class="flex justify-end">
+    <a
+      routerLink="/auth/forgot-password"
+      class="text-sm font-semibold text-brand-700 hover:underline"
+      >¿Has olvidado tu contraseña?</a
+    >
+  </div>
+
+  <button pButton type="submit" class="w-full" [loading]="loginForm().submitting()">
+    <span pButtonLabel>Entrar</span>
+  </button>
+</form>

@@ -1,35 +1,126 @@
 import { inject } from '@angular/core';
-import { Routes } from '@angular/router';
-import { roleGuard } from './core/guards/auth.guard';
-import { authInverseGuard } from './core/guards/auth-inverse.guard';
-import { AuthService } from './core/services/auth.service';
+import type { Routes } from '@angular/router';
+import { AuthStore } from './core/auth/auth-store';
+import { roleGuard } from './core/auth/guards';
 
+const shell = () => import('./layout/app-shell/app-shell').then((m) => m.AppShell);
+const profile = () => import('./features/profile/profile-page').then((m) => m.ProfilePage);
+const mealPlans = () => import('./features/meal-plans/meal-plans.routes');
+const content = () => import('./features/content/content.routes');
+const community = () =>
+  import('./features/community/community.routes').then((m) => m.COMMUNITY_ROUTES);
+
+/**
+ * Rutas por rol (/client, /nutritionist, /admin) con canMatch: el código de las áreas de otros roles ni se
+ * descarga. Cada área carga sus funcionalidades de forma diferida.
+ */
 export const routes: Routes = [
-    // Con sesión, a la página de inicio de su rol; sin ella, al login.
-    {path: '', pathMatch: 'full', redirectTo: () => inject(AuthService).homeUrl()},
-
-    {
-        path: 'auth',
-        loadChildren: () => import('./pages/auth/auth.routes').then(a => a.authRoutes),
-        canActivate: [authInverseGuard]
-    },
-    {
-        path: 'cliente',
-        loadChildren: () => import('./pages/cliente/cliente.routes').then(c => c.clienteRoutes),
-        canMatch: [roleGuard('CLIENTE')]
-    },
-    {
-        path: 'nutricionista',
-        loadChildren: () => import('./pages/nutricionista/nutricionista.routes').then(n => n.nutricionistaRoutes),
-        canMatch: [roleGuard('NUTRICIONISTA')]
-    },
-    {
-        path: 'admin',
-        loadComponent: () => import('./pages/admin/admin-placeholder.component').then(m => m.AdminPlaceholderComponent),
-        canMatch: [roleGuard('ADMIN')]
-    },
-    {
-        path: '**',
-        loadComponent: () => import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent)
-    }
+  // Con sesión, a la página de inicio de su rol; sin ella, al login.
+  { path: '', pathMatch: 'full', redirectTo: () => inject(AuthStore).homeUrl() },
+  {
+    path: 'auth',
+    loadChildren: () => import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
+  },
+  {
+    path: 'client',
+    canMatch: [roleGuard('CLIENT')],
+    loadComponent: shell,
+    children: [
+      {
+        path: '',
+        title: 'Inicio',
+        loadComponent: () =>
+          import('./features/dashboard/client-dashboard').then((m) => m.ClientDashboard),
+      },
+      { path: 'profile', title: 'Tu perfil', loadComponent: profile },
+      {
+        path: 'subscription',
+        loadChildren: () =>
+          import('./features/subscription/subscription.routes').then((m) => m.SUBSCRIPTION_ROUTES),
+      },
+      {
+        path: 'meal-plans',
+        loadChildren: () => mealPlans().then((m) => m.CLIENT_MEAL_PLAN_ROUTES),
+      },
+      { path: 'content', loadChildren: () => content().then((m) => m.CLIENT_CONTENT_ROUTES) },
+      {
+        path: 'progress',
+        loadChildren: () =>
+          import('./features/progress/progress.routes').then((m) => m.PROGRESS_ROUTES),
+      },
+      {
+        path: 'habits',
+        title: 'Tus hábitos',
+        loadComponent: () => import('./features/habits/habits-page').then((m) => m.HabitsPage),
+      },
+      {
+        path: 'rewards',
+        title: 'Recompensas',
+        loadComponent: () =>
+          import('./features/rewards/client/rewards-page').then((m) => m.RewardsPage),
+      },
+      { path: 'community', loadChildren: community },
+    ],
+  },
+  {
+    path: 'nutritionist',
+    canMatch: [roleGuard('NUTRITIONIST')],
+    loadComponent: shell,
+    children: [
+      {
+        path: '',
+        title: 'Inicio',
+        loadComponent: () =>
+          import('./features/dashboard/nutritionist-dashboard').then(
+            (m) => m.NutritionistDashboard,
+          ),
+      },
+      { path: 'profile', title: 'Tu perfil', loadComponent: profile },
+      {
+        path: 'meal-plans',
+        loadChildren: () => mealPlans().then((m) => m.NUTRITIONIST_MEAL_PLAN_ROUTES),
+      },
+      {
+        path: 'content',
+        loadChildren: () => content().then((m) => m.NUTRITIONIST_CONTENT_ROUTES),
+      },
+      {
+        path: 'rewards',
+        title: 'Tus recompensas',
+        loadComponent: () =>
+          import('./features/rewards/nutritionist/nutritionist-rewards').then(
+            (m) => m.NutritionistRewards,
+          ),
+      },
+      {
+        path: 'clients',
+        title: 'Tus clientes',
+        loadComponent: () =>
+          import('./features/nutritionist-clients/clients-page').then((m) => m.ClientsPage),
+      },
+      { path: 'community', loadChildren: community },
+    ],
+  },
+  {
+    path: 'admin',
+    canMatch: [roleGuard('ADMIN')],
+    loadComponent: shell,
+    children: [
+      {
+        path: '',
+        title: 'Resumen',
+        loadComponent: () =>
+          import('./features/admin/overview/overview-page').then((m) => m.OverviewPage),
+      },
+      {
+        path: '',
+        loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
+      },
+    ],
+  },
+  {
+    path: '**',
+    title: 'Página no encontrada',
+    loadComponent: () => import('./layout/not-found/not-found').then((m) => m.NotFound),
+  },
 ];
