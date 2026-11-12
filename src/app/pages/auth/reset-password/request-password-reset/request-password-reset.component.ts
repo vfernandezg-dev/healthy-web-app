@@ -1,6 +1,7 @@
-import {Component, inject, OnInit, ChangeDetectionStrategy} from '@angular/core';
+import {Component, inject, ChangeDetectionStrategy} from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {PasswordResetService} from '../../../../core/services/password-reset.service';
 import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
@@ -23,6 +24,7 @@ import {MatButton} from '@angular/material/button';
 })
 export class RequestPasswordResetComponent {
   resetForm: FormGroup;
+  sending = false;
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -40,19 +42,22 @@ export class RequestPasswordResetComponent {
   }
 
   onSubmit() {
-    if (this.resetForm.invalid) {
+    if (this.resetForm.invalid || this.sending) {
       return;
     }
 
-    const emailData = this.resetForm.value.email;
-    this.passwordResetService.sendResetPasswordEmail(emailData).subscribe({
+    this.sending = true;
+    this.passwordResetService.requestReset(this.resetForm.value.email).subscribe({
       next: () => {
-        this.showSnackBar(
-          'Si el correo está registrado, recibirás un enlace para restablecer la contraseña'
-        );
+        this.sending = false;
+        // Mismo mensaje exista o no la cuenta: la API tampoco lo revela.
+        this.showSnackBar('Si el correo está registrado, recibirás un enlace que caduca en 30 minutos.');
       },
-      error: () => {
-        this.showSnackBar('Error al enviar el correo. Inténtalo nuevamente');
+      error: (error: HttpErrorResponse) => {
+        this.sending = false;
+        this.showSnackBar(error.status === 429
+          ? 'Demasiadas solicitudes. Inténtalo más tarde.'
+          : 'No pudimos procesar la solicitud. Inténtalo nuevamente.');
       },
     });
   }

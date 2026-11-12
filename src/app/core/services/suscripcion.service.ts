@@ -18,7 +18,4 @@ export class SuscripcionService {
       return this.http.post<SuscripcionResponse>(`${this.baseURL}`, suscripcion);
   }
 
-  eliminarSuscripcion(suscripcionId: number): Observable<void> {
-      return this.http.delete<void>(`${this.baseURL}/${suscripcionId}`);
-  }
 }

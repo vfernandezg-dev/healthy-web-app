@@ -12,8 +12,9 @@ export const authRoutes: Routes = [
         children: [
             {path: 'login', component: LoginComponent},
             {path: 'register', component: RegisterComponent},
-            {path: 'reset-password', component: RequestPasswordResetComponent},
-            {path: 'reset-password/:token', component: ResetPasswordComponent}
+            {path: 'forgot-password', component: RequestPasswordResetComponent},
+            // El token llega en el fragmento (#token=…), nunca en la ruta.
+            {path: 'reset-password', component: ResetPasswordComponent}
         ]
     }
 ];

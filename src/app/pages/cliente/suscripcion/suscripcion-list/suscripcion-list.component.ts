@@ -1,12 +1,12 @@
 import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Router, ActivatedRoute } from '@angular/router';
 import { SuscripcionService } from '../../../../core/services/suscripcion.service';
-import { CheckoutService } from '../../../../core/services/checkout.service';
+import { CheckoutService, isPayPalUrl } from '../../../../core/services/checkout.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { SuscripcionCreateRequest, TipoSuscripcion } from '../../../../shared/models/suscripcion-create-request.model';
-import { SuscripcionResponse } from '../../../../shared/models/suscripcion-response.model';
 
 @Component({
     selector: 'app-suscripcion-list',
@@ -16,14 +16,11 @@ import { SuscripcionResponse } from '../../../../shared/models/suscripcion-respo
     styleUrls: ['./suscripcion-list.component.css']
 })
 export class SuscripcionListComponent implements OnInit {
-  total: number = 0;
   loading = false;
-  clienteId!: number;
-  
-  subscriptionForm: FormGroup;
+  /** Aviso para el usuario (vuelta de PayPal, errores del pago). */
+  message: string | null = null;
 
-  filteredSuscripciones: SuscripcionResponse[] = [];
-  suscripciones: SuscripcionResponse[] = [];
+  subscriptionForm: FormGroup;
 
   // Enum de tipos de suscripción para usar en el formulario
   tiposSuscripcion = Object.values(TipoSuscripcion);
@@ -42,19 +39,16 @@ export class SuscripcionListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.clienteId = Number(this.authService.getUser()?.id); // Obtén el ID del cliente autenticado
-
-    // Manejo del retorno de PayPal
-    const token = this.route.snapshot.queryParamMap.get('token');
-    const payerId = this.route.snapshot.queryParamMap.get('PayerID');
-    if (token && payerId) {
-      this.loading = true;
-      this.checkoutService.capturePaypalOrder(token).subscribe(response => {
-        this.loading = false;
-        if (response.completed) {
-          this.router.navigate(['/cliente/perfil']);
-        }
-      });
+    // Vuelta de PayPal: la API decide estas URLs (aprobado: ?token&PayerID; cancelado: ?checkout=cancelado).
+    const params = this.route.snapshot.queryParamMap;
+    if (params.get('checkout') === 'cancelado') {
+      this.message = 'Pago cancelado. No se ha realizado ningún cargo.';
+      this.clearQueryParams();
+      return;
+    }
+    const orderId = params.get('token');
+    if (orderId && params.get('PayerID')) {
+      this.capture(orderId);
     }
   }
 
@@ -65,42 +59,63 @@ export class SuscripcionListComponent implements OnInit {
     }
   }
 
-  cancelarSuscripcion(suscripcionId: number): void {
-    if (confirm('¿Estás seguro de que deseas cancelar esta suscripción?')) {
-      this.loading = true;
-      this.suscripcionService.eliminarSuscripcion(suscripcionId).subscribe({
-        next: () => {
-          this.loading = false;
-          alert('La suscripción ha sido cancelada exitosamente.');
-          // Actualizar la lista de suscripciones
-          this.suscripciones = this.suscripciones.filter(s => s.id !== suscripcionId);
-        },
-        error: (err) => {
-          this.loading = false;
-          console.error(err);
-          alert('Hubo un error al cancelar la suscripción: ' + err.error?.message || 'Error desconocido.');
-        },
-      });
-    }
-  }
-  
-
   proceedToCheckout(tipoSuscripcion: TipoSuscripcion): void {
     const suscripcionRequest: SuscripcionCreateRequest = {
-      usuarioId: this.clienteId,
+      usuarioId: Number(this.authService.getUser()?.id),
       tipoSuscripcion
     };
 
     this.loading = true;
-    this.suscripcionService.crearSuscripcion(suscripcionRequest).subscribe(suscripcion => {
-      this.loading = false;
-      if (suscripcion.tipoSuscripcion === TipoSuscripcion.BASICO) {
-        this.router.navigate(['/cliente/perfil']); // Redirigir directamente
-      } else {
-        this.checkoutService.createPaypalOrder(suscripcion.id).subscribe(response => {
-          window.location.href = response.paypalUrl; // Redirigir a PayPal
+    this.message = null;
+    this.suscripcionService.crearSuscripcion(suscripcionRequest).subscribe({
+      next: suscripcion => {
+        if (suscripcion.tipoSuscripcion === TipoSuscripcion.BASICO) {
+          this.loading = false;
+          this.router.navigate(['/cliente/perfil']); // El plan básico no necesita pago
+          return;
+        }
+        this.checkoutService.createPaypalOrder(suscripcion.id).subscribe({
+          next: response => {
+            if (isPayPalUrl(response.paypalUrl)) {
+              window.location.href = response.paypalUrl; // Redirigir a PayPal
+            } else {
+              this.fail('No se pudo iniciar el pago. Inténtalo más tarde.');
+            }
+          },
+          error: (error: HttpErrorResponse) => this.fail(this.errorMessage(error)),
         });
-      }
+      },
+      error: (error: HttpErrorResponse) => this.fail(this.errorMessage(error)),
     });
+  }
+
+  private capture(orderId: string): void {
+    this.loading = true;
+    this.checkoutService.capturePaypalOrder(orderId).subscribe({
+      next: response => {
+        this.loading = false;
+        if (response.completed) {
+          this.router.navigate(['/cliente/perfil']);
+        } else {
+          this.fail('PayPal no completó el pago. No se ha realizado ningún cargo.');
+        }
+      },
+      error: (error: HttpErrorResponse) => this.fail(this.errorMessage(error)),
+    });
+    this.clearQueryParams();
+  }
+
+  private fail(message: string): void {
+    this.loading = false;
+    this.message = message;
+  }
+
+  private errorMessage(error: HttpErrorResponse): string {
+    return error.error?.message ?? 'No se pudo completar el pago. Inténtalo más tarde.';
+  }
+
+  /** Quita de la barra de direcciones el id del pedido que añade PayPal. */
+  private clearQueryParams(): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
   }
 }

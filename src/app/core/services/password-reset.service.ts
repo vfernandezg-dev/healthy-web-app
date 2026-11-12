@@ -1,25 +1,34 @@
 import { inject, Injectable } from '@angular/core';
-import { APP_CONFIG } from '../config/app-config';
 import { HttpClient } from '@angular/common/http';
-import {Observable} from 'rxjs';
-
+import { Observable } from 'rxjs';
+import { APP_CONFIG } from '../config/app-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PasswordResetService {
-  private baseURL = `${inject(APP_CONFIG).apiUrl}/mail`;
+  private readonly baseURL = `${inject(APP_CONFIG).apiUrl}/auth`;
+  private readonly http = inject(HttpClient);
 
-  private http = inject(HttpClient);
-
-  sendResetPasswordEmail(email: string): Observable<void> {
-    return this.http.post<void>(`${this.baseURL}/sendMail`, email);
+  /** Responde 202 exista o no la cuenta: la API no revela qué correos están registrados. */
+  requestReset(correo: string): Observable<void> {
+    return this.http.post<void>(`${this.baseURL}/forgot-password`, { correo });
   }
 
-  checkTokenValidity(token: string): Observable<boolean> {
-    return this.http.get<boolean>(`${this.baseURL}/reset/check/${token}`);
+  /** Cambia la contraseña con el token del enlace. La API cierra todas las sesiones abiertas. */
+  resetPassword(token: string, contrasena: string): Observable<void> {
+    return this.http.post<void>(`${this.baseURL}/reset-password`, { token, contrasena });
   }
-  resetPassword(token: string, newPassword: string): Observable<any> {
-    return this.http.post(`${this.baseURL}/reset/${token}`, newPassword);
+}
+
+/**
+ * Token del enlace del correo (`/auth/reset-password#token=…`). Va en el fragmento, que el navegador nunca envía
+ * al servidor: no queda en logs ni en la cabecera Referer.
+ */
+export function tokenFromFragment(fragment: string | null): string | null {
+  if (!fragment) {
+    return null;
   }
+  const token = new URLSearchParams(fragment).get('token');
+  return token && /^[A-Za-z0-9_-]{20,128}$/.test(token) ? token : null;
 }

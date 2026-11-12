@@ -2,6 +2,10 @@
   <div class="loading-spinner">Cargando...</div>
 }
 
+@if (message) {
+  <p class="checkout-message" role="status">{{ message }}</p>
+}
+
 <form [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()">
   <div>
     <label for="tipoSuscripcion">Selecciona un tipo de suscripción:</label>

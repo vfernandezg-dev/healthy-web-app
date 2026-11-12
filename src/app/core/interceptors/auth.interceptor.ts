@@ -6,7 +6,7 @@ import { AuthService } from '../services/auth.service';
 
 /** Endpoints públicos o de sesión: no llevan access token ni disparan un refresh si responden 401. */
 const PUBLIC_PATHS = ['/auth/login', '/auth/refresh', '/auth/logout', '/auth/register/', '/auth/forgot-password',
-  '/auth/reset-password', '/mail/'];
+  '/auth/reset-password'];
 
 /**
  * Añade el access token a las peticiones a la API (y solo a la API: nunca a otros orígenes). Si una petición
