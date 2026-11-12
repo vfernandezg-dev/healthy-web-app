@@ -145,6 +145,24 @@ export const HealthyBitesPreset = definePreset(Aura, {
         secondary: { color: '{surface.700}' },
       },
     },
+    // Avisos y mensajes: Aura usa tonos 600 sobre fondos 50 (éxito ≈ 3:1); con 800 pasan de 7:1.
+    toast: {
+      success: {
+        background: '{primary.50}',
+        borderColor: '{primary.200}',
+        color: '{primary.800}',
+        closeButton: { hoverBackground: '{primary.100}', focusRing: { color: '{primary.700}' } },
+      },
+      info: { color: '{sky.800}' },
+      warn: { color: '{amber.800}' },
+      error: { color: '{red.800}' },
+    },
+    message: {
+      success: { background: '{primary.50}', borderColor: '{primary.200}', color: '{primary.800}' },
+      info: { color: '{sky.800}' },
+      warn: { color: '{amber.800}' },
+      error: { color: '{red.800}' },
+    },
     // Opciones de p-selectbutton: el gris de Aura (surface-500 sobre surface-100) se queda en 4,3:1.
     togglebutton: {
       root: {

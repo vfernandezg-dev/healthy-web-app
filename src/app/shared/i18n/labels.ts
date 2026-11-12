@@ -35,6 +35,38 @@ export const PAYMENT_STATUS_SEVERITY: Readonly<
   CANCELED: 'secondary',
 };
 
+export type MealPlanGoal = Schemas['MealPlanSummaryResponse']['goal'];
+export type MealCategory = Schemas['MealResponse']['category'];
+export type PublicationStatus = Schemas['MealPlanSummaryResponse']['status'];
+
+export const GOAL_LABELS: Readonly<Record<MealPlanGoal, string>> = {
+  WEIGHT_LOSS: 'Perder peso',
+  MAINTENANCE: 'Mantener el peso',
+  MUSCLE_GAIN: 'Ganar músculo',
+};
+
+export const MEAL_CATEGORY_LABELS: Readonly<Record<MealCategory, string>> = {
+  BREAKFAST: 'Desayuno',
+  LUNCH: 'Comida',
+  DINNER: 'Cena',
+  SNACK: 'Tentempié',
+};
+
+/** Estado de publicación (planes y contenidos). */
+export const PUBLICATION_STATUS_LABELS: Readonly<Record<PublicationStatus, string>> = {
+  DRAFT: 'Borrador',
+  PUBLISHED: 'Publicado',
+  ARCHIVED: 'Archivado',
+};
+
+export const PUBLICATION_STATUS_SEVERITY: Readonly<
+  Record<PublicationStatus, 'success' | 'warn' | 'secondary'>
+> = {
+  DRAFT: 'warn',
+  PUBLISHED: 'success',
+  ARCHIVED: 'secondary',
+};
+
 /** Opciones para un p-select o p-selectbutton a partir de un mapa de etiquetas. */
 export function optionsOf<T extends string>(
   labels: Readonly<Record<T, string>>,

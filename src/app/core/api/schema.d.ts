@@ -1671,6 +1671,8 @@ export interface components {
             publishedAt?: string | null;
             /** @enum {string} */
             requiredTier: "BASIC" | "PREMIUM" | "VIP";
+            /** @enum {string} */
+            status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
             title: string;
         };
         MealRequest: {

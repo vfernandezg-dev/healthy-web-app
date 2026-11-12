@@ -6,6 +6,9 @@ import { LucideCircleAlert } from '@lucide/angular';
  * Etiqueta, control y mensajes de un campo. El control va proyectado y tiene que usar el mismo `inputId` como id
  * y `describedBy(...)` como aria-describedby (ver {@link fieldDescription}).
  *
+ * La etiqueta tiene el id `{inputId}-label`: los controles cuyo foco no es un <input> (p-select) se enlazan con
+ * `ariaLabelledBy`, porque un <label for> no puede nombrar a un elemento que no es de formulario.
+ *
  * El error se muestra cuando el campo se ha tocado (o tras intentar enviar el formulario) y es inválido; los
  * mensajes vienen de los validadores de Signal Forms o de la API (errores de campo de un 422).
  */
@@ -14,7 +17,11 @@ import { LucideCircleAlert } from '@lucide/angular';
   imports: [LucideCircleAlert],
   host: { class: 'block' },
   template: `
-    <label [for]="inputId()" class="mb-1.5 block text-sm font-semibold text-ink">
+    <label
+      [for]="inputId()"
+      [id]="inputId() + '-label'"
+      class="mb-1.5 block text-sm font-semibold text-ink"
+    >
       {{ label() }}
       @if (optional()) {
         <span class="font-normal text-muted">(opcional)</span>
