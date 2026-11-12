@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PlanAlimenticioResponse } from '../../shared/models/plan-alimenticio-response.model';
@@ -9,7 +9,7 @@ import { PlanAlimenticioResponse } from '../../shared/models/plan-alimenticio-re
 })
 export class AccesoPlanService {
 
-    private baseURL = `${environment.baseUrl}/acceso-contenido`;
+    private baseURL = `${inject(APP_CONFIG).apiUrl}/acceso-contenido`;
     private http = inject(HttpClient);
 
     addPlanAlimenticioToCliente(planAlimenticioId: number, clienteId: number): Observable<PlanAlimenticioResponse> {

@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
 import { ClienteResponse } from '../../shared/models/cliente-response.model';
@@ -9,7 +9,7 @@ import { ClienteResponse } from '../../shared/models/cliente-response.model';
 })
 export class GestionarPerfilService {
 
-    private baseUrl = `${environment.baseUrl}/admin/cliente`;
+    private baseUrl = `${inject(APP_CONFIG).apiUrl}/admin/cliente`;
     private http = inject(HttpClient);
 
     getAllClientes(): Observable<ClienteResponse[]> {

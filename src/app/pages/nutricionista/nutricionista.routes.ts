@@ -15,6 +15,7 @@ export const nutricionistaRoutes: Routes = [
         path: '',
         component: NutricionistaLayoutComponent,
         children: [
+            {path: '', pathMatch: 'full', redirectTo: 'plan-alimenticio/list'},
 
             {path: 'gestionar-perfiles/list', component: GestionarClientesListComponent},
 

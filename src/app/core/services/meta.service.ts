@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { Observable } from 'rxjs';
 import { MetaCreateRequestModel } from '../../shared/models/meta-create-request-model';
 import { MetaResponseModel } from '../../shared/models/meta-response.model';
@@ -10,7 +10,7 @@ import { MetaResponseModel } from '../../shared/models/meta-response.model';
 })
 export class MetaService {
 
-    private baseURL = `${environment.baseUrl}/meta`;
+    private baseURL = `${inject(APP_CONFIG).apiUrl}/meta`;
     private http = inject(HttpClient);
     private metaId?: number;
 

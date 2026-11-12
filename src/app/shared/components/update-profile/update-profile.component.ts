@@ -8,7 +8,6 @@ import { UserProfileService } from '../../../core/services/user-profile.service'
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
-import { StorageService } from '../../../core/services/storage.service';
 import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
 
 @Component({
@@ -77,7 +76,8 @@ export class UpdateProfileComponent {
       console.log('Datos enviados:', updatedData); // Agrega esta línea para depurar los datos enviados
       this.userProfileService.updateUserProfile(Number(userId), updatedData).subscribe({
         next: (response) => {
-          console.log('Respuesta del servidor:', response); // Agrega esta línea para depurar la respuesta del servidor
+          // El nombre que muestra la app viene de la sesión: se actualiza también ahí.
+          this.authService.updateName(response.nombre, response.apellido);
           this.showSnackBar('Perfil actualizado exitosamente.');
           this.router.navigate(['/cliente/perfil']);
         },

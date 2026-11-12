@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RecompensaResponse } from '../../shared/models/recompensa-response.model';
@@ -9,7 +9,7 @@ import { RecompensaResponse } from '../../shared/models/recompensa-response.mode
 })
 export class RachaService {
 
-    private baseURL = `${environment.baseUrl}/racha`;
+    private baseURL = `${inject(APP_CONFIG).apiUrl}/racha`;
     private http = inject(HttpClient);
 
     addRecompensaToCliente(clienteId: number, recompensaId: number): Observable<RecompensaResponse> {

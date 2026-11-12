@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UserProfile } from '../../shared/models/user-profile.model';
@@ -9,7 +9,7 @@ import { UserProfile } from '../../shared/models/user-profile.model';
 })
 export class UserProfileService {
 
-  private baseURL = `${environment.baseUrl}/user/profile`;  // Ajusta el endpoint según tu API
+  private baseURL = `${inject(APP_CONFIG).apiUrl}/user/profile`;  // Ajusta el endpoint según tu API
 
   private http = inject(HttpClient);
 

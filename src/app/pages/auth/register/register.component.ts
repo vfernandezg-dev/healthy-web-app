@@ -39,7 +39,7 @@ export class RegisterComponent {
       nombre: ['', Validators.required],
       apellido: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      contrasena: ['', [Validators.required, Validators.minLength(6)]],
+      contrasena: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(64)]],
       sexo: ['', Validators.required],
       edad: ['', Validators.required],
       altura: ['', Validators.required],

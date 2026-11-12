@@ -5,7 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Router, RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthRequest } from '../../../shared/models/auth-request.model';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -24,14 +25,9 @@ export class LoginComponent {
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
   private authService = inject(AuthService);
-
-  private readonly CLIENTE_ROL = 'CLIENTE';
-  private readonly NUTRICIONISTA_ROL = 'NUTRICIONISTA';
-  private readonly CLIENTE_ROUTE = '/cliente/perfil';
-  private readonly NUTRICIONISTA_ROUTE = '/nutricionista/gestionar-perfiles/list';
-  private readonly DEFAULT_ROUTE = '/home';
 
   constructor(){
     this.loginForm = this.fb.group({
@@ -54,30 +50,35 @@ export class LoginComponent {
     this.authService.login(credentials).subscribe({
       next: () => {
         this.showSnackBar('Inicio de sesión exitoso');
-        this.redirectUserBasedOnRole();
+        void this.router.navigateByUrl(this.destination());
       },
-      error: () => {
-        this.showSnackBar('Error en el inicio de sesión. Por favor, intenta de nuevo.');
+      error: (error: HttpErrorResponse) => {
+        this.showSnackBar(error.status === 429
+          ? 'Demasiados intentos. Espera unos minutos antes de volver a probar.'
+          : 'Correo o contraseña incorrectos.');
       },
     });
 
   }
 
-  private redirectUserBasedOnRole(): void {
-    const userRole = this.authService.getUserRole();
-
-    if (userRole === this.CLIENTE_ROL) {
-      this.router.navigate([this.CLIENTE_ROUTE]);
-    } else if (userRole === this.NUTRICIONISTA_ROL) {
-      this.router.navigate([this.NUTRICIONISTA_ROUTE]);
-    } else {
-      this.router.navigate([this.DEFAULT_ROUTE]);
+  /**
+   * Vuelve a la página que pidió el usuario antes de iniciar sesión, si es una ruta interna de la app
+   * (nunca una URL externa: evita redirecciones abiertas). Si no, a la página de inicio de su rol.
+   */
+  private destination(): string {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    const home = this.authService.homeUrl();
+    if (!returnUrl || !returnUrl.startsWith('/') || returnUrl.startsWith('//') || returnUrl.startsWith('/auth')) {
+      return home;
     }
+    // Solo si pertenece al área de su rol (un cliente no vuelve a /nutricionista/...).
+    const area = home.split('/')[1];
+    return returnUrl.split('/')[1] === area ? returnUrl : home;
   }
 
-  private showSnackBar(message:string): void {
-    this.snackBar.open('Login Successful', 'Close', {
-      duration: 2000,
+  private showSnackBar(message: string): void {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
       verticalPosition: 'top'
     });
   }

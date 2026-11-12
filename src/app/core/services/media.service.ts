@@ -1,14 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { APP_CONFIG } from '../config/app-config';
 import { UploadMediaResponse } from '../../shared/models/upload-media-request.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MediaService {
-  private baseURL = `${environment.baseUrl}/media`;
+  private baseURL = `${inject(APP_CONFIG).apiUrl}/media`;
   private http = inject(HttpClient);
 
   constructor() {}

@@ -1,23 +1,30 @@
-import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
 import { inject } from '@angular/core';
+import { CanActivateFn, CanMatchFn, Router, UrlSegment } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { Role, homeFor } from './role-home';
 
-export const authGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AuthService);
-  const router = inject(Router);
-
-  if(authService.isAuthenticated()) {
-    return true;
-  } else {
-    router.navigate(['/auth/login']);
-
-    if(route.routeConfig?.path === 'cliente') {
-      router.navigate(['/cliente']);
-    } else if(route.routeConfig?.path === 'nutricionista') {
-      
-    }
-
-    return false;
-  }
-
+/** Exige sesión. Sin ella, al login recordando la URL pedida (antes provocaba un bucle de redirecciones). */
+export const authGuard: CanActivateFn = (_route, state) => {
+  const auth = inject(AuthService);
+  return auth.isAuthenticated() ? true : loginRedirect(state.url);
 };
+
+/**
+ * Exige sesión y un rol concreto (canMatch: con otro rol, ni siquiera se descarga el código del área).
+ * Con un rol distinto, a la página de inicio de su propio rol.
+ */
+export function roleGuard(role: Role): CanMatchFn {
+  return (_route, segments: UrlSegment[]) => {
+    const auth = inject(AuthService);
+    if (!auth.isAuthenticated()) {
+      return loginRedirect('/' + segments.map(segment => segment.path).join('/'));
+    }
+    return auth.getUserRole() === role ? true : inject(Router).parseUrl(auth.homeUrl());
+  };
+}
+
+function loginRedirect(returnUrl: string) {
+  return inject(Router).createUrlTree(['/auth/login'], { queryParams: { returnUrl } });
+}
+
+export { homeFor };

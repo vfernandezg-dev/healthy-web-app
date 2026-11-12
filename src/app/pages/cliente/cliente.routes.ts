@@ -25,6 +25,7 @@ export const clienteRoutes: Routes = [
         path: '',
         component: ClienteLayoutComponent,
         children: [
+            {path: '', pathMatch: 'full', redirectTo: 'perfil'},
             {path: 'perfil', component: UserProfileComponent},
             {path: 'perfil/update', component: UpdateProfileComponent},
 

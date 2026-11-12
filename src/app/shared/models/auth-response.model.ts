@@ -1,9 +1,13 @@
 export interface AuthResponse {
+    /** JWT de corta duración; se guarda solo en memoria. */
+    accessToken: string;
+    tokenType: string;
+    /** Segundos de validez del access token. */
+    expiresIn: number;
     id: number;
-    token: string;
     nombre: string;
     apellido: string;
     role: string;
-    clienteId: number;
-    nutricionistaId: number;
+    clienteId: number | null;
+    nutricionistaId: number | null;
 }

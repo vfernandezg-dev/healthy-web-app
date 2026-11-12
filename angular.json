@@ -11,9 +11,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular/build:application",
+          "builder": "@ngx-env/builder:application",
           "options": {
-            "allowedCommonJsDependencies": ["apexcharts"],
+            "allowedCommonJsDependencies": [
+              "apexcharts"
+            ],
             "outputPath": "dist/healthybites-app",
             "index": "src/index.html",
             "browser": "src/main.ts",
@@ -47,19 +49,42 @@
                   "maximumError": "4kB"
                 }
               ],
-              "outputHashing": "all",
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ]
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
-            },
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "build-test": {
+          "builder": "@angular/build:application",
+          "options": {
+            "allowedCommonJsDependencies": [
+              "apexcharts"
+            ],
+            "outputPath": "dist/healthybites-app",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "src/styles.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
             "testing": {
               "aot": false,
               "optimization": false,
@@ -69,13 +94,13 @@
                 "zone.js/testing"
               ]
             }
-          },
-          "defaultConfiguration": "production"
+          }
         },
         "serve": {
-          "builder": "@angular/build:dev-server",
+          "builder": "@ngx-env/builder:dev-server",
           "options": {
-            "port": 4210
+            "port": 4210,
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {
@@ -94,7 +119,7 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "buildTarget": ":build:testing",
+            "buildTarget": ":build-test:testing",
             "runner": "vitest"
           }
         }
