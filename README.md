@@ -4,12 +4,12 @@ Aplicación web de [Healthy Bites](https://healthybites.vfernandezg.dev), la pla
 hábitos saludables. Es una SPA en Angular con áreas para clientes y nutricionistas, y consume la API
 REST de [`healthy-bites-api`](https://github.com/vfernandezg-dev/healthy-bites-api).
 
-> El proyecto está en plena modernización: Angular 22, sesión segura y una interfaz nueva con
+> El proyecto está en plena modernización: ya usa Angular 22; faltan la sesión segura y la interfaz nueva con
 > PrimeNG. Este README se ampliará al terminar.
 
 ## Requisitos
 
-- **Node** 22.23 o superior. La versión exacta está en [`.nvmrc`](.nvmrc); con
+- **Node 26** (LTS). La versión exacta está en [`.nvmrc`](.nvmrc); con
   [fnm](https://github.com/Schniz/fnm) basta con `fnm use`.
 - **pnpm 12**. La versión se fija en `packageManager` (`package.json`). Este proyecto no se instala
   con npm ni con yarn.
@@ -30,7 +30,7 @@ La app espera la API en `http://localhost:8090/api/v1`. Para levantarla, sigue e
 | ----------------- | ---------------------------------------------- |
 | `pnpm start`      | Servidor de desarrollo en el puerto 4210       |
 | `pnpm build`      | Build de producción en `dist/`                 |
-| `pnpm test`       | Tests unitarios una vez, en Chrome headless    |
+| `pnpm test`       | Tests unitarios (Vitest) una vez               |
 | `pnpm test:watch` | Tests unitarios en modo observación            |
 
 CI ejecuta `pnpm install --frozen-lockfile`, `pnpm test` y `pnpm build` en cada pull request
