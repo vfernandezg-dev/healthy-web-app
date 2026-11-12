@@ -15,15 +15,16 @@ import type {
   PostResponse,
 } from '@core/api/schema';
 import { type PageRequest, pageParams } from '@shared/table/page-query';
+import { PAGE_SIZE } from '@shared/table/page-size';
+
+export interface PostFilters {
+  readonly groupId: string;
+}
 
 export interface DirectoryFilters {
   /** Busca por nombre. */
   readonly q: string;
 }
-
-export const POST_PAGE_SIZE = 10;
-export const COMMENT_PAGE_SIZE = 20;
-export const MEMBER_PAGE_SIZE = 20;
 
 /** Publicación o comentario que se denuncia. */
 export interface ReportTarget {
@@ -86,7 +87,7 @@ export class CommunityApi {
       const { groupId, page } = query();
       return {
         url: `${this.api}/groups/${groupId}/members`,
-        params: { page, size: MEMBER_PAGE_SIZE, sort: 'createdAt,asc' },
+        params: { page, size: PAGE_SIZE.list, sort: 'createdAt,asc' },
       };
     });
   }
@@ -107,15 +108,15 @@ export class CommunityApi {
   // ---------------------------------------------------------------- publicaciones
 
   /** 403 `private-group` si el grupo es privado y no se es miembro activo. */
-  posts(query: Signal<{ groupId: string; page: number } | undefined>) {
+  /** Publicaciones de un grupo, las últimas primero. Sin petición (undefined) no pide nada: grupo privado ajeno. */
+  posts(request: Signal<(PostFilters & PageRequest) | undefined>) {
     return httpResource<PagedModelPostResponse>(() => {
-      const value = query();
-      return value
-        ? {
-            url: `${this.api}/groups/${value.groupId}/posts`,
-            params: { page: value.page, size: POST_PAGE_SIZE, sort: 'createdAt,desc' },
-          }
-        : undefined;
+      const value = request();
+      if (!value) {
+        return undefined;
+      }
+      const { groupId, ...page } = value;
+      return { url: `${this.api}/groups/${groupId}/posts`, params: pageParams(page) };
     });
   }
 
@@ -144,15 +145,20 @@ export class CommunityApi {
       return value
         ? {
             url: `${this.api}/posts/${value.postId}/comments`,
-            params: { page: value.page, size: COMMENT_PAGE_SIZE, sort: 'createdAt,asc' },
+            params: { page: value.page, size: PAGE_SIZE.list, sort: 'createdAt,asc' },
           }
         : undefined;
     });
   }
 
+  /** Los errores los muestra el formulario del comentario. */
   comment(postId: string, body: string): Promise<CommentResponse> {
     return firstValueFrom(
-      this.http.post<CommentResponse>(`${this.api}/posts/${postId}/comments`, { body }),
+      this.http.post<CommentResponse>(
+        `${this.api}/posts/${postId}/comments`,
+        { body },
+        { context: silentErrors() },
+      ),
     );
   }
 

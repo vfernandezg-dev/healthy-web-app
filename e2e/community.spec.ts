@@ -1,4 +1,4 @@
-import { expect, test } from './support/test';
+import { type Page, expect, test } from './support/test';
 import { expectNoA11yViolations } from './support/a11y';
 import { type Schemas, mockApi, problem, requestBody, sessionFor } from './support/api';
 
@@ -20,6 +20,13 @@ type Membership = { role: 'OWNER' | 'MEMBER'; status: 'ACTIVE' | 'PENDING' } | n
 const ACTIVE_MEMBER: Membership = { role: 'MEMBER', status: 'ACTIVE' };
 const OWNER: Membership = { role: 'OWNER', status: 'ACTIVE' };
 const PENDING: Membership = { role: 'MEMBER', status: 'PENDING' };
+
+/** La lista de miembros se carga al acercarse a ella (en móvil está debajo de las publicaciones). */
+async function membersPanel(page: Page) {
+  await page.getByRole('heading', { level: 1 }).waitFor();
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  return page.getByRole('region', { name: 'Miembros' });
+}
 
 function group(
   id: string,
@@ -249,7 +256,7 @@ test.describe('comunidad: un grupo', () => {
     await expect(other.getByRole('button', { name: 'Editar' })).toHaveCount(0);
     await expect(other.getByRole('button', { name: 'Eliminar' })).toHaveCount(0);
 
-    const members = page.getByRole('region', { name: 'Miembros' });
+    const members = await membersPanel(page);
     await expect(members.getByRole('listitem').filter({ hasText: 'Carlos García' })).toContainText(
       'Creador del grupo',
     );
@@ -373,7 +380,7 @@ test.describe('comunidad: un grupo', () => {
     });
 
     await page.goto('/client/community/groups/g4');
-    const panel = page.getByRole('region', { name: 'Miembros' });
+    const panel = await membersPanel(page);
     await expect(panel.getByRole('listitem')).toHaveCount(20);
     await panel.getByRole('button', { name: 'Ver más miembros' }).click();
     await expect(panel.getByRole('listitem')).toHaveCount(22);
@@ -500,7 +507,7 @@ test.describe('comunidad: un grupo', () => {
     });
 
     await page.goto('/nutritionist/community/groups/g3');
-    const panel = page.getByRole('region', { name: 'Miembros' });
+    const panel = await membersPanel(page);
     await expect(panel).toContainText('Solicitudes pendientes (1)');
     await expect(panel.getByRole('button', { name: 'Expulsar a Carlos García' })).toHaveCount(0);
     await expectNoA11yViolations(page);

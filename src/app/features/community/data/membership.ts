@@ -34,3 +34,16 @@ export function membershipLabel(membership: GroupResponse['membership']): string
 
 /** Para el pipe i18nPlural. */
 export const MEMBERS_PLURAL = { '=0': 'Sin miembros', '=1': '1 miembro', other: '# miembros' };
+
+/** Relación de quien mira con el grupo: decide qué acciones ve (editar, salir, retirar la solicitud, entrar). */
+export type Relation = 'owner' | 'member' | 'pending' | 'none';
+
+export function relationOf(membership: GroupResponse['membership']): Relation {
+  if (!membership) {
+    return 'none';
+  }
+  if (membership.status === 'PENDING') {
+    return 'pending';
+  }
+  return membership.role === 'OWNER' ? 'owner' : 'member';
+}

@@ -3,6 +3,9 @@ import type { Role } from '@core/auth/roles';
 
 type Schemas = components['schemas'];
 
+/** Nombre que se muestra cuando el autor o el titular ya no tiene cuenta (la API lo manda como null). */
+export const DELETED_ACCOUNT = 'Cuenta eliminada';
+
 /** Nombres en español de los valores que la API envía en inglés (enums). */
 export const SEX_LABELS: Readonly<Record<NonNullable<Schemas['ClientData']['sex']>, string>> = {
   FEMALE: 'Mujer',

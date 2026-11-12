@@ -1,100 +1,26 @@
-<a
-  routerLink="../.."
-  class="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline"
->
-  <svg lucideArrowLeft class="size-4"></svg>
-  Comunidad
-</a>
+<app-back-link link="../.." label="Comunidad" />
 
-@if (group.error()) {
-  <app-load-error [error]="group.error()" (retry)="group.reload()" />
-} @else if (group.hasValue()) {
-  @let g = group.value();
-  <header class="card mb-8 p-6 sm:p-8">
-    <div class="flex flex-wrap items-center gap-2">
-      <app-visibility-badge [visibility]="g.visibility" />
-      @if (membership(); as label) {
-        <span class="rounded-full bg-mint px-2.5 py-0.5 text-xs font-semibold text-brand-900">
-          {{ label }}
-        </span>
-      }
-    </div>
-    <div class="mt-3 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-      <div class="min-w-0">
-        <h1 class="text-2xl font-bold tracking-tight text-balance sm:text-3xl">{{ g.name }}</h1>
-        @if (g.description) {
-          <p class="mt-2 max-w-2xl whitespace-pre-line text-muted">{{ g.description }}</p>
-        }
-        <p class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
-          <span class="inline-flex items-center gap-1.5">
-            <svg lucideUsers class="size-4"></svg>
-            {{ g.members | i18nPlural: membersPlural }}
-          </span>
-          @if (g.createdAt) {
-            <span>Creado el {{ g.createdAt | date: 'longDate' }}</span>
-          }
-        </p>
-      </div>
-      <div class="flex shrink-0 flex-wrap gap-2">
-        @switch (relation()) {
-          @case ('owner') {
-            <button
-              pButton
-              type="button"
-              severity="secondary"
-              variant="outlined"
-              (click)="groupDialog.open(g)"
-            >
-              <svg lucidePencil></svg>
-              Editar
-            </button>
-            <button pButton type="button" severity="danger" variant="text" (click)="deleteGroup()">
-              <svg lucideTrash></svg>
-              Eliminar el grupo
-            </button>
-          }
-          @case ('member') {
-            <button
-              pButton
-              type="button"
-              severity="secondary"
-              variant="outlined"
-              [loading]="busy()"
-              (click)="leave(g)"
-            >
-              <svg lucideLogOut></svg>
-              Salir del grupo
-            </button>
-          }
-          @case ('pending') {
-            <button
-              pButton
-              type="button"
-              severity="secondary"
-              variant="outlined"
-              [loading]="busy()"
-              (click)="leave(g)"
-            >
-              Retirar la solicitud
-            </button>
-          }
-          @default {
-            <button pButton type="button" [loading]="busy()" (click)="join()">
-              <svg lucideUserPlus></svg>
-              {{ g.visibility === 'PRIVATE' ? 'Pedir entrar' : 'Unirme' }}
-            </button>
-          }
-        }
-      </div>
-    </div>
-  </header>
+@if (store.group.error(); as error) {
+  <app-load-error [error]="error" (retry)="store.group.reload()" />
+} @else if (store.group.hasValue()) {
+  @let g = store.group.value();
+  <app-group-header
+    [group]="g"
+    [relation]="store.relation()"
+    [membershipLabel]="store.membershipLabel()"
+    [pending]="store.membershipPending()"
+    (edit)="groupDialog.open(g)"
+    (remove)="deleteGroup()"
+    (join)="store.join.run()"
+    (leave)="store.leave.run(g)"
+  />
 
   <div class="@container">
     <div class="grid items-start gap-8 @4xl:grid-cols-[minmax(0,1fr)_20rem]">
       <section class="min-w-0" aria-labelledby="posts-title">
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 id="posts-title" class="text-xl font-bold">Publicaciones</h2>
-          @if (viewer().member) {
+          @if (store.viewer().member) {
             <button pButton type="button" (click)="postDialog.open({ groupId: g.id, post: null })">
               <svg lucidePlus></svg>
               Publicar
@@ -102,65 +28,58 @@
           }
         </div>
 
-        @if (!canRead()) {
+        @if (!store.canRead()) {
           <app-empty-state
             [icon]="lockIcon"
             title="Grupo privado"
             [description]="
-              relation() === 'pending'
+              store.relation() === 'pending'
                 ? 'Tu solicitud está pendiente. Cuando la aprueben podrás leer y participar.'
                 : 'Pide entrar para leer sus publicaciones y participar.'
             "
           />
-        } @else if (posts.error()) {
-          <app-load-error [error]="posts.error()" (retry)="posts.reload()" />
-        } @else if (posts.hasValue()) {
-          @let result = posts.value();
-          @if (result.content.length === 0) {
-            <app-empty-state
-              [icon]="postsIcon"
-              title="Aún no hay publicaciones"
-              [description]="
-                viewer().member
-                  ? 'Rompe el hielo: cuenta un avance, una duda o una receta.'
-                  : 'Únete al grupo para publicar.'
-              "
-            />
-          } @else {
-            <ul class="space-y-5" role="list">
-              @for (post of result.content; track post.id) {
-                <li>
-                  <app-post-card
-                    [post]="post"
-                    [viewer]="viewer()"
-                    (edit)="postDialog.open({ groupId: g.id, post })"
-                    (remove)="deletePost(post)"
-                    (report)="reportDialog.open($event)"
-                  />
-                </li>
-              }
-            </ul>
-            @if (result.page.totalPages > 1) {
-              <p-paginator
-                class="mt-6 block"
-                [first]="result.page.number * pageSize"
-                [rows]="pageSize"
-                [totalRecords]="result.page.totalElements"
-                (onPageChange)="changePage($event)"
-              />
-            }
-          }
         } @else {
-          <div class="space-y-5" aria-busy="true">
-            @for (placeholder of [1, 2]; track placeholder) {
-              <p-skeleton height="12rem" borderRadius="1.5rem" />
-            }
-          </div>
+          <app-paged-grid
+            [query]="store.posts"
+            layout="list"
+            skeletonHeight="12rem"
+            [skeletons]="2"
+          >
+            <ng-template [appRow]="store.posts.items()" let-post>
+              <app-post-card
+                [post]="post"
+                [viewer]="store.viewer()"
+                (edit)="postDialog.open({ groupId: g.id, post })"
+                (remove)="store.deletePost.run(post)"
+                (report)="reportDialog.open($event)"
+              />
+            </ng-template>
+            <div empty>
+              <app-empty-state
+                [icon]="postsIcon"
+                title="Aún no hay publicaciones"
+                [description]="
+                  store.viewer().member
+                    ? 'Rompe el hielo: cuenta un avance, una duda o una receta.'
+                    : 'Únete al grupo para publicar.'
+                "
+              />
+            </div>
+          </app-paged-grid>
         }
       </section>
 
-      @if (viewer().member) {
-        <app-group-members [groupId]="g.id" [owner]="viewer().owner" (changed)="group.reload()" />
+      @if (store.viewer().member) {
+        <!-- La lista de miembros va al lado (o debajo, en móvil): se carga al acercarse. -->
+        @defer (on viewport; prefetch on idle) {
+          <app-group-members
+            [groupId]="g.id"
+            [owner]="store.viewer().owner"
+            (changed)="store.group.reload()"
+          />
+        } @placeholder {
+          <div class="card h-48"></div>
+        }
       }
     </div>
   </div>
@@ -175,7 +94,7 @@
   @if (groupDialog.data(); as dialog) {
     <app-group-dialog
       [group]="dialog.value"
-      (saved)="groupSaved($event)"
+      (saved)="store.groupSaved($event)"
       (closed)="groupDialog.close()"
     />
   }
@@ -184,7 +103,7 @@
   @if (postDialog.data(); as dialog) {
     <app-post-dialog
       [target]="dialog.value"
-      (saved)="postSaved($event)"
+      (saved)="store.postSaved($event)"
       (closed)="postDialog.close()"
     />
   }

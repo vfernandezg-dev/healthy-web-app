@@ -1,13 +1,13 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input, output } from '@angular/core';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import type { MemberResponse } from '@core/api/schema';
-import { Confirmer } from '@core/ui/confirmer';
-import { Toaster } from '@core/ui/toaster';
 import { PersonAvatar } from '@shared/ui/person-avatar';
 import { loadMore } from '@shared/utils/load-more';
 import { CommunityApi } from './data/community-api';
+import { LoadMoreFooter } from '@shared/ui/load-more-footer';
+import { mutation } from '@shared/utils/mutation';
+import { DELETED_ACCOUNT } from '@shared/i18n/labels';
 
 type Person = NonNullable<MemberResponse['person']>;
 
@@ -22,7 +22,7 @@ function memberKey(member: MemberResponse): string {
  */
 @Component({
   selector: 'app-group-members',
-  imports: [NgTemplateOutlet, ButtonDirective, Skeleton, PersonAvatar],
+  imports: [LoadMoreFooter, ButtonDirective, Skeleton, PersonAvatar],
   host: { class: 'block' },
   template: `
     <section class="card p-5" aria-labelledby="members-title">
@@ -47,7 +47,7 @@ function memberKey(member: MemberResponse): string {
                       type="button"
                       size="small"
                       [attr.aria-label]="'Aprobar a ' + person.name"
-                      (click)="approve(person)"
+                      (click)="approve.run(person)"
                     >
                       Aprobar
                     </button>
@@ -58,7 +58,7 @@ function memberKey(member: MemberResponse): string {
                       severity="secondary"
                       variant="text"
                       [attr.aria-label]="'Rechazar a ' + person.name"
-                      (click)="reject(person)"
+                      (click)="reject.run(person)"
                     >
                       Rechazar
                     </button>
@@ -89,7 +89,7 @@ function memberKey(member: MemberResponse): string {
                   severity="danger"
                   variant="text"
                   [attr.aria-label]="'Expulsar a ' + person.name"
-                  (click)="kick(person)"
+                  (click)="kick.run(person)"
                 >
                   Expulsar
                 </button>
@@ -97,47 +97,19 @@ function memberKey(member: MemberResponse): string {
             </li>
           }
         </ul>
-        @if (members.resource.error()) {
-          <ng-container *ngTemplateOutlet="loadError" />
-        } @else if (members.hasMore()) {
-          <button
-            pButton
-            type="button"
-            size="small"
-            severity="secondary"
-            variant="outlined"
-            class="mt-4 w-full"
-            [loading]="members.resource.isLoading()"
-            (click)="members.more()"
-          >
-            Ver más miembros
-          </button>
-        }
-      } @else if (members.resource.error()) {
-        <ng-container *ngTemplateOutlet="loadError" />
-      } @else {
+      } @else if (!members.resource.error()) {
         <div class="mt-4 space-y-3" aria-busy="true">
           @for (placeholder of [1, 2, 3]; track placeholder) {
             <p-skeleton height="2rem" />
           }
         </div>
       }
+      <app-load-more-footer class="mt-4" [list]="members" label="Ver más miembros" />
     </section>
-
-    <ng-template #loadError>
-      <p class="mt-3 text-sm text-red-700" role="alert">
-        No se ha podido cargar la lista.
-        <button type="button" class="font-semibold underline" (click)="members.resource.reload()">
-          Reintentar
-        </button>
-      </p>
-    </ng-template>
   `,
 })
 export class GroupMembers {
   private readonly api = inject(CommunityApi);
-  private readonly confirmer = inject(Confirmer);
-  private readonly toaster = inject(Toaster);
 
   readonly groupId = input.required<string>();
   /** Quien mira es el creador del grupo. */
@@ -159,50 +131,42 @@ export class GroupMembers {
   );
 
   protected nameOf(member: MemberResponse): string {
-    return member.person?.name ?? 'Cuenta eliminada';
+    return member.person?.name ?? DELETED_ACCOUNT;
   }
 
-  protected async approve(person: Person): Promise<void> {
-    await this.act(
-      () => this.api.approve(this.groupId(), person.id),
-      () => this.members.replace(person.id, (member) => ({ ...member, status: 'ACTIVE' })),
-      `${person.name} ya es miembro`,
-    );
-  }
+  protected readonly approve = mutation(
+    (person: Person) => this.api.approve(this.groupId(), person.id),
+    {
+      success: (_, person) => `${person.name} ya es miembro`,
+      onSuccess: (_, person) => {
+        this.members.replace(person.id, (member) => ({ ...member, status: 'ACTIVE' }));
+        this.changed.emit();
+      },
+    },
+  );
 
-  protected async reject(person: Person): Promise<void> {
-    await this.act(
-      () => this.api.remove(this.groupId(), person.id),
-      () => this.members.remove(person.id),
-      'Solicitud rechazada',
-    );
-  }
+  protected readonly reject = mutation(
+    (person: Person) => this.api.remove(this.groupId(), person.id),
+    { success: 'Solicitud rechazada', onSuccess: (_, person) => this.dropped(person) },
+  );
 
-  protected async kick(person: Person): Promise<void> {
-    const confirmed = await this.confirmer.ask({
-      header: 'Expulsar del grupo',
-      message: `${person.name} dejará de ser miembro. Podrá volver a pedir entrar.`,
-      acceptLabel: 'Expulsar',
-      danger: true,
-    });
-    if (confirmed) {
-      await this.act(
-        () => this.api.remove(this.groupId(), person.id),
-        () => this.members.remove(person.id),
-        'Miembro expulsado',
-      );
-    }
-  }
+  protected readonly kick = mutation(
+    (person: Person) => this.api.remove(this.groupId(), person.id),
+    {
+      confirm: (person) => ({
+        header: 'Expulsar del grupo',
+        message: `${person.name} dejará de ser miembro. Podrá volver a pedir entrar.`,
+        acceptLabel: 'Expulsar',
+        danger: true,
+      }),
+      success: 'Miembro expulsado',
+      onSuccess: (_, person) => this.dropped(person),
+    },
+  );
 
-  /** Hace el cambio en la API y, si sale bien, lo refleja en la lista ya cargada (sin volver a pedirla entera). */
-  private async act(action: () => Promise<void>, update: () => void, done: string): Promise<void> {
-    try {
-      await action();
-      update();
-      this.changed.emit();
-      this.toaster.success(done);
-    } catch {
-      // El interceptor de errores ya ha avisado.
-    }
+  /** Lo refleja en la lista ya cargada, sin volver a pedirla entera. */
+  private dropped(person: Person): void {
+    this.members.remove(person.id);
+    this.changed.emit();
   }
 }

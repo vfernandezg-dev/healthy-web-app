@@ -7,7 +7,7 @@ import type { PagedQuery } from './paged-query';
 import { RowTemplate } from './row-template';
 
 /**
- * Cuadrícula de tarjetas de un listado paginado: esqueleto mientras llega la primera página, el error con
+ * Cuadrícula (o lista) de tarjetas de un listado paginado: esqueleto mientras llega la primera página, el error con
  * «Reintentar», el estado vacío (lo que se proyecte con el atributo `empty`), las tarjetas y el paginador. Al cambiar
  * de página se queda la anterior, atenuada, hasta que llega la nueva.
  *
@@ -32,7 +32,8 @@ import { RowTemplate } from './row-template';
         <ng-content select="[empty]" />
       } @else {
         <ul
-          class="grid gap-5 transition-opacity sm:grid-cols-2 xl:grid-cols-3"
+          class="transition-opacity"
+          [class]="layoutClass()"
           [class.opacity-60]="query().loading()"
           role="list"
           [attr.aria-label]="label()"
@@ -58,7 +59,7 @@ import { RowTemplate } from './row-template';
         }
       }
     } @else {
-      <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true">
+      <div [class]="layoutClass()" aria-busy="true">
         @for (placeholder of placeholders(); track placeholder) {
           <p-skeleton [height]="skeletonHeight()" borderRadius="1.5rem" />
         }
@@ -72,8 +73,13 @@ export class PagedGrid<T extends { readonly id: string }> {
   readonly label = input<string>();
   readonly skeletonHeight = input('14rem');
   readonly skeletons = input(3);
+  /** Cuadrícula de tarjetas (por defecto) o lista de una columna (publicaciones). */
+  readonly layout = input<'grid' | 'list'>('grid');
 
   protected readonly card = contentChild.required(RowTemplate, { read: TemplateRef });
+  protected readonly layoutClass = computed(() =>
+    this.layout() === 'grid' ? 'grid gap-5 sm:grid-cols-2 xl:grid-cols-3' : 'space-y-5',
+  );
   protected readonly placeholders = computed(() =>
     Array.from({ length: this.skeletons() }, (_, index) => index),
   );

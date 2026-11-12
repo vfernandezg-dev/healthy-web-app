@@ -21,8 +21,8 @@ export type Notice =
   | { readonly summary: string; readonly detail?: string; readonly severity?: 'success' | 'info' };
 
 export interface MutationOptions<A extends unknown[], R> {
-  /** Pide confirmación antes (acciones destructivas). */
-  readonly confirm?: ConfirmOptions | ((...args: A) => ConfirmOptions);
+  /** Pide confirmación antes (acciones destructivas). Una función puede devolver null: no hace falta confirmar. */
+  readonly confirm?: ConfirmOptions | ((...args: A) => ConfirmOptions | null);
   /** Aviso al terminar bien. */
   readonly success?: Notice | ((result: R, ...args: A) => Notice);
   /** Tras terminar bien (actualizar la vista, navegar...). */

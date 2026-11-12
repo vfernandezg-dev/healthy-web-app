@@ -1,0 +1,104 @@
+<article class="card p-5 sm:p-6" [attr.aria-labelledby]="titleId()">
+  <header class="flex items-center gap-3">
+    <app-person-avatar [name]="post().author?.name" />
+    <div class="min-w-0">
+      <p class="truncate font-semibold">{{ authorName() }}</p>
+      <p class="text-sm text-muted">
+        @if (post().createdAt; as createdAt) {
+          <time [attr.datetime]="createdAt">{{ createdAt | date: dateFormat }}</time>
+        }
+        @if (edited()) {
+          · editada
+        }
+      </p>
+    </div>
+  </header>
+
+  <h3 [id]="titleId()" class="mt-4 text-lg font-bold text-balance">{{ post().title }}</h3>
+  <p class="mt-2 whitespace-pre-line">{{ post().body }}</p>
+  @if (post().imagePath; as imagePath) {
+    <div class="relative mt-4 aspect-video overflow-hidden rounded-2xl bg-brand-50">
+      <img
+        [ngSrc]="(imagePath | mediaUrl) ?? ''"
+        alt=""
+        fill
+        sizes="(min-width: 1024px) 42rem, 100vw"
+        class="object-cover"
+      />
+    </div>
+  }
+
+  <div
+    class="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-brand-100 pt-3"
+  >
+    <button
+      pButton
+      type="button"
+      size="small"
+      severity="secondary"
+      variant="text"
+      [attr.aria-expanded]="expanded()"
+      [attr.aria-controls]="expanded() ? commentsId() : null"
+      [attr.aria-describedby]="titleId()"
+      (click)="expanded.set(!expanded())"
+    >
+      <svg lucideMessageCircle></svg>
+      {{ expanded() ? 'Ocultar los comentarios' : 'Comentarios' }}
+    </button>
+    <div class="flex flex-wrap gap-1">
+      @if (mine()) {
+        <button
+          pButton
+          type="button"
+          size="small"
+          severity="secondary"
+          variant="text"
+          [attr.aria-describedby]="titleId()"
+          (click)="edit.emit()"
+        >
+          <svg lucidePencil></svg>
+          Editar
+        </button>
+      }
+      @if (mine() || viewer().owner) {
+        <button
+          pButton
+          type="button"
+          size="small"
+          severity="danger"
+          variant="text"
+          [attr.aria-describedby]="titleId()"
+          (click)="remove.emit()"
+        >
+          <svg lucideTrash></svg>
+          Eliminar
+        </button>
+      }
+      @if (!mine()) {
+        <button
+          pButton
+          type="button"
+          size="small"
+          severity="secondary"
+          variant="text"
+          [attr.aria-describedby]="titleId()"
+          (click)="report.emit({ kind: 'posts', id: post().id })"
+        >
+          <svg lucideFlag></svg>
+          Denunciar
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (expanded()) {
+    <app-comment-thread
+      class="mt-4"
+      [attr.id]="commentsId()"
+      [post]="post()"
+      [viewer]="viewer()"
+      [titleId]="titleId()"
+      (report)="report.emit($event)"
+    />
+  }
+</article>
