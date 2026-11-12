@@ -27,11 +27,14 @@ usa una base de datos nueva.
 
    ```bash
    DB_URL=jdbc:postgresql://127.0.0.1:5440/healthybites DB_USERNAME=postgres DB_PASSWORD=solo-local \
-   MAIL_PORT=1026 STORAGE_LOCATION=/tmp/hb-e2e-storage \
+   MAIL_HOST=127.0.0.1 MAIL_PORT=1026 STORAGE_LOCATION=/tmp/hb-e2e-storage \
    APP_FRONTEND_URL=http://localhost:4310 API_PUBLIC_URL=http://localhost:4310/api/v1 \
    CORS_APP_ORIGINS=http://localhost:4310 \
    java -jar target/healthy-bites-*.jar --spring.profiles.active=dev
    ```
+
+   `MAIL_HOST=127.0.0.1` y no `localhost`: si `localhost` se resuelve a `::1`, el proxy de puertos de Docker Desktop
+   acepta la conexión pero no responde, y el correo de invitación falla con «Exception reading response».
 
 3. El build del web-app y los recorridos (el servidor de `dist/` reenvía `/api` a la API):
 
