@@ -42,6 +42,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/progress/progress.routes').then((m) => m.PROGRESS_ROUTES),
       },
+      {
+        path: 'habits',
+        title: 'Tus hábitos',
+        loadComponent: () => import('./features/habits/habits-page').then((m) => m.HabitsPage),
+      },
     ],
   },
   {
