@@ -219,8 +219,8 @@ importers:
         specifier: ^1.72.0
         version: 1.72.0(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))
       '@primeuix/themes':
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: ^3.1.1
+        version: 3.1.1
       echarts:
         specifier: ^6.1.0
         version: 6.1.0
@@ -1548,8 +1548,8 @@ packages:
   '@primeuix/styles@3.1.0':
     resolution: {integrity: sha512-xl1e8gcUhsqu1YgGIUe3R/PSKJHk88NMVwnOTVZZfptx955Rw0GkwvhRaeBh9iPVz4p5b7t9OiGJDWOu2qpX0Q==}
 
-  '@primeuix/themes@3.1.0':
-    resolution: {integrity: sha512-/co1Vfo5JunRvjatdrTNYJ37j3fyXlvlN/NHgSNXToLP0ahhv4fxWAE5Q5A0C1PS/krrpXfXS2XIUBmKj/hzFg==}
+  '@primeuix/themes@3.1.1':
+    resolution: {integrity: sha512-NDempN4bFl3ZYh8ZX/f3lUuvOPwgmmTV/tD44SOfUYJ3yX+UD5umwCjU40Y4TWjUsdbEvQZa/FtUXIWqbr6aZA==}
 
   '@primeuix/utils@0.8.3':
     resolution: {integrity: sha512-UyFtnzxHfG7UqbOqUsjMXpe96h36eDre9Iw+zkZuJHsplHdoXNWgovDkoGZNxw4V5ZUHP1Y3pIu0kJw0OhmT0g==}
@@ -5393,7 +5393,7 @@ snapshots:
     dependencies:
       '@primeuix/styled': 1.2.0
 
-  '@primeuix/themes@3.1.0':
+  '@primeuix/themes@3.1.1':
     dependencies:
       '@primeuix/styled': 1.2.0
 
