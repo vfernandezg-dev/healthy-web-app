@@ -22,6 +22,7 @@ import { LoadError } from '../../../shared/ui/load-error';
 import { TierBadge } from '../../../shared/ui/tier-badge';
 import { MealPlansApi } from '../data/meal-plans-api';
 import { mealsByDay } from '../shared/meals-by-day';
+import { titleFrom } from '../../../core/routing/title-strategy';
 
 /** Un plan con sus comidas por día. Si es de pago y el cliente no tiene acceso, explica cómo conseguirlo. */
 @Component({
@@ -50,6 +51,11 @@ export class MealPlanDetail {
   readonly id = input.required<string>();
 
   protected readonly detail = this.api.detail(this.id);
+
+  /** La pestaña lleva el nombre de lo que se ve. */
+  private readonly tabTitle = titleFrom(() =>
+    this.detail.hasValue() ? this.detail.value().plan.title : null,
+  );
   private readonly enrollments = this.api.enrollments();
 
   protected readonly goals = GOAL_LABELS;

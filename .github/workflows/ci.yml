@@ -34,6 +34,9 @@ jobs:
       # Los tipos generados (schema.d.ts) tienen que coincidir con el contrato commiteado (openapi.yaml).
       - run: pnpm api:check
 
+      # El preset del tema solo trae los tokens de los componentes de PrimeNG que se usan: que no falte ninguno.
+      - run: pnpm theme:check
+
       - run: pnpm test
       - run: pnpm build
 

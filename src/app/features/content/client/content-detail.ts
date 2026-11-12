@@ -17,6 +17,7 @@ import { MediaUrlPipe } from '../../../shared/pipes/media-url.pipe';
 import { LoadError } from '../../../shared/ui/load-error';
 import { TierBadge } from '../../../shared/ui/tier-badge';
 import { ContentApi } from '../data/content-api';
+import { titleFrom } from '../../../core/routing/title-strategy';
 
 /** Un contenido: portada, texto y su fichero (vídeo o descarga) con enlace firmado. */
 @Component({
@@ -47,6 +48,11 @@ export class ContentDetail {
   readonly slug = input.required<string>();
 
   protected readonly detail = this.api.detail(this.slug);
+
+  /** La pestaña lleva el nombre de lo que se ve. */
+  private readonly tabTitle = titleFrom(() =>
+    this.detail.hasValue() ? this.detail.value().item.title : null,
+  );
   protected readonly types = CONTENT_TYPE_LABELS;
   protected readonly categories = CONTENT_CATEGORY_LABELS;
 

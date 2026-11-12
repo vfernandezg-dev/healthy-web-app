@@ -29,6 +29,7 @@ import { PostDialog } from './post-dialog';
 import { ReportDialog } from './report-dialog';
 import { MEMBERS_PLURAL, type Viewer, membershipLabel, viewerOf } from './shared/membership';
 import { VisibilityBadge } from './shared/visibility-badge';
+import { titleFrom } from '../../core/routing/title-strategy';
 
 type Relation = 'owner' | 'member' | 'pending' | 'none';
 
@@ -85,6 +86,11 @@ export class GroupPage {
   protected readonly postsIcon = LucideMessageSquare;
 
   protected readonly group = this.api.group(this.id);
+
+  /** La pestaña lleva el nombre de lo que se ve. */
+  private readonly tabTitle = titleFrom(() =>
+    this.group.hasValue() ? this.group.value().name : null,
+  );
   private readonly current = computed(() => (this.group.hasValue() ? this.group.value() : null));
 
   protected readonly viewer = computed<Viewer>(() => {

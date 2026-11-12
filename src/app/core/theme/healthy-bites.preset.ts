@@ -1,8 +1,8 @@
 import { definePreset } from '@primeuix/themes';
-import Aura from '@primeuix/themes/aura';
+import { AuraLean } from './aura-lean';
 
 /**
- * Preset de PrimeNG con la marca de Healthy Bites, sobre Aura. Los colores son los de
+ * Preset de PrimeNG con la marca de Healthy Bites, sobre Aura (solo los componentes que usa la app: aura-lean.ts). Los colores son los de
  * src/styles/tokens.css (los mismos que la landing).
  *
  * - primary: escala brand. El color de acción es brand-700 (blanco encima: 6:1, WCAG AA); el foco, brand-600.
@@ -11,7 +11,7 @@ import Aura from '@primeuix/themes/aura';
  *
  * Solo tema claro: el oscuro llegará con la clase .app-dark (darkModeSelector) y valores light-dark().
  */
-export const HealthyBitesPreset = definePreset(Aura, {
+export const HealthyBitesPreset = definePreset(AuraLean, {
   semantic: {
     primary: {
       50: '#effaf3',

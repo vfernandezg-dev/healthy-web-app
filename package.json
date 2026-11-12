@@ -23,7 +23,8 @@
     "api:sync": "node scripts/api-sync.mjs && pnpm api:gen",
     "api:gen": "node scripts/api-gen.mjs",
     "api:check": "node scripts/api-gen.mjs --check",
-    "verify": "pnpm lint && pnpm format:check && pnpm api:check && pnpm test && pnpm build"
+    "theme:check": "node scripts/check-theme-tokens.mjs",
+    "verify": "pnpm lint && pnpm format:check && pnpm api:check && pnpm theme:check && pnpm test && pnpm build"
   },
   "dependencies": {
     "@angular/cdk": "^22.2.6",
