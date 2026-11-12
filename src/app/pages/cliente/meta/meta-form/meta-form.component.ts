@@ -1,5 +1,5 @@
 
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -18,6 +18,7 @@ import { AuthService } from '../../../../core/services/auth.service';
     MatSnackBarModule
 ],
     templateUrl: './meta-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './meta-form.component.css'
 })
 export class MetaFormComponent {

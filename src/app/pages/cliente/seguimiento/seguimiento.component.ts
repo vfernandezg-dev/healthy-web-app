@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -23,6 +23,7 @@ import { RachaService } from '../../../core/services/racha.service';
     MatCardModule
 ],
     templateUrl: './seguimiento.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./seguimiento.component.css']
 })
 export class SeguimientoComponent implements OnInit {

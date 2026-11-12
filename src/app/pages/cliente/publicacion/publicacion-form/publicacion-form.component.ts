@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -34,6 +34,7 @@ import { GrupoService } from '../../../../core/services/grupo.service';
         MatSnackBarModule,
     ],
     templateUrl: './publicacion-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './publicacion-form.component.css'
 })
 export class PublicacionFormComponent implements OnInit {

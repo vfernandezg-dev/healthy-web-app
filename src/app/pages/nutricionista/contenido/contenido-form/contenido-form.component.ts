@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -39,6 +39,7 @@ import { MatRadioModule } from '@angular/material/radio';
         MatSnackBarModule,
     ],
     templateUrl: './contenido-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./contenido-form.component.css']
 })
 export class ContenidoFormComponent {

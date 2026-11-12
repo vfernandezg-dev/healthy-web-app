@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ContenidoResponse } from '../../../shared/models/contenido-response.model';
 import { PlanAlimenticioResponse } from '../../../shared/models/plan-alimenticio-response.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -25,6 +25,7 @@ import { AccesoPlanService } from '../../../core/services/acceso-plan.service';
     FormatPlanObjetivoPipe
 ],
     templateUrl: './contenido.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './contenido.component.css'
 })
 export class ContenidoComponent {

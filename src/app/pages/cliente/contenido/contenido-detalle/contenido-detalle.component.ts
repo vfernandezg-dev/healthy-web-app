@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
@@ -16,6 +16,7 @@ import { FormatPlanObjetivoPipe } from '../../../../core/pipes/format-plan-objet
     selector: 'app-contenido-detalle',
     imports: [MatCardModule, MatTableModule, ApiImgPipe, FormatPlanObjetivoPipe],
     templateUrl: './contenido-detalle.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./contenido-detalle.component.css']
 })
 export class ContenidoDetalleComponent {

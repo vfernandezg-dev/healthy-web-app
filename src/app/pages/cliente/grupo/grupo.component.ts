@@ -1,5 +1,5 @@
 
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,6 +21,7 @@ import { GrupoListComponent } from "./grupo-list/grupo-list.component";
     GrupoListComponent
 ],
     templateUrl: './grupo.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './grupo.component.css'
 })
 export class GrupoComponent {

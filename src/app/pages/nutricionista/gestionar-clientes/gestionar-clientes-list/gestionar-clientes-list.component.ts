@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { GestionarPerfilService } from '../../../../core/services/gestionar-perfil.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -21,6 +21,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     FormsModule
 ],
     templateUrl: './gestionar-clientes-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './gestionar-clientes-list.component.css'
 })
 export class GestionarClientesListComponent {

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -22,6 +22,7 @@ import { RecompensaService } from '../../../../core/services/recompensa.service'
     MatCardModule
 ],
     templateUrl: './racha-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./racha-form.component.css']
 })
 export class RachaFormComponent implements OnInit {

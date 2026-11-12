@@ -1,5 +1,5 @@
 
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -11,6 +11,7 @@ import { SuscripcionListComponent } from "../../../pages/cliente/suscripcion/sus
     selector: 'app-user-profile',
     imports: [SuscripcionListComponent],
     templateUrl: './user-profile.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './user-profile.component.css'
 })
 export class UserProfileComponent {

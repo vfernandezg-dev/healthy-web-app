@@ -1,5 +1,5 @@
 
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -23,6 +23,7 @@ import { RecompensaService } from '../../../../core/services/recompensa.service'
     FormatPlanObjetivoPipe
 ],
     templateUrl: './recompensas-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './recompensas-list.component.css'
 })
 export class RecompensasListComponent {

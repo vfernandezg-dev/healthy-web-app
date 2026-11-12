@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -6,6 +6,7 @@ import { AuthService } from '../../../core/services/auth.service';
     selector: 'app-navbar',
     imports: [RouterLink],
     templateUrl: './navbar.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {

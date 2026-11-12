@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserProfile } from '../../models/user-profile.model';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -16,6 +16,7 @@ import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
     imports: [MatRadioModule, MatButtonModule, MatInputModule, MatCardModule, MatSnackBarModule,
         FormsModule, ReactiveFormsModule],
     templateUrl: './update-profile.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './update-profile.component.css'
 })
 export class UpdateProfileComponent {

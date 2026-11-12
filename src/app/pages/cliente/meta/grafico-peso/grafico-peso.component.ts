@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ApexChartComponent } from '../../../../shared/components/apex-chart/apex-chart.component';
@@ -21,6 +21,7 @@ export type ChartOptions = {
         ApexChartComponent
     ],
     templateUrl: './grafico-peso.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './grafico-peso.component.css'
 })
 

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { PlanAlimenticioResponse } from '../../../../shared/models/plan-alimenticio-response.model';
 import { PlanAlimenticioService } from '../../../../core/services/plan-alimenticio.service';
 import { Router } from '@angular/router';
@@ -26,6 +26,7 @@ import { ComidaService } from '../../../../core/services/comida.service';
     FormatPlanObjetivoPipe
 ],
     templateUrl: './plan-alimenticio-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './plan-alimenticio-list.component.css'
 })
 export class PlanAlimenticioListComponent {

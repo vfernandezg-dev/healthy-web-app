@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Router, ActivatedRoute } from '@angular/router';
@@ -12,6 +12,7 @@ import { SuscripcionResponse } from '../../../../shared/models/suscripcion-respo
     selector: 'app-suscripcion-list',
     imports: [ReactiveFormsModule],
     templateUrl: './suscripcion-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./suscripcion-list.component.css']
 })
 export class SuscripcionListComponent implements OnInit {

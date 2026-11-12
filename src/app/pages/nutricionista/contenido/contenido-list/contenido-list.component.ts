@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
 import { ContenidoService } from '../../../../core/services/contenido.service';
@@ -28,6 +28,7 @@ import { AuthService } from '../../../../core/services/auth.service';
     MatCardModule
 ],
     templateUrl: './contenido-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './contenido-list.component.css'
 })
 export class ContenidoListComponent {

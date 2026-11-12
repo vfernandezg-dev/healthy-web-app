@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -28,6 +28,7 @@ import { GrupoService } from '../../../../core/services/grupo.service';
         MatSnackBarModule,
     ],
     templateUrl: './grupo-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './grupo-form.component.css'
 })
 export class GrupoFormComponent {

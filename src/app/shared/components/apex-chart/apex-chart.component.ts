@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, afterRenderEffect, inject, input, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, afterRenderEffect, inject, input, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import type ApexCharts from 'apexcharts';
 
 /**
@@ -11,6 +11,7 @@ import type ApexCharts from 'apexcharts';
  */
 @Component({
   selector: 'apx-chart',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: '<div #host></div>',
 })
 export class ApexChartComponent {

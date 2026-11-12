@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -25,6 +25,7 @@ import { PlanAlimenticioResponse } from '../../../../shared/models/plan-alimenti
         MatSelectModule
     ],
     templateUrl: './plan-alimenticio-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./plan-alimenticio-form.component.css']
 })
 export class PlanAlimenticioFormComponent {

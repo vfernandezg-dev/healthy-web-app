@@ -1,5 +1,5 @@
 
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
@@ -21,6 +21,7 @@ import { FormatTimePipe } from '../../../../core/pipes/format-time.pipe';
     MatSelectModule
 ],
     templateUrl: './habitos-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './habitos-form.component.css'
 })
 export class HabitosFormComponent {

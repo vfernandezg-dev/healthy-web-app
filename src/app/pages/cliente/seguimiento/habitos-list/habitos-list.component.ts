@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -23,6 +23,7 @@ import { MatTableModule } from '@angular/material/table';
         MatTableModule
     ],
     templateUrl: './habitos-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './habitos-list.component.css'
 })
 export class HabitosListComponent {

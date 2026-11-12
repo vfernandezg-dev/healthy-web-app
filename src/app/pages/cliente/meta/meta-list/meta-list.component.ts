@@ -1,5 +1,5 @@
 
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -34,6 +34,7 @@ export type ChartOptions = {
     ApexChartComponent
 ],
     templateUrl: './meta-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./meta-list.component.css']
 })
 export class MetaListComponent implements OnInit {

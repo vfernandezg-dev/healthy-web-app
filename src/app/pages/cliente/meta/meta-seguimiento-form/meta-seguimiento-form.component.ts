@@ -1,5 +1,5 @@
 
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
@@ -20,6 +20,7 @@ import { SeguimientoService } from '../../../../core/services/seguimiento.servic
     MatSelectModule
 ],
     templateUrl: './meta-seguimiento-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './meta-seguimiento-form.component.css'
 })
 export class MetaSeguimientoFormComponent implements OnInit {

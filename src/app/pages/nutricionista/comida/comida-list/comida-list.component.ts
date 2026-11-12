@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { ComidaResponse } from '../../../../shared/models/comida-response.model';
@@ -27,6 +27,7 @@ import { FormsModule } from '@angular/forms';
     FormatCategoriaComida
 ],
     templateUrl: './comida-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./comida-list.component.css']
 })
 export class ComidaListComponent {
