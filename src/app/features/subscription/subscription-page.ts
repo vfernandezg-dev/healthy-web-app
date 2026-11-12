@@ -5,7 +5,7 @@ import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
 import type { PlanResponse } from '@core/api/schema';
-import { ExternalNavigation, isPayPalUrl } from '@core/routing/external-navigation';
+import { ExternalNavigation } from '@core/routing/external-navigation';
 import { Confirmer } from '@core/ui/confirmer';
 import { Toaster } from '@core/ui/toaster';
 import {
@@ -64,15 +64,13 @@ export class SubscriptionPage {
     this.checkingOut.set(tier);
     try {
       const { approvalUrl } = await this.billing.checkout(tier);
-      if (!isPayPalUrl(approvalUrl)) {
+      if (!this.navigation.toPayPal(approvalUrl)) {
         this.toaster.error(
           'No se ha podido iniciar el pago',
           'La dirección de pago no es de PayPal.',
         );
         this.checkingOut.set(null);
-        return;
       }
-      this.navigation.assign(approvalUrl);
     } catch {
       // El interceptor de errores ya ha avisado.
       this.checkingOut.set(null);

@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { LucideArrowLeft, LucideDownload, LucideLock, LucidePlay } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
-import { APP_CONFIG } from '@core/api/api-config';
 import { toProblem } from '@core/api/problem';
 import { ExternalNavigation } from '@core/routing/external-navigation';
 import {
@@ -40,7 +39,6 @@ import { titleFrom } from '@core/routing/title-strategy';
 export class ContentDetail {
   private readonly api = inject(ContentApi);
   private readonly navigation = inject(ExternalNavigation);
-  private readonly apiUrl = inject(APP_CONFIG).apiUrl;
 
   /** Slug del contenido (parámetro de la ruta). */
   readonly slug = input.required<string>();
@@ -78,7 +76,12 @@ export class ContentDetail {
     this.fileFailure.set(null);
     try {
       const link = await this.api.fileLink(id);
-      this.videoUrl.set(`${this.apiUrl}${link.path}`);
+      const url = this.navigation.apiUrlOf(link.path);
+      if (url) {
+        this.videoUrl.set(url);
+      } else {
+        this.fileFailure.set('El enlace del vídeo no es válido.');
+      }
     } catch (error) {
       this.fileFailure.set(toProblem(error).detail);
     } finally {
@@ -88,12 +91,14 @@ export class ContentDetail {
 
   /** Abre el fichero en una pestaña nueva (las guías en PDF se descargan). */
   protected async openFile(id: string): Promise<void> {
-    const tab = this.navigation.openTab();
+    const tab = this.navigation.openApiTab();
     this.opening.set(true);
     this.fileFailure.set(null);
     try {
       const link = await this.api.fileLink(id);
-      tab.go(`${this.apiUrl}${link.path}`);
+      if (!tab.go(link.path)) {
+        this.fileFailure.set('El enlace del fichero no es válido.');
+      }
     } catch (error) {
       tab.cancel();
       this.fileFailure.set(toProblem(error).detail);

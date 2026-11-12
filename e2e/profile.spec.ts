@@ -159,14 +159,16 @@ test.describe('perfil', () => {
         '/me': (route) => {
           calls += 1;
           return calls === 1
-            ? route.fulfill(problem(503, 'unavailable', 'El servicio no está disponible'))
+            ? route.fulfill(problem(503, 'unavailable', 'Detalle interno del servidor'))
             : route.fulfill({ json: CLIENT_ME });
         },
       },
     });
 
     await page.goto('/client/profile');
-    await expect(page.getByText('El servicio no está disponible')).toBeVisible();
+    // Un 5xx enseña un texto genérico, nunca el del servidor.
+    await expect(page.getByText('El servidor no está disponible ahora mismo')).toBeVisible();
+    await expect(page.getByText('Detalle interno del servidor')).toHaveCount(0);
     await page.getByRole('button', { name: 'Reintentar' }).click();
     await expect(page.getByLabel('Nombre')).toHaveValue('María');
   });

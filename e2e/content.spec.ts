@@ -123,9 +123,10 @@ test.describe('contenido para clientes', () => {
     await browser.goto('/client/content/contenido-video');
     await browser.getByRole('button', { name: 'Ver el vídeo' }).click();
 
+    // URL absoluta y comprobada: solo rutas de la propia API.
     await expect(browser.locator('video')).toHaveAttribute(
       'src',
-      '/api/v1/media/clip?expires=1&signature=s',
+      /^http:\/\/localhost:\d+\/api\/v1\/media\/clip\?expires=1&signature=s$/,
     );
   });
 
