@@ -97,6 +97,13 @@ export const GOAL_STATUS_SEVERITY: Readonly<Record<GoalStatus, 'info' | 'success
     ABANDONED: 'secondary',
   };
 
+export type GroupVisibility = Schemas['GroupResponse']['visibility'];
+
+export const GROUP_VISIBILITY_LABELS: Readonly<Record<GroupVisibility, string>> = {
+  PUBLIC: 'Público',
+  PRIVATE: 'Privado',
+};
+
 /** Opciones para un p-select o p-selectbutton a partir de un mapa de etiquetas. */
 export function optionsOf<T extends string>(
   labels: Readonly<Record<T, string>>,

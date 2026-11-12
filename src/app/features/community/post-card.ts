@@ -1,0 +1,325 @@
+import { DatePipe, NgOptimizedImage } from '@angular/common';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { FormField, form, maxLength, required, submit } from '@angular/forms/signals';
+import { LucideFlag, LucideMessageCircle, LucidePencil, LucideTrash2 } from '@lucide/angular';
+import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
+import { Skeleton } from 'primeng/skeleton';
+import { Textarea } from 'primeng/textarea';
+import type { CommentResponse, PostResponse } from '../../core/api/schema';
+import { Confirmer } from '../../core/ui/confirmer';
+import { Toaster } from '../../core/ui/toaster';
+import { LabeledField, fieldDescription } from '../../shared/forms/labeled-field';
+import { focusFirstInvalid } from '../../shared/forms/server-errors';
+import { MediaUrlPipe } from '../../shared/pipes/media-url.pipe';
+import { PersonAvatar } from '../../shared/ui/person-avatar';
+import { CommunityApi } from './data/community-api';
+import type { Viewer } from './shared/membership';
+
+/** Publicación o comentario que se quiere denunciar. */
+export interface ReportTarget {
+  readonly kind: 'posts' | 'comments';
+  readonly id: string;
+}
+
+type Author = PostResponse['author'];
+
+/**
+ * Una publicación del grupo con sus acciones (editar, borrar, denunciar) y sus comentarios, que se cargan al
+ * desplegarlos.
+ */
+@Component({
+  selector: 'app-post-card',
+  imports: [
+    DatePipe,
+    NgOptimizedImage,
+    MediaUrlPipe,
+    FormField,
+    Textarea,
+    ButtonDirective,
+    ButtonIcon,
+    ButtonLabel,
+    Skeleton,
+    LabeledField,
+    PersonAvatar,
+    LucideMessageCircle,
+    LucidePencil,
+    LucideTrash2,
+    LucideFlag,
+  ],
+  host: { class: 'block' },
+  template: `
+    <article class="card p-5 sm:p-6" [attr.aria-labelledby]="titleId()">
+      <header class="flex items-center gap-3">
+        <app-person-avatar [name]="post().author?.name" />
+        <div class="min-w-0">
+          <p class="truncate font-semibold">{{ authorName(post().author) }}</p>
+          <p class="text-sm text-muted">
+            @if (post().createdAt; as createdAt) {
+              <time [attr.datetime]="createdAt">{{ createdAt | date: dateFormat }}</time>
+            }
+            @if (edited()) {
+              · editada
+            }
+          </p>
+        </div>
+      </header>
+
+      <h3 [id]="titleId()" class="mt-4 text-lg font-bold text-balance">{{ post().title }}</h3>
+      <p class="mt-2 whitespace-pre-line">{{ post().body }}</p>
+      @if (post().imagePath; as imagePath) {
+        <div class="relative mt-4 aspect-video overflow-hidden rounded-2xl bg-brand-50">
+          <img
+            [ngSrc]="(imagePath | mediaUrl) ?? ''"
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 42rem, 100vw"
+            class="object-cover"
+          />
+        </div>
+      }
+
+      <div
+        class="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-brand-100 pt-3"
+      >
+        <button
+          pButton
+          type="button"
+          size="small"
+          severity="secondary"
+          variant="text"
+          [attr.aria-expanded]="expanded()"
+          [attr.aria-controls]="expanded() ? commentsId() : null"
+          [attr.aria-describedby]="titleId()"
+          (click)="expanded.set(!expanded())"
+        >
+          <svg lucideMessageCircle pButtonIcon></svg>
+          <span pButtonLabel>{{ expanded() ? 'Ocultar los comentarios' : 'Comentarios' }}</span>
+        </button>
+        <div class="flex flex-wrap gap-1">
+          @if (mine()) {
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              variant="text"
+              [attr.aria-describedby]="titleId()"
+              (click)="edit.emit()"
+            >
+              <svg lucidePencil pButtonIcon></svg>
+              <span pButtonLabel>Editar</span>
+            </button>
+          }
+          @if (mine() || viewer().owner) {
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="danger"
+              variant="text"
+              [attr.aria-describedby]="titleId()"
+              (click)="remove.emit()"
+            >
+              <svg lucideTrash2 pButtonIcon></svg>
+              <span pButtonLabel>Eliminar</span>
+            </button>
+          }
+          @if (!mine()) {
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              variant="text"
+              [attr.aria-describedby]="titleId()"
+              (click)="report.emit({ kind: 'posts', id: post().id })"
+            >
+              <svg lucideFlag pButtonIcon></svg>
+              <span pButtonLabel>Denunciar</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (expanded()) {
+        <div [id]="commentsId()" class="mt-4 space-y-4">
+          @if (comments.error()) {
+            <p class="text-sm text-red-700" role="alert">
+              No se han podido cargar los comentarios.
+              <button type="button" class="font-semibold underline" (click)="comments.reload()">
+                Reintentar
+              </button>
+            </p>
+          } @else if (comments.hasValue()) {
+            @if (comments.value().length === 0) {
+              <p class="text-sm text-muted">Aún no hay comentarios.</p>
+            } @else {
+              <ul class="space-y-3" role="list">
+                @for (comment of comments.value(); track comment.id) {
+                  <li class="rounded-2xl bg-brand-50/70 px-4 py-3">
+                    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                      <p class="text-sm">
+                        <span class="font-semibold">{{ authorName(comment.author) }}</span>
+                        @if (comment.createdAt; as createdAt) {
+                          <span class="text-muted">
+                            ·
+                            <time [attr.datetime]="createdAt">{{
+                              createdAt | date: dateFormat
+                            }}</time>
+                          </span>
+                        }
+                      </p>
+                      <span class="flex gap-1">
+                        @if (isMine(comment.author) || viewer().owner) {
+                          <button
+                            pButton
+                            type="button"
+                            size="small"
+                            severity="danger"
+                            variant="text"
+                            [attr.aria-label]="
+                              'Eliminar el comentario de ' + authorName(comment.author)
+                            "
+                            (click)="deleteComment(comment)"
+                          >
+                            <span pButtonLabel>Eliminar</span>
+                          </button>
+                        }
+                        @if (!isMine(comment.author)) {
+                          <button
+                            pButton
+                            type="button"
+                            size="small"
+                            severity="secondary"
+                            variant="text"
+                            [attr.aria-label]="
+                              'Denunciar el comentario de ' + authorName(comment.author)
+                            "
+                            (click)="report.emit({ kind: 'comments', id: comment.id })"
+                          >
+                            <span pButtonLabel>Denunciar</span>
+                          </button>
+                        }
+                      </span>
+                    </div>
+                    <p class="mt-1 whitespace-pre-line">{{ comment.body }}</p>
+                  </li>
+                }
+              </ul>
+            }
+          } @else {
+            <p-skeleton height="4rem" borderRadius="1rem" />
+          }
+
+          @if (viewer().member) {
+            <form class="space-y-3" novalidate (submit)="addComment($event)">
+              <app-field
+                label="Tu comentario"
+                [inputId]="commentInputId()"
+                [field]="commentForm.body"
+              >
+                <textarea
+                  pTextarea
+                  rows="2"
+                  class="w-full"
+                  [id]="commentInputId()"
+                  [formField]="commentForm.body"
+                  [attr.aria-describedby]="describe(commentInputId(), commentForm.body)"
+                ></textarea>
+              </app-field>
+              <div class="flex justify-end">
+                <button pButton type="submit" size="small" [loading]="commentForm().submitting()">
+                  <span pButtonLabel>Comentar</span>
+                </button>
+              </div>
+            </form>
+          } @else {
+            <p class="text-sm text-muted">Únete al grupo para comentar.</p>
+          }
+        </div>
+      }
+    </article>
+  `,
+})
+export class PostCard {
+  private readonly api = inject(CommunityApi);
+  private readonly confirmer = inject(Confirmer);
+  private readonly toaster = inject(Toaster);
+
+  readonly post = input.required<PostResponse>();
+  readonly viewer = input.required<Viewer>();
+
+  readonly edit = output();
+  readonly remove = output();
+  readonly report = output<ReportTarget>();
+
+  protected readonly dateFormat = "d 'de' MMMM, HH:mm";
+  protected readonly describe = fieldDescription;
+  protected readonly titleId = computed(() => `post-${this.post().id}-title`);
+  protected readonly commentsId = computed(() => `post-${this.post().id}-comments`);
+  protected readonly commentInputId = computed(() => `post-${this.post().id}-comment`);
+
+  protected readonly mine = computed(() => this.isMine(this.post().author));
+  /** La API pone la misma fecha de creación y de modificación al crear. */
+  protected readonly edited = computed(() => {
+    const { createdAt, updatedAt } = this.post();
+    return !!createdAt && !!updatedAt && createdAt !== updatedAt;
+  });
+
+  protected readonly expanded = signal(false);
+  protected readonly comments = this.api.comments(
+    computed(() => (this.expanded() ? this.post().id : undefined)),
+  );
+
+  protected readonly commentModel = signal({ body: '' });
+  protected readonly commentForm = form(this.commentModel, (path) => {
+    required(path.body, { message: 'Escribe tu comentario' });
+    maxLength(path.body, 1000, { message: 'Máximo 1000 caracteres' });
+  });
+
+  protected isMine(author: Author): boolean {
+    return !!author && author.id === this.viewer().userId;
+  }
+
+  protected authorName(author: Author): string {
+    return author?.name ?? 'Cuenta eliminada';
+  }
+
+  protected async addComment(event: Event): Promise<void> {
+    event.preventDefault();
+    await submit(this.commentForm, {
+      action: async () => {
+        try {
+          await this.api.comment(this.post().id, this.commentModel().body.trim());
+          this.commentForm().reset({ body: '' });
+          this.comments.reload();
+        } catch {
+          // El interceptor de errores ya ha avisado.
+        }
+        return undefined;
+      },
+      onInvalid: (tree) => focusFirstInvalid(tree),
+    });
+  }
+
+  protected async deleteComment(comment: CommentResponse): Promise<void> {
+    const confirmed = await this.confirmer.ask({
+      header: 'Eliminar el comentario',
+      message: this.isMine(comment.author)
+        ? 'Se borrará tu comentario.'
+        : 'Como creador del grupo, puedes retirar comentarios de otras personas.',
+      acceptLabel: 'Eliminar',
+      danger: true,
+    });
+    if (!confirmed) {
+      return;
+    }
+    try {
+      await this.api.deleteComment(comment.id);
+      this.comments.reload();
+      this.toaster.success('Comentario eliminado');
+    } catch {
+      // El interceptor de errores ya ha avisado.
+    }
+  }
+}

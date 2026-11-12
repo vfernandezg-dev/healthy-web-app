@@ -8,6 +8,8 @@ const roleHome = () => import('./features/home/role-home').then((m) => m.RoleHom
 const profile = () => import('./features/profile/profile-page').then((m) => m.ProfilePage);
 const mealPlans = () => import('./features/meal-plans/meal-plans.routes');
 const content = () => import('./features/content/content.routes');
+const community = () =>
+  import('./features/community/community.routes').then((m) => m.COMMUNITY_ROUTES);
 
 /**
  * Rutas por rol (/client, /nutritionist, /admin) con canMatch: el código de las áreas de otros roles ni se
@@ -53,6 +55,7 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/rewards/client/rewards-page').then((m) => m.RewardsPage),
       },
+      { path: 'community', loadChildren: community },
     ],
   },
   {
@@ -78,6 +81,7 @@ export const routes: Routes = [
             (m) => m.NutritionistRewards,
           ),
       },
+      { path: 'community', loadChildren: community },
     ],
   },
   {
