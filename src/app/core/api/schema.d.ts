@@ -1010,6 +1010,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/media/uploads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Empieza una subida directa al almacenamiento
+         * @description Para ficheros que no caben en una petición a la API (más de 4,5 MB en el hosting): devuelve una URL prefirmada para subir el fichero con PUT y el Content-Type indicado, y el billete para confirmarlo con POST /media/uploads/complete. Mismas reglas que POST /media. Sin almacenamiento de objetos responde 501 direct-upload-unavailable: sube el fichero a POST /media.
+         */
+        post: operations["startUpload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/media/uploads/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirma una subida directa
+         * @description Comprueba el fichero subido (tipo por su contenido y tamaño) y lo registra como POST /media. Si no es el anunciado, se borra.
+         */
+        post: operations["completeUpload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/media/{id}": {
         parameters: {
             query?: never;
@@ -1486,6 +1526,9 @@ export interface components {
             /** Format: uuid */
             id: string;
         };
+        CompleteUploadRequest: {
+            ticket: string;
+        };
         ContactMessage: {
             apellido: string;
             /** Format: email */
@@ -1550,6 +1593,21 @@ export interface components {
             /** Format: uuid */
             id: string;
             name: string;
+        };
+        DirectUploadRequest: {
+            contentType: string;
+            /** @enum {string} */
+            purpose: "POST_IMAGE" | "CONTENT_COVER" | "CONTENT_FILE";
+            /** Format: int64 */
+            sizeBytes: number;
+        };
+        DirectUploadResponse: {
+            contentType: string;
+            /** Format: date-time */
+            expiresAt: string;
+            ticket: string;
+            /** Format: uri */
+            uploadUrl: string;
         };
         EditableContentResponse: {
             body?: string | null;
@@ -2099,12 +2157,15 @@ export type ClientData = components['schemas']['ClientData'];
 export type ClientProfileResponse = components['schemas']['ClientProfileResponse'];
 export type CommentRequest = components['schemas']['CommentRequest'];
 export type CommentResponse = components['schemas']['CommentResponse'];
+export type CompleteUploadRequest = components['schemas']['CompleteUploadRequest'];
 export type ContactMessage = components['schemas']['ContactMessage'];
 export type ContentDetailResponse = components['schemas']['ContentDetailResponse'];
 export type ContentRequest = components['schemas']['ContentRequest'];
 export type ContentSummaryResponse = components['schemas']['ContentSummaryResponse'];
 export type CurrentSubscriptionResponse = components['schemas']['CurrentSubscriptionResponse'];
 export type CustomerResponse = components['schemas']['CustomerResponse'];
+export type DirectUploadRequest = components['schemas']['DirectUploadRequest'];
+export type DirectUploadResponse = components['schemas']['DirectUploadResponse'];
 export type EditableContentResponse = components['schemas']['EditableContentResponse'];
 export type EnrollRequest = components['schemas']['EnrollRequest'];
 export type EnrollmentResponse = components['schemas']['EnrollmentResponse'];
@@ -3866,6 +3927,54 @@ export interface operations {
                     /** Format: binary */
                     file: string;
                 };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["UploadResponse"];
+                };
+            };
+        };
+    };
+    startUpload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DirectUploadRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DirectUploadResponse"];
+                };
+            };
+        };
+    };
+    completeUpload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompleteUploadRequest"];
             };
         };
         responses: {

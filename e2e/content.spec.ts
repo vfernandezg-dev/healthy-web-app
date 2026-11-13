@@ -224,4 +224,72 @@ test.describe('contenido del nutricionista', () => {
       browser.getByText('Publicado en el catálogo como «contenido-nueva».'),
     ).toBeVisible();
   });
+
+  test('con almacenamiento de objetos, la portada se sube directamente a R2 y se confirma', async ({
+    page: browser,
+  }) => {
+    const r2 = 'https://cuenta.r2.cloudflarestorage.com/healthy-bites-media/pending-x.png';
+    let started: Record<string, unknown> | undefined;
+    let confirmed: Record<string, unknown> | undefined;
+    let put:
+      { contentType: string | null; authorization: string | null; bytes: number } | undefined;
+    await mockApi(browser, {
+      session: 'NUTRITIONIST',
+      routes: {
+        '/media/uploads': (route) => {
+          started = requestBody<Record<string, unknown>>(route);
+          return route.fulfill({
+            status: 201,
+            json: {
+              uploadUrl: `${r2}?X-Amz-Signature=firma`,
+              contentType: 'image/png',
+              ticket: 'billete-firmado',
+              expiresAt: '2026-11-13T20:00:00Z',
+            },
+          });
+        },
+        '/media/uploads/complete': (route) => {
+          confirmed = requestBody<Record<string, unknown>>(route);
+          return route.fulfill({
+            status: 201,
+            json: {
+              id: 'cover1',
+              contentType: 'image/png',
+              sizeBytes: 2048,
+              path: '/media/cover1',
+            },
+          });
+        },
+        '/media/cover1': (route) => route.fulfill({ contentType: 'image/png', body: PNG }),
+      },
+    });
+    await browser.route(`${r2}?*`, async (route) => {
+      const request = route.request();
+      put = {
+        contentType: await request.headerValue('content-type'),
+        authorization: await request.headerValue('authorization'),
+        bytes: request.postDataBuffer()?.length ?? 0,
+      };
+      await route.fulfill({
+        status: 200,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+      });
+    });
+
+    await browser.goto('/nutritionist/content/new');
+    await browser.locator('#content-cover').setInputFiles({
+      name: 'portada.png',
+      mimeType: 'image/png',
+      buffer: PNG,
+    });
+
+    await expect(browser.getByText('Fichero subido (2 KB)')).toBeVisible();
+    expect(started).toEqual({
+      purpose: 'CONTENT_COVER',
+      contentType: 'image/png',
+      sizeBytes: PNG.length,
+    });
+    expect(put).toEqual({ contentType: 'image/png', authorization: null, bytes: PNG.length });
+    expect(confirmed).toEqual({ ticket: 'billete-firmado' });
+  });
 });
