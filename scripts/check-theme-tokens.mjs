@@ -6,6 +6,10 @@
 //    texto y 3:1 para elementos gráficos (bordes de foco, indicadores, líneas de gráficos). Los e2e lo comprueban con
 //    axe página a página; esto falla antes y documenta qué combinaciones están permitidas.
 // 3. Cada variable CSS que referencia el preset de la marca existe en tokens.css.
+// 4. Las plantillas y los estilos solo usan los colores de tokens.css. Con `--color-*: initial`, una clase de la
+//    paleta por defecto de Tailwind (bg-red-600) o un nombre retirado (mint, surface, shadow-card) no genera CSS y
+//    fallaría en silencio. Los hexadecimales solo se admiten en el tema y en los gráficos (ECharts necesita colores
+//    reales y los lee de los tokens).
 //
 // `node scripts/check-theme-tokens.mjs --verbose` imprime la tabla de contrastes.
 import { readFileSync, readdirSync } from 'node:fs';
@@ -234,6 +238,75 @@ for (const name of [...referenced].sort()) {
   }
 }
 
+// ---------------------------------------------------------------------------------------------- 4. colores en bruto
+
+const DEFAULT_PALETTE = [
+  'slate',
+  'gray',
+  'zinc',
+  'neutral',
+  'red',
+  'orange',
+  'amber',
+  'yellow',
+  'lime',
+  'green',
+  'emerald',
+  'teal',
+  'cyan',
+  'sky',
+  'blue',
+  'indigo',
+  'violet',
+  'purple',
+  'fuchsia',
+  'pink',
+  'rose',
+  'white',
+  'black',
+].join('|');
+const COLOR_UTILITIES =
+  'bg|text|border(?:-[trblxy])?|ring|outline|fill|stroke|divide|placeholder|from|via|to|decoration|caret|shadow';
+const RAW_COLOR_CLASS = new RegExp(
+  `\\b(?:${COLOR_UTILITIES})-(?:(?:${DEFAULT_PALETTE})(?:-\\d{2,3})?|mint|surface)\\b|\\bshadow-card\\b`,
+  'g',
+);
+// Un color hexadecimal (#abc, #aabbcc, #aabbccdd), no un ancla (href="#main").
+const HEX_COLOR = /(?<![\w&/="'-])#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3})\b/gi;
+const HEX_ALLOWED = ['src/app/core/theme/', 'src/app/shared/charts/'];
+
+/** Plantillas, componentes y hojas de estilo (sin las pruebas). */
+function styled(dir) {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      return styled(path);
+    }
+    return /\.(ts|html|css)$/.test(entry.name) && !entry.name.endsWith('.spec.ts') ? [path] : [];
+  });
+}
+
+const scannedFiles = [
+  ...styled('src/app'),
+  'src/index.html',
+  'src/styles.css',
+  'src/styles/motion.css',
+];
+for (const file of scannedFiles) {
+  const normalized = file.replaceAll('\\', '/');
+  const text = readFileSync(file, 'utf8');
+  for (const match of text.matchAll(RAW_COLOR_CLASS)) {
+    problems.push(
+      `${normalized}: «${match[0]}» no es un color de tokens.css (usa un rol o una escala propia).`,
+    );
+  }
+  if (!HEX_ALLOWED.some((allowed) => normalized.startsWith(allowed))) {
+    for (const match of text.matchAll(HEX_COLOR)) {
+      problems.push(`${normalized}: color hexadecimal ${match[0]} fuera de tokens.css.`);
+    }
+  }
+}
+
 if (problems.length > 0) {
   console.error(rows.join('\n'));
   console.error(`\n${problems.join('\n')}`);
@@ -243,5 +316,5 @@ if (process.argv.includes('--verbose')) {
   console.warn(rows.join('\n'));
 }
 console.warn(
-  `Tokens del tema completos para ${used.size} módulos de PrimeNG; ${PAIRS.length} pares de colores con contraste suficiente; ${referenced.size} variables del preset definidas.`,
+  `Tokens del tema completos para ${used.size} módulos de PrimeNG; ${PAIRS.length} pares de colores con contraste suficiente; ${referenced.size} variables del preset definidas; ${scannedFiles.length} archivos sin colores en bruto.`,
 );

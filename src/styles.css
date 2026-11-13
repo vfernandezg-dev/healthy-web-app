@@ -6,7 +6,6 @@
 @layer theme, base, primeng, components, utilities;
 
 @import 'tailwindcss';
-@import 'tailwindcss-primeui';
 @import '@fontsource-variable/plus-jakarta-sans';
 @import './styles/tokens.css';
 @import './styles/motion.css';

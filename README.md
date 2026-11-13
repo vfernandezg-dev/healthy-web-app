@@ -92,7 +92,7 @@ flowchart LR
 | Área            | Tecnología                                                                                             |
 | --------------- | ------------------------------------------------------------------------------------------------------ |
 | Framework       | Angular 22 (zoneless, standalone, signals, Signal Forms), TypeScript 6                                 |
-| Interfaz        | PrimeNG 22 (modo styled, preset propio sobre Aura), Tailwind CSS 4 + tailwindcss-primeui               |
+| Interfaz        | PrimeNG 22 (modo styled, preset propio sobre Aura), Tailwind CSS 4 con tokens propios                  |
 | Iconos y fuente | Lucide (`@lucide/angular`), Plus Jakarta Sans (la misma tipografía que la landing)                     |
 | Gráficos        | Apache ECharts 6 con ngx-echarts (solo los módulos usados, con SVG)                                    |
 | Configuración   | Variables `NG_APP_*` con `@ngx-env/builder`                                                            |
