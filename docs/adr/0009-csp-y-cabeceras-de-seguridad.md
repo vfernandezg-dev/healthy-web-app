@@ -28,7 +28,8 @@ El hosting de la web aún no está decidido; Vercel es lo previsto.
     `angular.json`. En una SPA el CSS crítico casi no aporta: nada se pinta hasta que carga el bundle.
   - `style-src 'self' 'unsafe-inline'`: PrimeNG y Angular inyectan `<style>` en tiempo de ejecución, y un nonce
     necesitaría un servidor que lo genere en cada petición.
-  - `connect-src 'self' https://api-healthybites.vfernandezg.dev`.
+  - `connect-src 'self' https://api-healthybites.vfernandezg.dev https://*.r2.cloudflarestorage.com` (R2: subidas
+    directas con URL prefirmada, añadido el 2026-11-13).
   - `img-src` y `media-src` admiten `https:` por las URLs prefirmadas del almacenamiento de ficheros.
   - `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'self'` y `form-action 'self'`.
 - **Otras cabeceras:** HSTS, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`,
