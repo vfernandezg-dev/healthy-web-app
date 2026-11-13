@@ -92,9 +92,19 @@
         </li>
       }
     </ul>
-    <p class="mt-4 text-sm text-muted">
-      El pago se hace en la web de PayPal. Al volver, activamos tu plan al momento.
-    </p>
+    <!-- La API usa el entorno de pruebas de PayPal (proyecto académico: ver /privacidad). -->
+    <div
+      class="mt-4 flex flex-col items-start gap-2 rounded-card border border-line bg-sunken px-4 py-3 text-sm sm:flex-row sm:gap-3"
+      role="note"
+    >
+      <app-badge tone="warning">Modo de pruebas</app-badge>
+      <p class="text-muted">
+        Healthy Bites es un proyecto académico: el pago se hace en el entorno de pruebas (sandbox)
+        de PayPal y <strong class="text-ink">nunca se cobra dinero real</strong>. Para completarlo
+        hace falta una cuenta de prueba de PayPal; con una cuenta real no funcionará. Al volver,
+        activamos tu plan al momento.
+      </p>
+    </div>
   } @else {
     <div class="grid gap-5 md:grid-cols-3" aria-busy="true">
       @for (placeholder of [1, 2, 3]; track placeholder) {
