@@ -143,7 +143,7 @@ export class HabitsPage {
         this.cancel();
         this.logs.reload();
         this.toaster.success(
-          editing ? 'Registro actualizado' : '¡Día registrado!',
+          editing ? 'Registro actualizado' : 'Día registrado',
           editing ? undefined : 'Suma a tus rachas.',
         );
       },

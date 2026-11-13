@@ -9,21 +9,21 @@ interface Day {
   readonly tone: string;
 }
 
-/** Tono de cada día según la media (0-10): más verde cuanto mejor. */
+/** Tono de cada día según la media (0-10): más verde cuanto mejor (rampa brand 200, 400, 600 y 800). */
 function toneOf(log: HabitLogResponse | undefined): string {
   if (!log) {
-    return 'bg-white border border-dashed border-brand-200';
+    return 'border border-dashed border-line-strong bg-card';
   }
   if (log.average >= 8) {
-    return 'bg-brand-700';
+    return 'bg-brand-800';
   }
   if (log.average >= 6) {
-    return 'bg-brand-500';
+    return 'bg-brand-600';
   }
   if (log.average >= 4) {
-    return 'bg-brand-300';
+    return 'bg-brand-400';
   }
-  return 'bg-brand-100';
+  return 'bg-brand-200';
 }
 
 /**
@@ -38,7 +38,7 @@ function toneOf(log: HabitLogResponse | undefined): string {
     <ol class="grid grid-cols-10 gap-1.5 sm:gap-2" role="list" aria-label="Tus últimos días">
       @for (day of days(); track day.date) {
         <li
-          class="aspect-square rounded-lg"
+          class="aspect-square rounded-md"
           [class]="day.tone"
           [title]="
             (day.date | date: 'd MMM') + (day.log ? ': ' + (day.log.average | number: '1.0-1') : '')
@@ -57,10 +57,10 @@ function toneOf(log: HabitLogResponse | undefined): string {
     </ol>
     <p class="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted" aria-hidden="true">
       <span>Peor</span>
-      <span class="size-3 rounded bg-brand-100"></span>
-      <span class="size-3 rounded bg-brand-300"></span>
-      <span class="size-3 rounded bg-brand-500"></span>
-      <span class="size-3 rounded bg-brand-700"></span>
+      <span class="size-3 rounded-sm bg-brand-200"></span>
+      <span class="size-3 rounded-sm bg-brand-400"></span>
+      <span class="size-3 rounded-sm bg-brand-600"></span>
+      <span class="size-3 rounded-sm bg-brand-800"></span>
       <span>Mejor</span>
     </p>
   `,

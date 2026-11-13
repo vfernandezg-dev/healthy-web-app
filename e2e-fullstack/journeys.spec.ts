@@ -25,7 +25,7 @@ test.describe.serial('recorridos contra la API real', () => {
 
     await page.goto('/client/habits');
     await page.getByRole('button', { name: 'Registrar el día' }).click();
-    await expect(page.getByText('¡Día registrado!')).toBeVisible();
+    await expect(page.getByText('Día registrado', { exact: true })).toBeVisible();
 
     await page.goto('/client/progress');
     const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima' }).format(new Date());

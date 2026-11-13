@@ -30,9 +30,11 @@ import type { RecommendationResponse } from '@core/api/schema';
         >.
       </p>
       <p
-        class="mt-3 rounded-2xl p-3 text-sm font-medium"
+        class="mt-3 rounded-control px-3.5 py-3 text-sm font-medium"
         [class]="
-          advice.targetInHealthyRange ? 'bg-brand-50 text-brand-900' : 'bg-amber-50 text-amber-900'
+          advice.targetInHealthyRange
+            ? 'bg-brand-50 text-brand-900'
+            : 'bg-saffron-50 text-saffron-900'
         "
       >
         {{ advice.message }}

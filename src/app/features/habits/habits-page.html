@@ -94,9 +94,9 @@
         </p>
         <dl class="mt-5 grid grid-cols-2 gap-3">
           @for (score of scores; track score.key) {
-            <div class="rounded-2xl bg-brand-50 p-4">
+            <div class="rounded-card border border-line bg-sunken p-4">
               <dt class="text-sm text-muted">{{ score.label }}</dt>
-              <dd class="text-2xl font-bold">{{ log[score.key] }}/10</dd>
+              <dd class="figure mt-1 text-2xl">{{ log[score.key] }}/10</dd>
             </div>
           }
         </dl>
@@ -168,7 +168,9 @@
           }
         </ul>
       } @else {
-        <p class="mt-6 text-muted">Aún no has registrado ningún día. ¡Empieza hoy!</p>
+        <p class="mt-6 text-muted">
+          Aún no has registrado ningún día: el primero cuenta para tus rachas.
+        </p>
       }
     </section>
   </div>
