@@ -1,4 +1,8 @@
-import { addDays, ageOn, fromIsoDate, toIsoDate, todayIso } from './date';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+import { addDays, ageOn, fromIsoDate, longDateLabel, toIsoDate, todayIso } from './date';
+
+registerLocaleData(localeEs);
 
 describe('fechas sin hora', () => {
   it('usa los componentes locales, no UTC', () => {
@@ -20,5 +24,9 @@ describe('fechas sin hora', () => {
     expect(ageOn('1995-11-12', '2026-11-12')).toBe(31);
     expect(ageOn('1995-11-13', '2026-11-12')).toBe(30);
     expect(ageOn('2000-02-29', '2026-03-01')).toBe(26);
+  });
+
+  it('escribe la fecha larga en español', () => {
+    expect(longDateLabel(new Date(2026, 10, 12, 9))).toBe('jueves, 12 de noviembre');
   });
 });
