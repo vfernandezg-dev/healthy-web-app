@@ -1,62 +1,38 @@
-<div class="grid min-h-dvh lg:grid-cols-2">
-  <section
-    class="relative hidden overflow-hidden bg-brand-800 text-white lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16"
-  >
-    <div
-      aria-hidden="true"
-      class="pointer-events-none absolute -top-32 -right-24 size-96 rounded-full bg-brand-600/60 blur-3xl"
-    ></div>
-    <div
-      aria-hidden="true"
-      class="pointer-events-none absolute -bottom-40 -left-24 size-112 rounded-full bg-mint/15 blur-3xl"
-    ></div>
-
-    <a [href]="landingUrl" class="relative w-fit rounded-lg">
-      <app-brand-logo [inverse]="true" />
-    </a>
-
-    <div class="relative max-w-md">
-      <p class="text-4xl leading-tight font-bold tracking-tight text-balance">
-        Come mejor, un hábito cada día.
-      </p>
-      <p class="mt-4 text-lg text-brand-100">
-        Planes de nutricionistas, metas con seguimiento, rachas con premios y una comunidad que te
-        acompaña.
-      </p>
-      <ul class="mt-10 space-y-4 text-brand-50" role="list">
-        <li class="flex items-center gap-3">
-          <span class="grid size-10 shrink-0 place-items-center rounded-full bg-white/10">
-            <svg lucideSalad></svg>
-          </span>
-          Planes alimenticios creados por nutricionistas
-        </li>
-        <li class="flex items-center gap-3">
-          <span class="grid size-10 shrink-0 place-items-center rounded-full bg-white/10">
-            <svg lucideTarget></svg>
-          </span>
-          Metas de peso con su gráfico de progreso
-        </li>
-        <li class="flex items-center gap-3">
-          <span class="grid size-10 shrink-0 place-items-center rounded-full bg-white/10">
-            <svg lucideFlame></svg>
-          </span>
-          Rachas de hábitos que desbloquean premios
-        </li>
-      </ul>
+<div class="grid min-h-dvh lg:grid-cols-[5fr_6fr]">
+  <!-- Escritorio: panel de marca en verde pino, con una foto real y el lema (un párrafo: el h1 es el de la página). -->
+  <section class="hb-on-pine hidden flex-col bg-pine p-10 text-on-pine lg:flex xl:p-14">
+    <a [href]="landingUrl" class="w-fit rounded-md"><app-brand-logo [inverse]="true" /></a>
+    <div class="relative mt-10 min-h-48 flex-1 overflow-hidden rounded-lg">
+      <img ngSrc="images/auth-bowl.webp" fill alt="" class="object-cover" />
     </div>
-
-    <p class="relative text-sm text-brand-100">© {{ year }} Healthy Bites</p>
+    <p class="mt-10 max-w-md font-display text-3xl leading-tight text-balance xl:text-4xl">
+      Come mejor, un hábito cada día.
+    </p>
+    <p class="mt-3 max-w-md text-on-pine-muted">
+      Planes de nutricionistas, pesajes y hábitos en un mismo sitio.
+    </p>
+    <p class="mt-10 text-sm text-on-pine-muted">© {{ year }} Healthy Bites</p>
   </section>
 
-  <main id="main" tabindex="-1" class="flex min-h-dvh flex-col px-6 py-8 sm:px-10">
-    <div class="flex items-center justify-between gap-4 lg:justify-end">
-      <app-brand-logo class="lg:hidden" />
-      <a [href]="landingUrl" class="text-sm font-semibold text-brand-700 hover:underline">
+  <div class="flex min-h-dvh flex-col">
+    <!-- Móvil: franja de marca. -->
+    <div
+      class="hb-on-pine flex items-center justify-between gap-4 bg-pine px-6 py-4 text-on-pine lg:hidden"
+    >
+      <app-brand-logo [inverse]="true" />
+      <a [href]="landingUrl" class="text-sm font-semibold text-on-pine hover:underline">
         Volver a la web
       </a>
     </div>
-    <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-10">
-      <router-outlet />
-    </div>
-  </main>
+    <main id="main" tabindex="-1" class="flex flex-1 flex-col px-6 py-8 sm:px-10">
+      <div class="hidden justify-end lg:flex">
+        <a [href]="landingUrl" class="text-sm font-semibold text-brand-700 hover:underline">
+          Volver a la web
+        </a>
+      </div>
+      <div class="mx-auto flex w-full max-w-md flex-1 flex-col py-4 lg:justify-center lg:py-10">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
 </div>

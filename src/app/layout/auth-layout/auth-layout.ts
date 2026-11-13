@@ -1,14 +1,18 @@
+import { NgOptimizedImage } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { LucideFlame, LucideSalad, LucideTarget } from '@lucide/angular';
 import { APP_CONFIG } from '@core/api/api-config';
 import { SIGNAL_FORMS_PROVIDERS } from '@shared/forms/forms.config';
 import { BrandLogo } from '@shared/ui/brand-logo';
 
-/** Pantallas de acceso: la marca a un lado (en escritorio) y el formulario al otro. */
+/**
+ * Pantallas de acceso: en escritorio, el panel de la marca en verde pino (con una foto) y el formulario sobre el
+ * papel; en móvil, una franja de marca encima del formulario. La foto es decorativa (alt vacío) y no se descarga en
+ * móvil: su panel no se muestra y la carga es diferida.
+ */
 @Component({
   selector: 'app-auth-layout',
-  imports: [RouterOutlet, BrandLogo, LucideSalad, LucideTarget, LucideFlame],
+  imports: [RouterOutlet, NgOptimizedImage, BrandLogo],
   providers: [SIGNAL_FORMS_PROVIDERS],
   templateUrl: './auth-layout.html',
 })
