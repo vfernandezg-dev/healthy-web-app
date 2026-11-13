@@ -1,32 +1,32 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  LucideArrowRight,
-  LucideCalendarCheck,
-  LucideCreditCard,
-  LucideFlame,
-  LucideTarget,
-} from '@lucide/angular';
+import { LucideFlame } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { AuthStore } from '@core/auth/auth-store';
-import { NAVIGATION } from '@core/routing/navigation';
 import { HabitsApi } from '@features/habits/data/habits-api';
 import { ProgressApi } from '@features/progress/data/progress-api';
 import { goalProgress } from '@features/progress/data/progress-math';
 import { RewardsApi } from '@features/rewards/data/rewards-api';
+import { streakPercent } from '@features/rewards/data/streaks';
 import { BillingApi } from '@features/subscription/data/billing-api';
 import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
 import { ProgressBar } from '@shared/ui/progress-bar';
+import { SectionHeader } from '@shared/ui/section-header';
+import { Sparkline } from '@shared/ui/sparkline';
 import { TierBadge } from '@shared/ui/tier-badge';
-import { todayIso } from '@shared/utils/date';
-import { Shortcuts } from '@shared/ui/shortcuts';
-import { streakPercent } from '@features/rewards/data/streaks';
-import { LoadError } from '@shared/ui/load-error';
+import { longDateLabel, todayIso } from '@shared/utils/date';
 
-/** Inicio del cliente: su meta, los hábitos de hoy, su plan de suscripción y las rachas en curso. */
+/** Pesajes que dibuja la línea de tendencia de la meta. */
+const TREND_POINTS = 12;
+
+/**
+ * Inicio del cliente: su meta (la tarjeta principal, con el último pesaje y su tendencia), los hábitos de hoy, su
+ * plan de suscripción y las rachas en curso.
+ */
 @Component({
   selector: 'app-client-dashboard',
   imports: [
@@ -36,15 +36,12 @@ import { LoadError } from '@shared/ui/load-error';
     DecimalPipe,
     ButtonDirective,
     Skeleton,
-    LucideArrowRight,
-    LucideTarget,
-    LucideCalendarCheck,
-    LucideCreditCard,
     EmptyState,
     PageHeader,
     ProgressBar,
+    SectionHeader,
+    Sparkline,
     TierBadge,
-    Shortcuts,
   ],
   templateUrl: './client-dashboard.html',
 })
@@ -56,7 +53,7 @@ export class ClientDashboard {
   private readonly billing = inject(BillingApi);
 
   protected readonly greeting = computed(() => `Hola, ${this.auth.user()?.firstName ?? ''}`);
-  protected readonly shortcuts = NAVIGATION.CLIENT.filter((item) => item.description);
+  protected readonly today = longDateLabel();
   protected readonly flameIcon = LucideFlame;
   protected readonly scores = [
     { key: 'hydration', label: 'Hidratación' },
@@ -79,10 +76,21 @@ export class ClientDashboard {
       ? goalProgress(this.entries.value(), goal.targetWeightKg)
       : null;
   });
+  /** Últimos pesajes, del más antiguo al más reciente (los mismos que ya se cargan para el avance). */
+  protected readonly weights = computed(() =>
+    this.entries.hasValue()
+      ? this.entries
+          .value()
+          .slice(-TREND_POINTS)
+          .map((entry) => entry.weightKg)
+      : [],
+  );
 
   // ---------------------------------------------------------------- hábitos de hoy
-  private readonly today = todayIso();
-  protected readonly todayLogs = this.habits.logs(signal({ from: this.today, to: this.today }));
+  private readonly todayDate = todayIso();
+  protected readonly todayLogs = this.habits.logs(
+    signal({ from: this.todayDate, to: this.todayDate }),
+  );
   protected readonly todayLog = computed(() =>
     this.todayLogs.hasValue() ? (this.todayLogs.value()[0] ?? null) : null,
   );

@@ -37,6 +37,11 @@ export class WeightChart {
   private readonly document = inject(DOCUMENT);
   private readonly locale = inject(LOCALE_ID);
 
+  /** Con el movimiento reducido, el gráfico se pinta sin animación. */
+  private readonly animate =
+    this.document.defaultView?.matchMedia('(prefers-reduced-motion: no-preference)').matches ??
+    false;
+
   readonly points = input.required<readonly WeightPoint[]>();
   readonly targetKg = input.required<number>();
 
@@ -73,7 +78,11 @@ export class WeightChart {
 
     return {
       aria: { enabled: false },
-      animation: false,
+      // La línea se dibuja de izquierda a derecha al cargar; los cambios de datos se animan más rápido.
+      animation: this.animate,
+      animationDuration: 900,
+      animationEasing: 'cubicOut',
+      animationDurationUpdate: 400,
       grid: { left: 56, right: 24, top: 32, bottom: zoom ? 72 : 32 },
       tooltip: {
         trigger: 'axis',

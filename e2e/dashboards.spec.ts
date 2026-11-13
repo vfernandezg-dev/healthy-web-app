@@ -119,7 +119,12 @@ test.describe('inicio del cliente', () => {
 
     const goal = page.getByRole('region', { name: 'Tu meta' });
     await expect(goal).toContainText('Bajar a 65 kg');
-    await expect(goal).toContainText('67,5 kg ahora · objetivo 65 kg');
+    await expect(goal).toContainText('67,5 kg');
+    await expect(goal).toContainText('Último pesaje · objetivo 65 kg');
+    await expect(goal.getByRole('link', { name: 'Ver tu progreso' })).toHaveAttribute(
+      'href',
+      '/client/progress',
+    );
     await expect(goal.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '50');
     await expect(goal).toContainText('Te faltan 2,5 kg');
 
@@ -135,9 +140,10 @@ test.describe('inicio del cliente', () => {
     const streaks = page.getByRole('region', { name: 'Rachas en curso' });
     await expect(streaks.getByRole('listitem')).toHaveCount(1);
     await expect(streaks).toContainText('3 de 7 días · premio: Semana ligera');
-    await expect(
-      page.getByRole('region', { name: 'Accesos directos' }).getByRole('link', { name: /Hábitos/ }),
-    ).toHaveAttribute('href', '/client/habits');
+    await expect(today.getByRole('link', { name: 'Ver tus hábitos' })).toHaveAttribute(
+      'href',
+      '/client/habits',
+    );
     await expectNoA11yViolations(page);
   });
 

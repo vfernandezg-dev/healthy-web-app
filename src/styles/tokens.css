@@ -1,15 +1,45 @@
 /*
- * Tokens de diseño de Healthy Bites: los mismos nombres y valores que la landing
- * (landing-page/src/styles/global.css). Son la única fuente para Tailwind y para el preset de PrimeNG
- * (src/app/core/theme/healthy-bites.preset.ts), que repite los colores de marca.
+ * Tokens de diseño de Healthy Bites, identidad «Despensa» (docs/adr/0010-identidad-despensa.md).
  *
- * - brand-600 (#2E8B57) es el verde histórico de la marca: úsalo en iconos y elementos grandes.
- * - brand-700 es el verde para texto y botones: blanco sobre brand-700 tiene contraste 6:1 (WCAG AA).
- * - mint es el tono del logo original.
+ * Este archivo es la única fuente de colores, radios y sombras: Tailwind genera sus utilidades a partir de él y el
+ * preset de PrimeNG (src/app/core/theme/healthy-bites.preset.ts) apunta a estas mismas variables con var(). La
+ * landing copia este archivo. `pnpm theme:check` (scripts/check-theme-tokens.mjs) calcula el contraste de los pares
+ * de colores que usa la interfaz.
+ *
+ * Paleta:
+ * - stone: neutros cálidos. El fondo es papel (canvas = stone-100) y las tarjetas son blancas con borde fino (line).
+ * - brand: el verde histórico de la marca (el del logo). brand-700 es el color de acción: blanco encima, 6:1.
+ * - pine: el verde como estructura (menú lateral, panel de acceso), con texto on-pine.
+ * - accent: caqui para lo que pide atención sin ser un error (rachas, Premium, la línea objetivo). Relleno 600,
+ *   texto 700.
+ * - saffron: VIP y avisos. danger: errores.
+ *
+ * Se usan los roles (canvas, card, line, ink, muted...) y las escalas; nunca la paleta por defecto de Tailwind ni
+ * colores hexadecimales en los componentes.
  */
 @theme {
   --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+}
 
+/*
+ * «static»: Tailwind escribe todas estas variables en :root aunque ninguna utilidad las use, porque el preset de
+ * PrimeNG y el gráfico de peso las leen.
+ */
+@theme static {
+  /* Neutros cálidos. */
+  --color-stone-50: #faf8f4;
+  --color-stone-100: #f5f2eb;
+  --color-stone-200: #e4ded2;
+  --color-stone-300: #d3cbbc;
+  --color-stone-400: #aba394;
+  --color-stone-500: #7a7366;
+  --color-stone-600: #5e584d;
+  --color-stone-700: #4a453c;
+  --color-stone-800: #35312a;
+  --color-stone-900: #24211c;
+  --color-stone-950: #1c1a16;
+
+  /* Verde de la marca. brand-600 (#2E8B57) es el del logo. */
   --color-brand-50: #effaf3;
   --color-brand-100: #d9f2e2;
   --color-brand-200: #b5e5c8;
@@ -21,16 +51,71 @@
   --color-brand-800: #1d593a;
   --color-brand-900: #17482f;
   --color-brand-950: #0b2a1b;
-  --color-mint: #c4f2d0;
 
-  --color-ink: #12261b;
-  --color-muted: #4b5d52;
-  --color-surface: #fbfdfb;
+  /* Verde pino: superficies de estructura. */
+  --color-pine: #10291f;
+  --color-pine-raised: #1a3a2d;
+  --color-pine-line: #2a4a3d;
+  --color-on-pine: #f5f2eb;
+  --color-on-pine-muted: #a3b3a4;
 
-  --shadow-card: 0 1px 2px rgb(18 38 27 / 0.04), 0 8px 24px -8px rgb(18 38 27 / 0.1);
-  --shadow-card-hover: 0 1px 2px rgb(18 38 27 / 0.06), 0 16px 40px -12px rgb(18 38 27 / 0.18);
+  /* Caqui. */
+  --color-accent-50: #fcf3ee;
+  --color-accent-100: #f9e3d7;
+  --color-accent-200: #f2c4ac;
+  --color-accent-300: #e8a07e;
+  --color-accent-400: #dc7a50;
+  --color-accent-500: #cb5f33;
+  --color-accent-600: #b44d24;
+  --color-accent-700: #943d1c;
+  --color-accent-800: #79331a;
+  --color-accent-900: #642c18;
+  --color-accent-950: #36140a;
 
-  /* Curvas de movimiento: salida suave (desaceleración larga) y rebote leve. */
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Azafrán. */
+  --color-saffron-50: #fdf8ec;
+  --color-saffron-100: #faedcb;
+  --color-saffron-200: #f4d993;
+  --color-saffron-300: #edc15c;
+  --color-saffron-400: #e3a92f;
+  --color-saffron-500: #cc8e17;
+  --color-saffron-600: #a87211;
+  --color-saffron-700: #855912;
+  --color-saffron-800: #6c4815;
+  --color-saffron-900: #5b3d16;
+  --color-saffron-950: #352008;
+
+  /* Errores. */
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
+  --color-danger-400: #f87171;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-danger-900: #7f1d1d;
+  --color-danger-950: #450a0a;
+
+  /* Roles. */
+  --color-canvas: var(--color-stone-100);
+  --color-card: #ffffff;
+  --color-sunken: var(--color-stone-50);
+  --color-line: var(--color-stone-200);
+  --color-line-strong: var(--color-stone-300);
+  --color-ink: var(--color-stone-950);
+  --color-muted: var(--color-stone-600);
+
+  /* Nombres antiguos mientras dura la migración. */
+  --color-surface: var(--color-canvas);
+  --color-mint: var(--color-brand-100);
+
+  /* Radios: controles (botones, campos), tarjetas y etiquetas. */
+  --radius-control: 0.5rem;
+  --radius-card: 0.75rem;
+  --radius-badge: 0.375rem;
+
+  /* Solo las capas flotantes (menús, diálogos, avisos) llevan sombra; las tarjetas se separan con borde. */
+  --shadow-overlay: 0 12px 32px -12px rgb(28 26 22 / 0.22);
 }

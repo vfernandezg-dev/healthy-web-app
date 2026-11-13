@@ -14,8 +14,8 @@
   <app-load-error [error]="error" (retry)="store.goals.reload()" />
 } @else if (!store.goals.hasValue()) {
   <div class="grid gap-6 xl:grid-cols-3" aria-busy="true">
-    <p-skeleton height="14rem" borderRadius="1.5rem" styleClass="xl:col-span-2" />
-    <p-skeleton height="14rem" borderRadius="1.5rem" />
+    <p-skeleton height="14rem" borderRadius="0.75rem" styleClass="xl:col-span-2" />
+    <p-skeleton height="14rem" borderRadius="0.75rem" />
   </div>
 } @else if (store.activeGoal(); as goal) {
   <div class="grid gap-6 xl:grid-cols-3 xl:items-start">
@@ -45,7 +45,7 @@
           } @placeholder {
             <div class="mt-4 h-72 rounded-2xl bg-brand-50"></div>
           } @loading {
-            <p-skeleton height="18rem" borderRadius="1rem" styleClass="mt-4" />
+            <p-skeleton height="18rem" styleClass="mt-4" />
           }
         }
       </section>

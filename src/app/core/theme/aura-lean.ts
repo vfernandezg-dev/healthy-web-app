@@ -1,5 +1,4 @@
 import type Aura from '@primeuix/themes/aura';
-import avatar from '@primeuix/themes/aura/avatar';
 import * as auraBase from '@primeuix/themes/aura/base';
 import button from '@primeuix/themes/aura/button';
 import confirmdialog from '@primeuix/themes/aura/confirmdialog';
@@ -37,7 +36,6 @@ const base = auraBase as unknown as Pick<AuraPreset, 'primitive' | 'semantic'>;
 export const AuraLean: AuraPreset = {
   ...base,
   components: {
-    avatar,
     button,
     confirmdialog,
     datatable,

@@ -4,6 +4,7 @@ import { LucideLock } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { toProblem } from '@core/api/problem';
 import { TIER_LABELS, type Tier } from '../i18n/labels';
+import { StatusPanel } from './status-panel';
 
 const TIERS = new Set<string>(Object.keys(TIER_LABELS));
 
@@ -25,25 +26,26 @@ export function requiredTierOf(error: unknown): Tier | undefined {
 /** Lo que ve un cliente en un plan o un contenido de un nivel superior al suyo: suscribirse o ganarlo con una racha. */
 @Component({
   selector: 'app-paywall',
-  imports: [RouterLink, ButtonDirective, LucideLock],
+  imports: [RouterLink, ButtonDirective, StatusPanel],
   host: { class: 'block' },
   template: `
-    <div class="card mx-auto max-w-xl px-6 py-12 text-center sm:px-12">
-      <span class="mx-auto grid size-14 place-items-center rounded-full bg-mint text-brand-900">
-        <svg lucideLock class="size-7"></svg>
-      </span>
-      <h1 class="mt-6 text-2xl font-bold">{{ subject() }} es {{ tierLabel() }}</h1>
-      <p class="mt-2 text-muted">
+    <app-status-panel
+      tone="accent"
+      [eyebrow]="'Solo con ' + tierLabel()"
+      [heading]="subject() + ' es ' + tierLabel()"
+      [icon]="lockIcon"
+    >
+      <p>
         Suscríbete a {{ tierLabel() }} para {{ benefit() }}. También puedes conseguirlo completando
         una racha de hábitos que lo tenga como premio.
       </p>
-      <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <ng-container ngProjectAs="[actions]">
         <a pButton routerLink="/client/subscription">Ver los planes de suscripción</a>
         <a pButton routerLink="/client/rewards" severity="secondary" variant="outlined">
           Ver las recompensas
         </a>
-      </div>
-    </div>
+      </ng-container>
+    </app-status-panel>
   `,
 })
 export class Paywall {
@@ -54,4 +56,5 @@ export class Paywall {
   readonly benefit = input.required<string>();
 
   protected readonly tierLabel = computed(() => TIER_LABELS[this.tier()]);
+  protected readonly lockIcon = LucideLock;
 }

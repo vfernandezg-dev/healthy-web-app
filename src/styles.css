@@ -9,6 +9,7 @@
 @import 'tailwindcss-primeui';
 @import '@fontsource-variable/plus-jakarta-sans';
 @import './styles/tokens.css';
+@import './styles/motion.css';
 
 @layer base {
   :root {
@@ -21,7 +22,7 @@
   }
 
   body {
-    @apply min-h-dvh bg-surface font-sans text-ink antialiased;
+    @apply min-h-dvh bg-canvas font-sans text-ink antialiased;
   }
 
   :focus-visible {
@@ -33,8 +34,13 @@
     outline: none;
   }
 
+  /* Titulares de página: el tamaño lo pone cada h1; el peso, el espaciado y el reparto de líneas son comunes. */
+  h1 {
+    @apply font-bold tracking-tight text-balance;
+  }
+
   ::selection {
-    @apply bg-mint text-brand-950;
+    @apply bg-brand-100 text-brand-950;
   }
 
   /*
@@ -54,6 +60,7 @@
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
@@ -62,9 +69,38 @@
 }
 
 @layer components {
-  /* Tarjeta de la marca (como en la landing): esquinas grandes y sombra suave. */
+  /*
+   * Tarjeta: blanca sobre el papel, con borde fino y sin sombra. Las que son un enlace añaden
+   * `transition-colors hover:border-line-strong`.
+   */
   .card {
-    @apply rounded-3xl border border-brand-100 bg-white shadow-card;
+    @apply rounded-card border border-line bg-card;
+  }
+
+  /* Cifra destacada (pesos, medias, KPI): grande, en negrita y con el espaciado ajustado. */
+  .figure {
+    @apply font-bold tracking-tight;
+  }
+
+  /*
+   * Superficies en verde pino (menú lateral, cabecera móvil, cajón del menú): los botones de texto secundarios de
+   * PrimeNG pasan a crema y el contorno de foco a brand-300 (9:1 sobre pino). Se redefinen las variables que lee
+   * el CSS de cada botón, así llegan a los que hay dentro.
+   */
+  .hb-on-pine {
+    --p-button-text-secondary-color: var(--color-on-pine);
+    --p-button-text-secondary-hover-background: var(--color-pine-raised);
+    --p-button-text-secondary-active-background: var(--color-pine-line);
+    --p-button-secondary-focus-ring-color: var(--color-brand-300);
+  }
+
+  .hb-on-pine :focus-visible {
+    outline-color: var(--color-brand-300);
+  }
+
+  /* Cabeceras de tabla en versalitas: PrimeNG no tiene token para la transformación ni el espaciado. */
+  .p-datatable-thead > tr > th {
+    @apply text-xs font-semibold tracking-[0.06em] uppercase;
   }
 }
 

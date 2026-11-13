@@ -112,9 +112,7 @@ test.describe('suscripción', () => {
 
     await page.goto('/client/subscription/checkout/return?token=ORDER-1&PayerID=PAYER');
 
-    await expect(
-      page.getByRole('heading', { level: 1, name: '¡Ya tienes Premium!' }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Ya tienes Premium' })).toBeVisible();
     await expect(page.getByText('12 de diciembre de 2026')).toBeVisible();
     expect(captured).toEqual({ orderId: 'ORDER-1' });
     await expectNoA11yViolations(page);

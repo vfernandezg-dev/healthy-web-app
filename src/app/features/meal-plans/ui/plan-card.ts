@@ -14,7 +14,7 @@ import { TierBadge } from '@shared/ui/tier-badge';
   template: `
     <a
       [routerLink]="link()"
-      class="card group flex h-full flex-col p-6 transition-shadow hover:shadow-card-hover"
+      class="card group flex h-full flex-col p-6 transition-[border-color,translate] duration-200 hover:border-line-strong motion-safe:hover:-translate-y-0.5"
     >
       <div class="flex flex-wrap items-center gap-2">
         <span class="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-800">

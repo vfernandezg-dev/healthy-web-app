@@ -1,3 +1,5 @@
+import { formatDate } from '@angular/common';
+
 /**
  * Fechas sin hora (las de la API, `YYYY-MM-DD`). Se trabaja siempre con la fecha local de la persona: convertir a
  * UTC movería el día a quien está al oeste de Greenwich.
@@ -51,4 +53,9 @@ export function ageOn(birthDate: string, onDate: string = todayIso()): number {
   const birthdayPassed =
     on.month > birth.month || (on.month === birth.month && on.day >= birth.day);
   return on.year - birth.year - (birthdayPassed ? 0 : 1);
+}
+
+/** «jueves, 12 de noviembre»: la fecha de hoy para el antetítulo de las páginas de inicio. */
+export function longDateLabel(now: Date = new Date(), locale = 'es'): string {
+  return formatDate(now, "EEEE, d 'de' MMMM", locale);
 }

@@ -1,10 +1,12 @@
 @if (!token || invitation.error()) {
-  <div class="text-center">
-    <span class="mx-auto grid size-14 place-items-center rounded-full bg-red-50 text-red-700">
-      <svg lucideLink2Off class="size-7"></svg>
-    </span>
-    <h1 class="mt-6 text-3xl font-bold tracking-tight">La invitación no es válida</h1>
-    <p class="mt-3 text-muted">
+  <app-status-panel
+    tone="danger"
+    eyebrow="Invitación de nutricionista"
+    heading="La invitación no es válida"
+    [icon]="brokenLinkIcon"
+    [framed]="false"
+  >
+    <p>
       @if (token) {
         {{ invitationError() }}
       } @else {
@@ -12,14 +14,12 @@
       }
       Si ha caducado, pide al equipo de Healthy Bites que te la reenvíe.
     </p>
-    <a
-      routerLink="/auth/login"
-      class="mt-8 inline-block font-semibold text-brand-700 hover:underline"
+    <a actions routerLink="/auth/login" class="font-semibold text-brand-700 hover:underline"
       >Ir a iniciar sesión</a
     >
-  </div>
+  </app-status-panel>
 } @else if (invitation.value(); as invited) {
-  <h1 class="text-3xl font-bold tracking-tight">Hola, {{ invited.firstName }}</h1>
+  <h1 class="text-3xl">Hola, {{ invited.firstName }}</h1>
   <p class="mt-2 text-muted">
     Crea tu contraseña para entrar en Healthy Bites como nutricionista con
     <strong class="text-ink">{{ invited.email }}</strong
