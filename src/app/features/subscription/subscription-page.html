@@ -98,7 +98,7 @@
   } @else {
     <div class="grid gap-5 md:grid-cols-3" aria-busy="true">
       @for (placeholder of [1, 2, 3]; track placeholder) {
-        <p-skeleton height="16rem" borderRadius="1.5rem" />
+        <p-skeleton height="16rem" borderRadius="0.75rem" />
       }
     </div>
   }
@@ -149,6 +149,6 @@
       </div>
     }
   } @else {
-    <p-skeleton height="10rem" borderRadius="1.5rem" />
+    <p-skeleton height="10rem" borderRadius="0.75rem" />
   }
 </section>

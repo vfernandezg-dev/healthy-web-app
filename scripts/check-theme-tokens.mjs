@@ -177,6 +177,8 @@ const PAIRS = [
   ['danger-800', 'danger-50', TEXT, 'mensaje de error'],
   ['card', 'danger-700', TEXT, 'botón de peligro'],
   ['stone-700', 'stone-100', TEXT, 'etiqueta neutra'],
+  ['stone-700', 'stone-200', TEXT, 'opción de un selector segmentado'],
+  ['muted', 'stone-50', TEXT, 'cabecera de tabla'],
   // Elementos gráficos.
   ['brand-600', 'canvas', UI, 'contorno de foco'],
   ['brand-600', 'card', UI, 'contorno de foco en tarjetas'],

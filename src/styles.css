@@ -69,6 +69,11 @@
   .card {
     @apply rounded-card border border-line bg-card;
   }
+
+  /* Cabeceras de tabla en versalitas: PrimeNG no tiene token para la transformación ni el espaciado. */
+  .p-datatable-thead > tr > th {
+    @apply text-xs font-semibold tracking-[0.06em] uppercase;
+  }
 }
 
 @layer components {

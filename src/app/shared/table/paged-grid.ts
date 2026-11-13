@@ -61,7 +61,7 @@ import { RowTemplate } from './row-template';
     } @else {
       <div [class]="layoutClass()" aria-busy="true">
         @for (placeholder of placeholders(); track placeholder) {
-          <p-skeleton [height]="skeletonHeight()" borderRadius="1.5rem" />
+          <p-skeleton [height]="skeletonHeight()" borderRadius="0.75rem" />
         }
       </div>
     }
