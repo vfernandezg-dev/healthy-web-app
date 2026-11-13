@@ -5,11 +5,12 @@ import { LucideCalendarDays, LucideFlame } from '@lucide/angular';
 import type { MealPlanSummaryResponse } from '@core/api/schema';
 import { GOAL_LABELS } from '@shared/i18n/labels';
 import { TierBadge } from '@shared/ui/tier-badge';
+import { Badge } from '@shared/ui/badge';
 
 /** Tarjeta de un plan en un listado; toda la tarjeta enlaza al detalle. */
 @Component({
   selector: 'app-plan-card',
-  imports: [RouterLink, DecimalPipe, LucideCalendarDays, LucideFlame, TierBadge],
+  imports: [Badge, RouterLink, DecimalPipe, LucideCalendarDays, LucideFlame, TierBadge],
   host: { class: 'block h-full' },
   template: `
     <a
@@ -17,9 +18,7 @@ import { TierBadge } from '@shared/ui/tier-badge';
       class="card group flex h-full flex-col p-6 transition-[border-color,translate] duration-200 hover:border-line-strong motion-safe:hover:-translate-y-0.5"
     >
       <div class="flex flex-wrap items-center gap-2">
-        <span class="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-800">
-          {{ goals[plan().goal] }}
-        </span>
+        <app-badge>{{ goals[plan().goal] }}</app-badge>
         <app-tier-badge [tier]="plan().requiredTier" [locked]="plan().locked" />
         <ng-content />
       </div>

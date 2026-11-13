@@ -13,11 +13,13 @@ import { ContentApi } from '../data/content-api';
 import { titleFrom } from '@core/routing/title-strategy';
 import { Paywall, requiredTierOf } from '@shared/ui/paywall';
 import { BackLink } from '@shared/ui/back-link';
+import { Badge } from '@shared/ui/badge';
 
 /** Un contenido: portada, texto y su fichero (vídeo o descarga) con enlace firmado. */
 @Component({
   selector: 'app-content-detail',
   imports: [
+    Badge,
     BackLink,
     Paywall,
     NgOptimizedImage,

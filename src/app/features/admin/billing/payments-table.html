@@ -47,7 +47,7 @@
               <p class="font-semibold tabular-nums">{{ payment.amount | money }}</p>
             </div>
             <div class="mt-3 flex flex-wrap items-center gap-2">
-              <p-tag [value]="statuses[payment.status]" [severity]="severities[payment.status]" />
+              <app-badge [tone]="tones[payment.status]">{{ statuses[payment.status] }}</app-badge>
               <span class="text-sm text-muted">
                 {{ payment.capturedAt ?? payment.createdAt | date: 'd MMM y, HH:mm' }}
               </span>
@@ -63,7 +63,7 @@
             {{ payment.amount | money }}
           </td>
           <td class="max-md:hidden">
-            <p-tag [value]="statuses[payment.status]" [severity]="severities[payment.status]" />
+            <app-badge [tone]="tones[payment.status]">{{ statuses[payment.status] }}</app-badge>
           </td>
           <td class="font-mono text-xs max-md:hidden">{{ payment.providerOrderId }}</td>
           <td class="max-md:hidden">

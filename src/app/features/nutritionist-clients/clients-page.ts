@@ -21,6 +21,7 @@ import { PAGE_SIZE } from '@shared/table/page-size';
 import { debouncedSearch } from '@shared/utils/debounced';
 import { PersonCell } from '@shared/ui/person-cell';
 import { MeasureValue } from '@shared/ui/measure-value';
+import { Badge } from '@shared/ui/badge';
 
 /** Fila de la tabla: los datos de la API más el IMC y su categoría. */
 interface ClientRow {
@@ -57,6 +58,7 @@ function toRow(client: NutritionistClientResponse): ClientRow {
 @Component({
   selector: 'app-clients-page',
   imports: [
+    Badge,
     MeasureValue,
     PersonCell,
     FormField,

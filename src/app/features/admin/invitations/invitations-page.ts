@@ -4,10 +4,9 @@ import { LucideMailPlus } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { SortIcon as TableSortIcon, SortableColumn, Table } from 'primeng/table';
-import { Tag } from 'primeng/tag';
 import type { InvitationResponse } from '@core/api/schema';
 import { Toaster } from '@core/ui/toaster';
-import { INVITATION_STATUS_LABELS, INVITATION_STATUS_SEVERITY } from '@shared/i18n/labels';
+import { INVITATION_STATUS_LABELS, INVITATION_STATUS_TONE } from '@shared/i18n/labels';
 import { EmptyState } from '@shared/ui/empty-state';
 import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
@@ -19,6 +18,7 @@ import { pagedQuery } from '@shared/table/paged-query';
 import { PAGE_SIZE } from '@shared/table/page-size';
 import { mutation } from '@shared/utils/mutation';
 import { dialogState } from '@shared/ui/dialog-state';
+import { Badge } from '@shared/ui/badge';
 
 const DEFAULT_SORT = 'createdAt,desc';
 
@@ -29,7 +29,7 @@ const DEFAULT_SORT = 'createdAt,desc';
     DatePipe,
     NgTemplateOutlet,
     Skeleton,
-    Tag,
+    Badge,
     Table,
     SortableColumn,
     TableSortIcon,
@@ -51,7 +51,7 @@ export class InvitationsPage {
 
   protected readonly inviteDialog = dialogState();
   protected readonly statuses = INVITATION_STATUS_LABELS;
-  protected readonly severities = INVITATION_STATUS_SEVERITY;
+  protected readonly tones = INVITATION_STATUS_TONE;
   protected readonly mailIcon = LucideMailPlus;
 
   protected readonly invitations = pagedQuery({

@@ -12,11 +12,13 @@ import { titleFrom } from '@core/routing/title-strategy';
 import { mutation } from '@shared/utils/mutation';
 import { Paywall, requiredTierOf } from '@shared/ui/paywall';
 import { BackLink } from '@shared/ui/back-link';
+import { Badge } from '@shared/ui/badge';
 
 /** Un plan con sus comidas por día. Si es de pago y el cliente no tiene acceso, explica cómo conseguirlo. */
 @Component({
   selector: 'app-meal-plan-detail',
   imports: [
+    Badge,
     BackLink,
     Paywall,
     DecimalPipe,

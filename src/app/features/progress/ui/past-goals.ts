@@ -1,13 +1,13 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, input } from '@angular/core';
-import { Tag } from 'primeng/tag';
 import type { GoalResponse } from '@core/api/schema';
-import { GOAL_STATUS_LABELS, GOAL_STATUS_SEVERITY } from '@shared/i18n/labels';
+import { GOAL_STATUS_LABELS, GOAL_STATUS_TONE } from '@shared/i18n/labels';
+import { Badge } from '@shared/ui/badge';
 
 /** Metas cumplidas o abandonadas: objetivo, fecha y cómo terminaron. */
 @Component({
   selector: 'app-past-goals',
-  imports: [DatePipe, DecimalPipe, Tag],
+  imports: [DatePipe, DecimalPipe, Badge],
   host: { class: 'card block p-6', role: 'region', 'aria-labelledby': 'past-title' },
   template: `
     <h2 id="past-title" class="text-lg font-bold">Metas anteriores</h2>
@@ -21,7 +21,7 @@ import { GOAL_STATUS_LABELS, GOAL_STATUS_SEVERITY } from '@shared/i18n/labels';
               {{ past.completedAt ?? past.createdAt | date: 'mediumDate' }}</span
             >
           </span>
-          <p-tag [value]="statusLabels[past.status]" [severity]="statusSeverity[past.status]" />
+          <app-badge [tone]="statusTones[past.status]">{{ statusLabels[past.status] }}</app-badge>
         </li>
       }
     </ul>
@@ -31,5 +31,5 @@ export class PastGoals {
   readonly goals = input.required<readonly GoalResponse[]>();
 
   protected readonly statusLabels = GOAL_STATUS_LABELS;
-  protected readonly statusSeverity = GOAL_STATUS_SEVERITY;
+  protected readonly statusTones = GOAL_STATUS_TONE;
 }

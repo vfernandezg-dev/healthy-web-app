@@ -11,10 +11,7 @@
         <li>
           <app-plan-card [plan]="enrollment.plan" [link]="enrollment.plan.id">
             @if (enrollment.source === 'REWARD') {
-              <span
-                class="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-900"
-                >Premio</span
-              >
+              <app-badge tone="accent">Premio</app-badge>
             }
           </app-plan-card>
         </li>

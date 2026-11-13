@@ -3,9 +3,8 @@ import { form } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
-import { Tag } from 'primeng/tag';
 import { Toaster } from '@core/ui/toaster';
-import { PUBLICATION_STATUS_LABELS, PUBLICATION_STATUS_SEVERITY } from '@shared/i18n/labels';
+import { PUBLICATION_STATUS_LABELS, PUBLICATION_STATUS_TONE } from '@shared/i18n/labels';
 import { LoadError } from '@shared/ui/load-error';
 import { ContentApi } from '../data/content-api';
 import {
@@ -19,11 +18,20 @@ import { formSubmitter } from '@shared/forms/form-submitter';
 import { mutation } from '@shared/utils/mutation';
 import { PublicationActions } from '@shared/publishing/publication-actions';
 import { BackLink } from '@shared/ui/back-link';
+import { Badge } from '@shared/ui/badge';
 
 /** Editor de un contenido del nutricionista: texto, portada, fichero y publicación. */
 @Component({
   selector: 'app-content-editor',
-  imports: [BackLink, PublicationActions, ButtonDirective, Skeleton, Tag, ContentFields, LoadError],
+  imports: [
+    BackLink,
+    PublicationActions,
+    ButtonDirective,
+    Skeleton,
+    Badge,
+    ContentFields,
+    LoadError,
+  ],
   templateUrl: './content-editor.html',
 })
 export class ContentEditor {
@@ -40,7 +48,7 @@ export class ContentEditor {
     this.content.hasValue() ? this.content.value() : undefined,
   );
   protected readonly statusLabels = PUBLICATION_STATUS_LABELS;
-  protected readonly statusSeverity = PUBLICATION_STATUS_SEVERITY;
+  protected readonly statusTones = PUBLICATION_STATUS_TONE;
 
   protected readonly model = linkedSignal(() => {
     const current = this.current();

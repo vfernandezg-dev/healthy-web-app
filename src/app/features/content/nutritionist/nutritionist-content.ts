@@ -2,8 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideBookOpen, LucidePlus } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
-import { Tag } from 'primeng/tag';
-import { PUBLICATION_STATUS_LABELS, PUBLICATION_STATUS_SEVERITY } from '@shared/i18n/labels';
+import { PUBLICATION_STATUS_LABELS, PUBLICATION_STATUS_TONE } from '@shared/i18n/labels';
 import { EmptyState } from '@shared/ui/empty-state';
 import { PageHeader } from '@shared/ui/page-header';
 import { ContentApi, type OwnContentFilters } from '../data/content-api';
@@ -12,6 +11,7 @@ import { pagedQuery } from '@shared/table/paged-query';
 import { PAGE_SIZE } from '@shared/table/page-size';
 import { PagedGrid } from '@shared/table/paged-grid';
 import { RowTemplate } from '@shared/table/row-template';
+import { Badge } from '@shared/ui/badge';
 
 /** El contenido del nutricionista, en cualquier estado. */
 @Component({
@@ -21,7 +21,7 @@ import { RowTemplate } from '@shared/table/row-template';
     RowTemplate,
     RouterLink,
     ButtonDirective,
-    Tag,
+    Badge,
     LucidePlus,
     ContentCard,
     EmptyState,
@@ -41,7 +41,7 @@ import { RowTemplate } from '@shared/table/row-template';
     <app-paged-grid [query]="items" label="Tu contenido" skeletonHeight="18rem">
       <ng-template [appRow]="items.items()" let-item>
         <app-content-card [item]="item" [link]="item.id">
-          <p-tag [value]="statusLabels[item.status]" [severity]="statusSeverity[item.status]" />
+          <app-badge [tone]="statusTones[item.status]">{{ statusLabels[item.status] }}</app-badge>
         </app-content-card>
       </ng-template>
       <div empty>
@@ -65,6 +65,6 @@ export class NutritionistContent {
     load: (request) => this.api.mine(request),
   });
   protected readonly statusLabels = PUBLICATION_STATUS_LABELS;
-  protected readonly statusSeverity = PUBLICATION_STATUS_SEVERITY;
+  protected readonly statusTones = PUBLICATION_STATUS_TONE;
   protected readonly emptyIcon = LucideBookOpen;
 }

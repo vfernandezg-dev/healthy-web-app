@@ -1,6 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { LucideBookOpen, LucideDynamicIcon, LucideFlame, LucideUtensils } from '@lucide/angular';
 import type { RewardResponse } from '@core/api/schema';
+import { Badge } from '@shared/ui/badge';
 
 /** Icono del premio: un plan o un contenido. */
 export function prizeIcon(reward: RewardResponse) {
@@ -13,15 +14,13 @@ export function prizeIcon(reward: RewardResponse) {
  */
 @Component({
   selector: 'app-reward-card',
-  imports: [LucideFlame, LucideDynamicIcon],
+  imports: [Badge, LucideFlame, LucideDynamicIcon],
   host: { class: 'card flex h-full flex-col p-6' },
   template: `
     <div class="flex items-center justify-between gap-2">
-      <span
-        class="inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-900"
-      >
+      <app-badge tone="accent">
         <svg lucideFlame class="size-3.5"></svg> {{ reward().requiredStreakDays }} días seguidos
-      </span>
+      </app-badge>
       <ng-content select="[badge]" />
     </div>
     @if (headingLevel() === 2) {

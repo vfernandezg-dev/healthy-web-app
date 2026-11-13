@@ -101,13 +101,12 @@
             />
           </td>
           <td class="max-md:hidden">
-            <p-tag [value]="roles[user.role]" [severity]="roleSeverity[user.role]" />
+            <app-badge [tone]="roleTones[user.role]">{{ roles[user.role] }}</app-badge>
           </td>
           <td class="max-md:hidden">
-            <p-tag
-              [value]="statuses[user.status]"
-              [severity]="user.status === 'ACTIVE' ? 'success' : 'secondary'"
-            />
+            <app-badge [tone]="user.status === 'ACTIVE' ? 'positive' : 'neutral'">{{
+              statuses[user.status]
+            }}</app-badge>
           </td>
           <td class="max-md:hidden">{{ user.createdAt | date: 'mediumDate' }}</td>
           <td class="max-md:hidden">
@@ -154,11 +153,10 @@
 </ng-template>
 
 <ng-template #tags let-user [appRow]="users.items()">
-  <p-tag [value]="roles[user.role]" [severity]="roleSeverity[user.role]" />
-  <p-tag
-    [value]="statuses[user.status]"
-    [severity]="user.status === 'ACTIVE' ? 'success' : 'secondary'"
-  />
+  <app-badge [tone]="roleTones[user.role]">{{ roles[user.role] }}</app-badge>
+  <app-badge [tone]="user.status === 'ACTIVE' ? 'positive' : 'neutral'">{{
+    statuses[user.status]
+  }}</app-badge>
 </ng-template>
 
 <ng-template #actions let-user [appRow]="users.items()">

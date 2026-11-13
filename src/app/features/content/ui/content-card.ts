@@ -6,13 +6,14 @@ import type { ContentSummaryResponse } from '@core/api/schema';
 import { CONTENT_CATEGORY_LABELS, CONTENT_TYPE_LABELS } from '@shared/i18n/labels';
 import { MediaUrlPipe } from '@shared/pipes/media-url.pipe';
 import { TierBadge } from '@shared/ui/tier-badge';
+import { Badge } from '@shared/ui/badge';
 
 const TYPE_ICONS = { ARTICLE: LucideBookOpen, VIDEO: LucidePlay, GUIDE: LucideFileText } as const;
 
 /** Tarjeta de un contenido con su portada (o un fondo con el icono del tipo). */
 @Component({
   selector: 'app-content-card',
-  imports: [RouterLink, NgOptimizedImage, LucideDynamicIcon, MediaUrlPipe, TierBadge],
+  imports: [Badge, RouterLink, NgOptimizedImage, LucideDynamicIcon, MediaUrlPipe, TierBadge],
   host: { class: 'block h-full' },
   template: `
     <a
@@ -36,9 +37,7 @@ const TYPE_ICONS = { ARTICLE: LucideBookOpen, VIDEO: LucidePlay, GUIDE: LucideFi
       </div>
       <div class="flex flex-1 flex-col p-5">
         <div class="flex flex-wrap items-center gap-2">
-          <span class="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-800">
-            {{ types[item().type] }} · {{ categories[item().category] }}
-          </span>
+          <app-badge>{{ types[item().type] }} · {{ categories[item().category] }}</app-badge>
           <app-tier-badge [tier]="item().requiredTier" [locked]="item().locked" />
           <ng-content />
         </div>

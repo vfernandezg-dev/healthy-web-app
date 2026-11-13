@@ -16,7 +16,6 @@ import selectbutton from '@primeuix/themes/aura/selectbutton';
 import skeleton from '@primeuix/themes/aura/skeleton';
 import slider from '@primeuix/themes/aura/slider';
 import tabs from '@primeuix/themes/aura/tabs';
-import tag from '@primeuix/themes/aura/tag';
 import textarea from '@primeuix/themes/aura/textarea';
 import toast from '@primeuix/themes/aura/toast';
 import togglebutton from '@primeuix/themes/aura/togglebutton';
@@ -52,7 +51,6 @@ export const AuraLean: AuraPreset = {
     skeleton,
     slider,
     tabs,
-    tag,
     textarea,
     toast,
     togglebutton,

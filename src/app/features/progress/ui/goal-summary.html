@@ -1,7 +1,7 @@
 @let current = goal();
 <div class="flex flex-wrap items-start justify-between gap-4">
   <div class="min-w-0">
-    <p-tag [value]="statusLabels[current.status]" [severity]="statusSeverity[current.status]" />
+    <app-badge [tone]="statusTones[current.status]">{{ statusLabels[current.status] }}</app-badge>
     <h2 id="goal-title" class="mt-2 text-2xl font-bold text-balance">{{ current.title }}</h2>
     <p class="text-sm text-muted">Desde el {{ current.startedOn | date: 'longDate' }}</p>
     @if (current.description) {
