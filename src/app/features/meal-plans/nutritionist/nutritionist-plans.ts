@@ -2,8 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucidePlus, LucideUtensils } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
-import { Tag } from 'primeng/tag';
-import { PUBLICATION_STATUS_LABELS, PUBLICATION_STATUS_SEVERITY } from '@shared/i18n/labels';
+import { PUBLICATION_STATUS_LABELS, PUBLICATION_STATUS_TONE } from '@shared/i18n/labels';
 import { EmptyState } from '@shared/ui/empty-state';
 import { PageHeader } from '@shared/ui/page-header';
 import { MealPlansApi, type OwnPlanFilters } from '../data/meal-plans-api';
@@ -12,6 +11,7 @@ import { pagedQuery } from '@shared/table/paged-query';
 import { PAGE_SIZE } from '@shared/table/page-size';
 import { PagedGrid } from '@shared/table/paged-grid';
 import { RowTemplate } from '@shared/table/row-template';
+import { Badge } from '@shared/ui/badge';
 
 /** Los planes del nutricionista, en cualquier estado. */
 @Component({
@@ -21,7 +21,7 @@ import { RowTemplate } from '@shared/table/row-template';
     RowTemplate,
     RouterLink,
     ButtonDirective,
-    Tag,
+    Badge,
     LucidePlus,
     PlanCard,
     EmptyState,
@@ -41,7 +41,7 @@ import { RowTemplate } from '@shared/table/row-template';
     <app-paged-grid [query]="plans" label="Tus planes">
       <ng-template [appRow]="plans.items()" let-plan>
         <app-plan-card [plan]="plan" [link]="plan.id">
-          <p-tag [value]="statusLabels[plan.status]" [severity]="statusSeverity[plan.status]" />
+          <app-badge [tone]="statusTones[plan.status]">{{ statusLabels[plan.status] }}</app-badge>
         </app-plan-card>
       </ng-template>
       <div empty>
@@ -65,6 +65,6 @@ export class NutritionistPlans {
     load: (request) => this.api.mine(request),
   });
   protected readonly statusLabels = PUBLICATION_STATUS_LABELS;
-  protected readonly statusSeverity = PUBLICATION_STATUS_SEVERITY;
+  protected readonly statusTones = PUBLICATION_STATUS_TONE;
   protected readonly emptyIcon = LucideUtensils;
 }

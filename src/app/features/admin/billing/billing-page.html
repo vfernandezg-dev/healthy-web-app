@@ -8,41 +8,37 @@
   @if (summary.error()) {
     <app-load-error [error]="summary.error()" (retry)="summary.reload()" />
   } @else if (summary.hasValue()) {
-    <ul class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" role="list">
+    <ul class="stat-ledger motion-safe:animate-rise sm:grid-cols-2 xl:grid-cols-4" role="list">
       <li>
         <app-stat-card
           label="Suscripciones vigentes"
           [value]="activeTotal()"
           [detail]="activeDetail()"
-          [icon]="icons.active"
         />
       </li>
       <li>
         <app-stat-card
           label="Ingreso mensual recurrente"
           [value]="format(summary.value().monthlyRecurringRevenue)"
-          [icon]="icons.mrr"
         />
       </li>
       <li>
         <app-stat-card
           label="Ingresos (30 días)"
           [value]="format(summary.value().revenueLast30Days)"
-          [icon]="icons.revenue"
         />
       </li>
       <li>
-        <app-stat-card
-          label="Pagos (30 días)"
-          [value]="summary.value().paymentsLast30Days"
-          [icon]="icons.payments"
-        />
+        <app-stat-card label="Pagos (30 días)" [value]="summary.value().paymentsLast30Days" />
       </li>
     </ul>
   } @else {
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-busy="true">
+    <div class="stat-ledger sm:grid-cols-2 xl:grid-cols-4" aria-busy="true">
       @for (placeholder of [1, 2, 3, 4]; track placeholder) {
-        <p-skeleton height="7rem" borderRadius="0.75rem" />
+        <div class="space-y-3 bg-card p-5 sm:p-6">
+          <p-skeleton height="1rem" width="50%" />
+          <p-skeleton height="2.25rem" width="35%" />
+        </div>
       }
     </div>
   }

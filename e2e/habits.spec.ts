@@ -52,7 +52,7 @@ test.describe('hábitos', () => {
     await expect(hydration).toHaveAttribute('aria-valuenow', '8');
     await page.getByRole('button', { name: 'Registrar el día' }).click();
 
-    await expect(page.getByText('¡Día registrado!')).toBeVisible();
+    await expect(page.getByText('Día registrado', { exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: 'Hoy, registrado' })).toBeVisible();
     expect(created).toEqual({
       loggedOn: today,
@@ -99,7 +99,7 @@ test.describe('hábitos', () => {
 
     await page.getByRole('button', { name: 'Registrar ayer' }).click();
     await page.getByRole('button', { name: 'Registrar el día' }).click();
-    await expect(page.getByText('¡Día registrado!')).toBeVisible();
+    await expect(page.getByText('Día registrado', { exact: true })).toBeVisible();
 
     expect(requests).toEqual([
       {

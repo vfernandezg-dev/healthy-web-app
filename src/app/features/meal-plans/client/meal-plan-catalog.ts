@@ -11,11 +11,21 @@ import { PAGE_SIZE } from '@shared/table/page-size';
 import { PagedGrid } from '@shared/table/paged-grid';
 import { RowTemplate } from '@shared/table/row-template';
 import { FormField, form } from '@angular/forms/signals';
+import { Badge } from '@shared/ui/badge';
 
 /** Catálogo de planes publicados, con los que sigue el cliente arriba. */
 @Component({
   selector: 'app-meal-plan-catalog',
-  imports: [PagedGrid, RowTemplate, FormField, SelectButton, PlanCard, EmptyState, PageHeader],
+  imports: [
+    Badge,
+    PagedGrid,
+    RowTemplate,
+    FormField,
+    SelectButton,
+    PlanCard,
+    EmptyState,
+    PageHeader,
+  ],
   templateUrl: './meal-plan-catalog.html',
 })
 export class MealPlanCatalog {

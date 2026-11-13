@@ -29,7 +29,10 @@ import { LucideCircleExclamationPoint } from '@lucide/angular';
     </label>
     <ng-content />
     @if (error(); as message) {
-      <p [id]="inputId() + '-error'" class="mt-1.5 flex items-start gap-1.5 text-sm text-red-700">
+      <p
+        [id]="inputId() + '-error'"
+        class="mt-1.5 flex items-start gap-1.5 text-sm text-danger-700"
+      >
         <svg lucideCircleExclamationPoint class="mt-0.5 size-4"></svg>
         <span>{{ message }}</span>
       </p>

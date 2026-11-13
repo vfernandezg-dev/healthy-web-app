@@ -1,22 +1,15 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  LucideArrowRight,
-  LucideBookOpen,
-  LucideDynamicIcon,
-  LucideTrophy,
-  LucideUsers,
-  LucideUtensils,
-} from '@lucide/angular';
+import { LucideArrowRight } from '@lucide/angular';
 import { Skeleton } from 'primeng/skeleton';
 import { AuthStore } from '@core/auth/auth-store';
 import type { PublicationSummaryResponse } from '@core/api/schema';
-import { NAVIGATION } from '@core/routing/navigation';
 import { PageHeader } from '@shared/ui/page-header';
 import { PersonAvatar } from '@shared/ui/person-avatar';
+import { SectionHeader } from '@shared/ui/section-header';
 import { StatCard } from '@shared/ui/stat-card';
-import { Shortcuts } from '@shared/ui/shortcuts';
+import { longDateLabel } from '@shared/utils/date';
 import { MealPlansApi } from '@features/meal-plans/data/meal-plans-api';
 import { ContentApi } from '@features/content/data/content-api';
 import { ClientsApi } from '@features/nutritionist-clients/data/clients-api';
@@ -35,7 +28,6 @@ interface Draft {
   readonly link: string;
 }
 
-/** Inicio del nutricionista: cifras de su actividad, clientes recientes y borradores por publicar. */
 /** Cuántos clientes recientes y cuántos borradores enseña el panel. */
 const DASHBOARD_CLIENTS = 4;
 const DASHBOARD_DRAFTS = 5;
@@ -46,6 +38,10 @@ const DRAFTS = {
   sort: 'updatedAt,desc',
 } as const;
 
+/**
+ * Inicio del nutricionista: las cifras de su actividad (con el enlace a cada sección), sus clientes más recientes y
+ * los borradores por publicar.
+ */
 @Component({
   selector: 'app-nutritionist-dashboard',
   imports: [
@@ -54,11 +50,10 @@ const DRAFTS = {
     DatePipe,
     Skeleton,
     LucideArrowRight,
-    LucideDynamicIcon,
     PageHeader,
     PersonAvatar,
+    SectionHeader,
     StatCard,
-    Shortcuts,
   ],
   templateUrl: './nutritionist-dashboard.html',
 })
@@ -70,13 +65,7 @@ export class NutritionistDashboard {
   private readonly rewardsApi = inject(RewardsApi);
 
   protected readonly greeting = computed(() => `Hola, ${this.auth.user()?.firstName ?? ''}`);
-  protected readonly shortcuts = NAVIGATION.NUTRITIONIST.filter((item) => item.description);
-  protected readonly icons = {
-    clients: LucideUsers,
-    plans: LucideUtensils,
-    content: LucideBookOpen,
-    rewards: LucideTrophy,
-  };
+  protected readonly today = longDateLabel();
 
   /** Sus clientes más recientes (la API los ordena así) y, en `page.totalElements`, cuántos tiene. */
   protected readonly clients = this.clientsApi.clients(

@@ -46,7 +46,7 @@ export class ProgressStore {
       message: `«${goal.title}» pasará a tus metas anteriores y podrás crear una nueva.`,
       acceptLabel: 'Dar por cumplida',
     }),
-    success: '¡Enhorabuena! Meta cumplida',
+    success: 'Meta cumplida',
     onSuccess: () => this.goals.reload(),
   });
 

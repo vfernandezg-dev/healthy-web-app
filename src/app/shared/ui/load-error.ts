@@ -4,30 +4,39 @@ import { ButtonDirective } from 'primeng/button';
 import { toProblem } from '@core/api/problem';
 
 /**
- * Estado de error de una lectura (un httpResource que falló), con el mensaje de la API y un botón para reintentar. */
+ * Estado de error de una lectura (un httpResource que falló), con el mensaje de la API y un botón para reintentar.
+ * Alineado a la izquierda, como el estado vacío: icono en línea, título, explicación y la acción.
+ */
 @Component({
   selector: 'app-load-error',
   imports: [ButtonDirective, LucideTriangleExclamationPoint, LucideRefreshCw],
   host: { class: 'block' },
   template: `
     @if (compact()) {
-      <p class="text-sm text-red-700" role="alert">
+      <p class="text-sm text-danger-700" role="alert">
         {{ title() }}.
         <button type="button" class="font-semibold underline" (click)="retry.emit()">
           Reintentar
         </button>
       </p>
     } @else {
-      <div class="card flex flex-col items-center gap-3 px-6 py-10 text-center" role="alert">
-        <span class="grid size-12 place-items-center rounded-full bg-red-50 text-red-700">
-          <svg lucideTriangleExclamationPoint class="size-6"></svg>
-        </span>
-        <p class="text-lg font-bold">{{ title() }}</p>
-        <p class="max-w-md text-muted">{{ detail() }}</p>
-        <button pButton type="button" severity="secondary" class="mt-2" (click)="retry.emit()">
-          <svg lucideRefreshCw></svg>
-          Reintentar
-        </button>
+      <div class="card flex items-start gap-4 px-5 py-6" role="alert">
+        <svg lucideTriangleExclamationPoint class="mt-0.5 text-danger-700"></svg>
+        <div class="min-w-0">
+          <p class="font-semibold">{{ title() }}</p>
+          <p class="mt-1 max-w-prose text-sm text-muted">{{ detail() }}</p>
+          <button
+            pButton
+            type="button"
+            severity="secondary"
+            size="small"
+            class="mt-4"
+            (click)="retry.emit()"
+          >
+            <svg lucideRefreshCw></svg>
+            Reintentar
+          </button>
+        </div>
       </div>
     }
   `,

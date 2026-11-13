@@ -8,12 +8,11 @@ import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { Skeleton } from 'primeng/skeleton';
 import { SortIcon as TableSortIcon, SortableColumn, Table } from 'primeng/table';
-import { Tag } from 'primeng/tag';
 import type { AdminUserResponse } from '@core/api/schema';
 import { AuthStore } from '@core/auth/auth-store';
 import {
   ROLE_LABELS,
-  ROLE_SEVERITY,
+  ROLE_TONE,
   USER_STATUS_LABELS,
   type UserStatus,
   ROLE_PLURAL_LABELS,
@@ -30,6 +29,7 @@ import { pagedQuery } from '@shared/table/paged-query';
 import { PAGE_SIZE } from '@shared/table/page-size';
 import { debouncedSearch } from '@shared/utils/debounced';
 import { mutation } from '@shared/utils/mutation';
+import { Badge } from '@shared/ui/badge';
 
 const DEFAULT_SORT = 'createdAt,desc';
 
@@ -52,7 +52,7 @@ const ACCOUNT_STATUS_FILTER: Readonly<Record<UserStatus, string>> = {
     InputIcon,
     Select,
     Skeleton,
-    Tag,
+    Badge,
     Table,
     SortableColumn,
     TableSortIcon,
@@ -71,7 +71,7 @@ export class UsersPage {
   private readonly auth = inject(AuthStore);
 
   protected readonly roles = ROLE_LABELS;
-  protected readonly roleSeverity = ROLE_SEVERITY;
+  protected readonly roleTones = ROLE_TONE;
   protected readonly statuses = USER_STATUS_LABELS;
   protected readonly roleOptions = withAllOption('Todos los roles', ROLE_PLURAL_LABELS);
   protected readonly statusOptions = withAllOption('Todas las cuentas', ACCOUNT_STATUS_FILTER);

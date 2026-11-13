@@ -1,6 +1,6 @@
 # ADR 0002 · PrimeNG + Tailwind CSS con el tema de la landing
 
-- **Estado:** aceptada
+- **Estado:** aceptada, sustituida en parte por el [ADR 0010](0010-identidad-despensa.md) (colores y forma)
 - **Fecha:** 2026-11-11
 
 ## Contexto

@@ -14,8 +14,8 @@ export interface WeightPoint {
 const ZOOM_FROM = 30;
 
 /**
- * Evolución del peso con la línea del objetivo (ECharts, SVG). Para lectores de pantalla, el contenedor tiene un
- * resumen en texto; los datos completos están en la tabla de pesajes de la página.
+ * Evolución del peso con la línea del objetivo (ECharts, SVG), con los colores de la paleta. Para lectores de
+ * pantalla, el contenedor tiene un resumen en texto; los datos completos están en la tabla de pesajes de la página.
  */
 @Component({
   selector: 'app-weight-chart',
@@ -70,9 +70,15 @@ export class WeightChart {
     const points = this.points();
     const color = (name: string, fallback: string) =>
       getComputedStyle(this.document.documentElement).getPropertyValue(name).trim() || fallback;
+    // Colores de los tokens (src/styles/tokens.css); el respaldo solo se usa si el CSS aún no se ha cargado.
     const line = color('--color-brand-700', '#237047');
-    const muted = color('--color-muted', '#4b5d52');
-    const grid = color('--color-brand-100', '#d9f2e2');
+    const target = color('--color-accent-500', '#cb5f33');
+    const targetText = color('--color-accent-700', '#943d1c');
+    const ink = color('--color-ink', '#1c1a16');
+    const muted = color('--color-muted', '#5e584d');
+    const grid = color('--color-line', '#e4ded2');
+    const card = color('--color-card', '#ffffff');
+    const font = color('--font-sans', 'sans-serif');
     const zoom = points.length > ZOOM_FROM;
     const kg = (value: number) => `${this.number().format(value)} kg`;
 
@@ -84,8 +90,16 @@ export class WeightChart {
       animationEasing: 'cubicOut',
       animationDurationUpdate: 400,
       grid: { left: 56, right: 24, top: 32, bottom: zoom ? 72 : 32 },
+      textStyle: { fontFamily: font },
+      // Tooltip como una tarjeta: blanco, filete y radio de la interfaz.
       tooltip: {
         trigger: 'axis',
+        backgroundColor: card,
+        borderColor: grid,
+        borderWidth: 1,
+        padding: [8, 12],
+        textStyle: { color: ink, fontFamily: font },
+        extraCssText: 'border-radius: 8px; box-shadow: 0 12px 32px -12px rgb(28 26 22 / 0.22);',
         valueFormatter: (value: unknown) => kg(Number(value)),
       },
       xAxis: {
@@ -123,18 +137,22 @@ export class WeightChart {
           name: 'Peso',
           type: 'line',
           smooth: 0.3,
-          symbolSize: 8,
+          symbol: 'circle',
+          symbolSize: 7,
           data: points.map((point) => [fromIsoDate(point.date).getTime(), point.weightKg]),
-          lineStyle: { color: line, width: 3 },
-          itemStyle: { color: line },
+          lineStyle: { color: line, width: 2 },
+          itemStyle: { color: line, borderColor: card, borderWidth: 2 },
+          // Área muy suave bajo la línea.
+          areaStyle: { color: line, opacity: 0.08 },
           markLine: {
             symbol: 'none',
             silent: true,
-            lineStyle: { type: 'dashed', color: '#b45309', width: 2 },
+            // Discontinua y en caqui: se distingue de la línea del peso también sin ver los colores.
+            lineStyle: { type: 'dashed', color: target, width: 1.5 },
             label: {
               formatter: () => `Objetivo ${kg(this.targetKg())}`,
               position: 'insideEndTop',
-              color: '#92400e',
+              color: targetText,
               fontWeight: 600,
             },
             data: [{ yAxis: this.targetKg() }],

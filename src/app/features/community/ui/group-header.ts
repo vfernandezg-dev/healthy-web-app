@@ -11,11 +11,13 @@ import { ButtonDirective } from 'primeng/button';
 import type { GroupResponse } from '@core/api/schema';
 import { MEMBERS_PLURAL, type Relation } from '../data/membership';
 import { VisibilityBadge } from './visibility-badge';
+import { Badge } from '@shared/ui/badge';
 
 /** La ficha de un grupo con las acciones de quien lo mira: editar y borrar, salir, retirar la solicitud o entrar. */
 @Component({
   selector: 'app-group-header',
   imports: [
+    Badge,
     DatePipe,
     I18nPluralPipe,
     ButtonDirective,

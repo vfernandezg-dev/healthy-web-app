@@ -16,11 +16,13 @@ import { FormField, form } from '@angular/forms/signals';
 import { pagedQuery } from '@shared/table/paged-query';
 import { PAGE_SIZE } from '@shared/table/page-size';
 import { dialogState } from '@shared/ui/dialog-state';
+import { Badge } from '@shared/ui/badge';
 
 /** Denuncias de la comunidad: las abiertas se atienden por orden de llegada; las cerradas, de la más reciente. */
 @Component({
   selector: 'app-moderation-page',
   imports: [
+    Badge,
     FormField,
     DatePipe,
     SelectButton,

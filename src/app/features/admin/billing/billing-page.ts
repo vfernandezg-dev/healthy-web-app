@@ -1,10 +1,4 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import {
-  LucideBadgeCheck,
-  LucideCreditCard,
-  LucideReceipt,
-  LucideTrendingUp,
-} from '@lucide/angular';
 import { Skeleton } from 'primeng/skeleton';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { MoneyPipe } from '@shared/pipes/money.pipe';
@@ -39,12 +33,6 @@ export class BillingPage {
   private readonly api = inject(AdminApi);
   private readonly money = inject(MoneyPipe);
 
-  protected readonly icons = {
-    active: LucideBadgeCheck,
-    mrr: LucideTrendingUp,
-    revenue: LucideCreditCard,
-    payments: LucideReceipt,
-  };
   protected readonly tab = signal<string | number | undefined>('subscriptions');
 
   protected readonly summary = this.api.billingSummary();

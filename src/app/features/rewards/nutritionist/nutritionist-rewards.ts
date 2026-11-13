@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { LucidePencil, LucidePlus, LucideTrophy } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
-import { Tag } from 'primeng/tag';
 import type { RewardResponse } from '@core/api/schema';
 import { Toaster } from '@core/ui/toaster';
 import { PAGE_SIZE } from '@shared/table/page-size';
@@ -15,13 +14,14 @@ import { mutation } from '@shared/utils/mutation';
 import { type OwnRewardFilters, RewardsApi } from '../data/rewards-api';
 import { RewardCard } from '../ui/reward-card';
 import { RewardDialog } from './reward-dialog';
+import { Badge } from '@shared/ui/badge';
 
 /** Las recompensas del nutricionista (activas y retiradas): crearlas, editarlas y retirarlas. */
 @Component({
   selector: 'app-nutritionist-rewards',
   imports: [
     ButtonDirective,
-    Tag,
+    Badge,
     LucidePlus,
     LucidePencil,
     EmptyState,

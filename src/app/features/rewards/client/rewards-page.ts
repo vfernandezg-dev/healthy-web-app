@@ -15,11 +15,13 @@ import { mutation } from '@shared/utils/mutation';
 import { RewardsApi } from '../data/rewards-api';
 import { prizeLink, streakPercent } from '../data/streaks';
 import { RewardCard, prizeIcon } from '../ui/reward-card';
+import { Badge } from '@shared/ui/badge';
 
 /** Rachas del cliente hacia las recompensas y las que puede empezar. */
 @Component({
   selector: 'app-rewards-page',
   imports: [
+    Badge,
     DatePipe,
     RouterLink,
     ButtonDirective,

@@ -3,8 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Select } from 'primeng/select';
 import { Skeleton } from 'primeng/skeleton';
 import { SortIcon as TableSortIcon, SortableColumn, Table } from 'primeng/table';
-import { Tag } from 'primeng/tag';
-import { PAYMENT_STATUS_LABELS, PAYMENT_STATUS_SEVERITY, withAllOption } from '@shared/i18n/labels';
+import { PAYMENT_STATUS_LABELS, PAYMENT_STATUS_TONE, withAllOption } from '@shared/i18n/labels';
 import { MoneyPipe } from '@shared/pipes/money.pipe';
 import { LoadError } from '@shared/ui/load-error';
 import { SortIcon } from '@shared/ui/sort-icon';
@@ -14,6 +13,7 @@ import { FormField, form } from '@angular/forms/signals';
 import { pagedQuery } from '@shared/table/paged-query';
 import { PAGE_SIZE } from '@shared/table/page-size';
 import { PersonCell } from '@shared/ui/person-cell';
+import { Badge } from '@shared/ui/badge';
 
 const DEFAULT_SORT = 'createdAt,desc';
 
@@ -27,7 +27,7 @@ const DEFAULT_SORT = 'createdAt,desc';
     MoneyPipe,
     Select,
     Skeleton,
-    Tag,
+    Badge,
     Table,
     SortableColumn,
     TableSortIcon,
@@ -42,7 +42,7 @@ export class PaymentsTable {
   private readonly api = inject(AdminApi);
 
   protected readonly statuses = PAYMENT_STATUS_LABELS;
-  protected readonly severities = PAYMENT_STATUS_SEVERITY;
+  protected readonly tones = PAYMENT_STATUS_TONE;
   protected readonly statusOptions = withAllOption('Todos los estados', PAYMENT_STATUS_LABELS);
 
   private readonly filterModel = signal<PaymentFilters>({ status: null });

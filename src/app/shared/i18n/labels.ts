@@ -1,3 +1,4 @@
+import type { BadgeTone } from '../ui/badge';
 import type { components } from '@core/api/schema';
 import type { Role } from '@core/auth/roles';
 
@@ -30,14 +31,14 @@ export const PAYMENT_STATUS_LABELS: Readonly<Record<PaymentStatus, string>> = {
   CANCELED: 'Cancelado',
 };
 
-/** Severidad de p-tag para cada estado de pago. */
-export const PAYMENT_STATUS_SEVERITY: Readonly<
-  Record<Schemas['PaymentResponse']['status'], 'success' | 'warn' | 'danger' | 'secondary'>
+/** Tono de app-badge para cada estado de pago (y así con el resto de mapas *_TONE). */
+export const PAYMENT_STATUS_TONE: Readonly<
+  Record<Schemas['PaymentResponse']['status'], BadgeTone>
 > = {
-  CREATED: 'warn',
-  CAPTURED: 'success',
+  CREATED: 'warning',
+  CAPTURED: 'positive',
   FAILED: 'danger',
-  CANCELED: 'secondary',
+  CANCELED: 'neutral',
 };
 
 export type MealPlanGoal = Schemas['MealPlanSummaryResponse']['goal'];
@@ -64,12 +65,10 @@ export const PUBLICATION_STATUS_LABELS: Readonly<Record<PublicationStatus, strin
   ARCHIVED: 'Archivado',
 };
 
-export const PUBLICATION_STATUS_SEVERITY: Readonly<
-  Record<PublicationStatus, 'success' | 'warn' | 'secondary'>
-> = {
-  DRAFT: 'warn',
-  PUBLISHED: 'success',
-  ARCHIVED: 'secondary',
+export const PUBLICATION_STATUS_TONE: Readonly<Record<PublicationStatus, BadgeTone>> = {
+  DRAFT: 'warning',
+  PUBLISHED: 'positive',
+  ARCHIVED: 'neutral',
 };
 
 export type ContentType = Schemas['ContentSummaryResponse']['type'];
@@ -95,12 +94,11 @@ export const GOAL_STATUS_LABELS: Readonly<Record<GoalStatus, string>> = {
   ABANDONED: 'Abandonada',
 };
 
-export const GOAL_STATUS_SEVERITY: Readonly<Record<GoalStatus, 'info' | 'success' | 'secondary'>> =
-  {
-    ACTIVE: 'info',
-    COMPLETED: 'success',
-    ABANDONED: 'secondary',
-  };
+export const GOAL_STATUS_TONE: Readonly<Record<GoalStatus, BadgeTone>> = {
+  ACTIVE: 'outline',
+  COMPLETED: 'positive',
+  ABANDONED: 'neutral',
+};
 
 export type GroupVisibility = Schemas['GroupResponse']['visibility'];
 
@@ -122,10 +120,10 @@ export const ROLE_PLURAL_LABELS: Readonly<Record<Role, string>> = {
   ADMIN: 'Administración',
 };
 
-export const ROLE_SEVERITY: Readonly<Record<Role, 'info' | 'success' | 'warn'>> = {
-  CLIENT: 'info',
-  NUTRITIONIST: 'success',
-  ADMIN: 'warn',
+export const ROLE_TONE: Readonly<Record<Role, BadgeTone>> = {
+  CLIENT: 'neutral',
+  NUTRITIONIST: 'positive',
+  ADMIN: 'pine',
 };
 
 export type UserStatus = Schemas['AdminUserResponse']['status'];
@@ -144,13 +142,11 @@ export const SUBSCRIPTION_STATUS_LABELS: Readonly<Record<SubscriptionStatus, str
   EXPIRED: 'Caducada',
 };
 
-export const SUBSCRIPTION_STATUS_SEVERITY: Readonly<
-  Record<SubscriptionStatus, 'success' | 'warn' | 'info' | 'secondary'>
-> = {
-  PENDING_PAYMENT: 'warn',
-  ACTIVE: 'success',
-  CANCELED: 'info',
-  EXPIRED: 'secondary',
+export const SUBSCRIPTION_STATUS_TONE: Readonly<Record<SubscriptionStatus, BadgeTone>> = {
+  PENDING_PAYMENT: 'warning',
+  ACTIVE: 'positive',
+  CANCELED: 'outline',
+  EXPIRED: 'neutral',
 };
 
 export type InvitationStatus = Schemas['InvitationResponse']['status'];
@@ -162,12 +158,10 @@ export const INVITATION_STATUS_LABELS: Readonly<Record<InvitationStatus, string>
   REVOKED: 'Revocada',
 };
 
-export const INVITATION_STATUS_SEVERITY: Readonly<
-  Record<InvitationStatus, 'success' | 'warn' | 'secondary' | 'danger'>
-> = {
-  PENDING: 'warn',
-  ACCEPTED: 'success',
-  EXPIRED: 'secondary',
+export const INVITATION_STATUS_TONE: Readonly<Record<InvitationStatus, BadgeTone>> = {
+  PENDING: 'warning',
+  ACCEPTED: 'positive',
+  EXPIRED: 'neutral',
   REVOKED: 'danger',
 };
 

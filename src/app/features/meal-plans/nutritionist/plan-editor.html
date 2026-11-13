@@ -6,7 +6,7 @@
   @let status = current.status;
   <header class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
     <div>
-      <p-tag [value]="statusLabels[status]" [severity]="statusSeverity[status]" />
+      <app-badge [tone]="statusTones[status]">{{ statusLabels[status] }}</app-badge>
       <h1 class="mt-2 text-3xl">{{ current.plan.title }}</h1>
       <p class="mt-1 text-muted">
         @switch (status) {
@@ -60,7 +60,7 @@
           @if (day.meals.length === 0) {
             <p class="text-sm text-muted">Sin comidas todavía.</p>
           } @else {
-            <ul class="divide-y divide-brand-50" role="list">
+            <ul class="divide-y divide-line" role="list">
               @for (meal of day.meals; track meal.id) {
                 <li class="flex items-center gap-4 py-2.5">
                   <span class="w-24 shrink-0 text-sm font-semibold text-brand-700">{{

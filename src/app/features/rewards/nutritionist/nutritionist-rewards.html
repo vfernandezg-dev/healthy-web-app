@@ -11,11 +11,9 @@
 <app-paged-grid [query]="rewards" label="Tus recompensas" [skeletons]="2">
   <ng-template [appRow]="rewards.items()" let-reward>
     <app-reward-card [reward]="reward" [headingLevel]="2">
-      <p-tag
-        badge
-        [value]="reward.active ? 'Activa' : 'Retirada'"
-        [severity]="reward.active ? 'success' : 'secondary'"
-      />
+      <app-badge [tone]="reward.active ? 'positive' : 'neutral'">{{
+        reward.active ? 'Activa' : 'Retirada'
+      }}</app-badge>
       @if (reward.active) {
         <div class="mt-5 flex justify-end gap-2">
           <button

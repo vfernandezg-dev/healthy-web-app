@@ -3,13 +3,12 @@ import { Component, LOCALE_ID, computed, inject, signal } from '@angular/core';
 import { LucideReceipt } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
-import { Tag } from 'primeng/tag';
 import type { PlanResponse, CurrentSubscriptionResponse } from '@core/api/schema';
 import { ExternalNavigation } from '@core/routing/external-navigation';
 import { Toaster } from '@core/ui/toaster';
 import {
   PAYMENT_STATUS_LABELS,
-  PAYMENT_STATUS_SEVERITY,
+  PAYMENT_STATUS_TONE,
   TIER_LABELS,
   type Tier,
 } from '@shared/i18n/labels';
@@ -19,13 +18,23 @@ import { LoadError } from '@shared/ui/load-error';
 import { PageHeader } from '@shared/ui/page-header';
 import { BillingApi } from './data/billing-api';
 import { mutation } from '@shared/utils/mutation';
+import { Badge } from '@shared/ui/badge';
 
 const TIER_ORDER: readonly Tier[] = ['BASIC', 'PREMIUM', 'VIP'];
 
 /** Plan actual, planes disponibles (pago con PayPal) e historial de pagos del cliente. */
 @Component({
   selector: 'app-subscription-page',
-  imports: [DatePipe, MoneyPipe, ButtonDirective, Skeleton, Tag, EmptyState, LoadError, PageHeader],
+  imports: [
+    DatePipe,
+    MoneyPipe,
+    ButtonDirective,
+    Skeleton,
+    Badge,
+    EmptyState,
+    LoadError,
+    PageHeader,
+  ],
   templateUrl: './subscription-page.html',
 })
 export class SubscriptionPage {
@@ -40,7 +49,7 @@ export class SubscriptionPage {
 
   protected readonly tierLabels = TIER_LABELS;
   protected readonly paymentLabels = PAYMENT_STATUS_LABELS;
-  protected readonly paymentSeverity = PAYMENT_STATUS_SEVERITY;
+  protected readonly paymentTones = PAYMENT_STATUS_TONE;
   protected readonly receiptIcon = LucideReceipt;
 
   protected readonly subscription = computed(() =>

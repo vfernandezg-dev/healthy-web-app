@@ -5,13 +5,12 @@ import { Router } from '@angular/router';
 import { LucidePencil, LucidePlus, LucideTrash } from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
-import { Tag } from 'primeng/tag';
 import type { MealPlanDetailResponse, MealResponse } from '@core/api/schema';
 import { Toaster } from '@core/ui/toaster';
 import {
   MEAL_CATEGORY_LABELS,
   PUBLICATION_STATUS_LABELS,
-  PUBLICATION_STATUS_SEVERITY,
+  PUBLICATION_STATUS_TONE,
 } from '@shared/i18n/labels';
 import { LoadError } from '@shared/ui/load-error';
 import { MealPlansApi } from '../data/meal-plans-api';
@@ -23,6 +22,7 @@ import { formSubmitter } from '@shared/forms/form-submitter';
 import { mutation } from '@shared/utils/mutation';
 import { PublicationActions } from '@shared/publishing/publication-actions';
 import { BackLink } from '@shared/ui/back-link';
+import { Badge } from '@shared/ui/badge';
 
 /** Editor de un plan del nutricionista: datos, comidas por día y publicación. */
 @Component({
@@ -33,7 +33,7 @@ import { BackLink } from '@shared/ui/back-link';
     DecimalPipe,
     ButtonDirective,
     Skeleton,
-    Tag,
+    Badge,
     LucidePlus,
     LucidePencil,
     LucideTrash,
@@ -63,7 +63,7 @@ export class PlanEditor {
   });
   protected readonly categories = MEAL_CATEGORY_LABELS;
   protected readonly statusLabels = PUBLICATION_STATUS_LABELS;
-  protected readonly statusSeverity = PUBLICATION_STATUS_SEVERITY;
+  protected readonly statusTones = PUBLICATION_STATUS_TONE;
 
   protected readonly model = linkedSignal(() => {
     const current = this.current();

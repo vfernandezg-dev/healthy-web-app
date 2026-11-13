@@ -1,30 +1,24 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { LucideGlobe, LucideLock } from '@lucide/angular';
 import { GROUP_VISIBILITY_LABELS, type GroupVisibility } from '@shared/i18n/labels';
+import { Badge } from '@shared/ui/badge';
 
 /** Grupo público (cualquiera entra y lee) o privado (el creador aprueba cada entrada). */
 @Component({
   selector: 'app-visibility-badge',
-  imports: [LucideGlobe, LucideLock],
+  imports: [Badge],
   host: { class: 'inline-flex' },
   template: `
-    <span
-      class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold"
-      [class]="
-        visibility() === 'PRIVATE' ? 'bg-amber-100 text-amber-900' : 'bg-brand-50 text-brand-800'
-      "
-    >
-      @if (visibility() === 'PRIVATE') {
-        <svg lucideLock class="size-3.5"></svg>
-      } @else {
-        <svg lucideGlobe class="size-3.5"></svg>
-      }
+    <app-badge [tone]="isPrivate() ? 'outline' : 'neutral'" [icon]="isPrivate() ? lock : globe">
       {{ labels[visibility()] }}
-    </span>
+    </app-badge>
   `,
 })
 export class VisibilityBadge {
   readonly visibility = input.required<GroupVisibility>();
 
   protected readonly labels = GROUP_VISIBILITY_LABELS;
+  protected readonly lock = LucideLock;
+  protected readonly globe = LucideGlobe;
+  protected readonly isPrivate = computed(() => this.visibility() === 'PRIVATE');
 }

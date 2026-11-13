@@ -80,10 +80,9 @@
               />
             </td>
             <td class="max-md:hidden">
-              <p-tag
-                [value]="statuses[invitation.status]"
-                [severity]="severities[invitation.status]"
-              />
+              <app-badge [tone]="tones[invitation.status]">{{
+                statuses[invitation.status]
+              }}</app-badge>
             </td>
             <td class="max-md:hidden">{{ invitation.createdAt | date: 'mediumDate' }}</td>
             <td class="max-md:hidden">
@@ -123,11 +122,9 @@
 <ng-template #who let-invitation [appRow]="invitations.items()">
   <p class="font-semibold">{{ invitation.firstName }} {{ invitation.lastName }}</p>
   <p class="text-sm text-muted">{{ invitation.email }}</p>
-  <p-tag
-    class="mt-2 md:hidden"
-    [value]="statuses[invitation.status]"
-    [severity]="severities[invitation.status]"
-  />
+  <app-badge class="mt-2 md:hidden" [tone]="tones[invitation.status]">{{
+    statuses[invitation.status]
+  }}</app-badge>
 </ng-template>
 
 <ng-template #deadline let-invitation [appRow]="invitations.items()">

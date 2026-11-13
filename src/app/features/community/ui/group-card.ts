@@ -5,11 +5,12 @@ import { LucideUsers } from '@lucide/angular';
 import type { GroupResponse } from '@core/api/schema';
 import { MEMBERS_PLURAL, membershipLabel } from '../data/membership';
 import { VisibilityBadge } from './visibility-badge';
+import { Badge } from '@shared/ui/badge';
 
 /** Tarjeta de un grupo del directorio. */
 @Component({
   selector: 'app-group-card',
-  imports: [RouterLink, I18nPluralPipe, LucideUsers, VisibilityBadge],
+  imports: [Badge, RouterLink, I18nPluralPipe, LucideUsers, VisibilityBadge],
   host: { class: 'block h-full' },
   template: `
     <a
@@ -19,9 +20,7 @@ import { VisibilityBadge } from './visibility-badge';
       <div class="flex flex-wrap items-center gap-2">
         <app-visibility-badge [visibility]="group().visibility" />
         @if (membership(); as label) {
-          <span class="rounded-full bg-mint px-2.5 py-0.5 text-xs font-semibold text-brand-900">
-            {{ label }}
-          </span>
+          <app-badge tone="positive">{{ label }}</app-badge>
         }
       </div>
       <h3 class="mt-3 text-lg font-bold text-balance group-hover:text-brand-800">

@@ -18,6 +18,11 @@
  * colores hexadecimales en los componentes.
  */
 @theme {
+  /*
+   * Sin la paleta por defecto de Tailwind: solo existen los colores de abajo. Una clase como bg-red-600 no generaría
+   * CSS (y `pnpm theme:check` la rechaza).
+   */
+  --color-*: initial;
   --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -106,10 +111,6 @@
   --color-line-strong: var(--color-stone-300);
   --color-ink: var(--color-stone-950);
   --color-muted: var(--color-stone-600);
-
-  /* Nombres antiguos mientras dura la migración. */
-  --color-surface: var(--color-canvas);
-  --color-mint: var(--color-brand-100);
 
   /* Radios: controles (botones, campos), tarjetas y etiquetas. */
   --radius-control: 0.5rem;
