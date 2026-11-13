@@ -95,6 +95,67 @@ describe('AuthStore', () => {
     expect(store.isAuthenticated()).toBe(true);
   });
 
+  describe('indicio de sesión abierta', () => {
+    beforeEach(() => localStorage.removeItem('hb_session'));
+
+    it('se guarda al entrar (sin datos de la sesión) y se borra si la cookie ya no vale', async () => {
+      const login = store.login('maria.lopez@healthybites.com', 'healthy123');
+      http.expectOne('/api/v1/auth/login').flush(session('CLIENT'));
+      await login;
+      expect(localStorage.getItem('hb_session')).toBe('1');
+
+      const refresh = store.refresh();
+      http
+        .expectOne('/api/v1/auth/refresh')
+        .flush({ code: 'invalid-refresh-token' }, { status: 401, statusText: 'Unauthorized' });
+      await refresh;
+      expect(localStorage.getItem('hb_session')).toBeNull();
+    });
+
+    it('un corte de red no lo borra', async () => {
+      store.applySession(session());
+
+      const offline = store.refresh();
+      http.expectOne('/api/v1/auth/refresh').error(new ProgressEvent('error'));
+      await offline;
+
+      expect(localStorage.getItem('hb_session')).toBe('1');
+    });
+
+    it('sin él, el arranque espera poco a la API (pero la pide igual, para despertarla)', async () => {
+      vi.useFakeTimers();
+      try {
+        let done = false;
+        void store.restore().then(() => (done = true));
+
+        await vi.advanceTimersByTimeAsync(1000);
+        http.expectOne('/api/v1/auth/refresh');
+        expect(done).toBe(false);
+        await vi.advanceTimersByTimeAsync(600);
+        expect(done).toBe(true);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('con él, el arranque espera hasta 8 s', async () => {
+      localStorage.setItem('hb_session', '1');
+      vi.useFakeTimers();
+      try {
+        let done = false;
+        void store.restore().then(() => (done = true));
+
+        await vi.advanceTimersByTimeAsync(7000);
+        http.expectOne('/api/v1/auth/refresh');
+        expect(done).toBe(false);
+        await vi.advanceTimersByTimeAsync(1100);
+        expect(done).toBe(true);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+  });
+
   it('cerrar sesión la borra, avisa al servidor y vuelve al login', async () => {
     store.applySession(session());
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);

@@ -98,6 +98,37 @@
     outline-color: var(--color-brand-300);
   }
 
+  /* Textos largos (privacidad, seguridad): una columna de lectura con los estilos del texto corrido. */
+  .legal-prose {
+    @apply max-w-prose text-pretty;
+
+    & .eyebrow {
+      @apply text-xs font-semibold tracking-[0.08em] text-muted uppercase;
+    }
+    & h1 {
+      @apply mt-2 text-3xl sm:text-4xl;
+    }
+    & .lead {
+      @apply mt-5 text-lg text-muted;
+    }
+    & h2 {
+      @apply mt-10 text-xl font-bold tracking-tight;
+    }
+    & p,
+    & ul {
+      @apply mt-3;
+    }
+    & ul {
+      @apply list-disc space-y-2 pl-5 marker:text-brand-600;
+    }
+    & a {
+      @apply font-semibold text-brand-700 underline underline-offset-2 hover:text-brand-800;
+    }
+    & code {
+      @apply rounded-badge bg-sunken px-1 py-0.5 text-[0.9em];
+    }
+  }
+
   /* Cabeceras de tabla en versalitas: PrimeNG no tiene token para la transformación ni el espaciado. */
   .p-datatable-thead > tr > th {
     @apply text-xs font-semibold tracking-[0.06em] uppercase;

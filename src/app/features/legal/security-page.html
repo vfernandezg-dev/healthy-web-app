@@ -1,0 +1,111 @@
+<article class="legal-prose" aria-labelledby="security-title">
+  <p class="eyebrow">Actualizada el 13 de noviembre de 2026</p>
+  <h1 id="security-title">Política de seguridad</h1>
+
+  <p class="lead">
+    Healthy Bites es un proyecto académico y de portafolio, sin garantías de disponibilidad. Aun
+    así, está construido con las mismas prácticas de seguridad que se esperan de un servicio real, y
+    esta página las explica.
+  </p>
+
+  <section aria-labelledby="security-transport">
+    <h2 id="security-transport">Conexiones cifradas</h2>
+    <p>
+      Todo viaja por HTTPS. El dominio <code>.dev</code> está en la lista de precarga HSTS de los
+      navegadores, que solo se conectan a él cifrando la conexión: nadie puede leer ni modificar las
+      peticiones por el camino.
+    </p>
+  </section>
+
+  <section aria-labelledby="security-accounts">
+    <h2 id="security-accounts">Cuentas y sesiones</h2>
+    <ul>
+      <li>Las contraseñas se guardan con bcrypt; nunca se guardan ni se registran en claro.</li>
+      <li>
+        El acceso usa un token de 15 minutos que vive solo en la memoria de la página. La sesión se
+        renueva con una cookie <em>httpOnly</em>, <em>Secure</em> y <em>SameSite=Strict</em> que
+        cambia en cada uso; si alguien reutiliza una antigua, se cierran todas las sesiones que
+        salieron de ella.
+      </li>
+      <li>
+        Los enlaces para cambiar la contraseña sirven una sola vez, caducan a los 30 minutos y solo
+        se guarda su hash. La respuesta es la misma exista o no la cuenta.
+      </li>
+      <li>
+        Cada petición comprueba en el servidor el rol (cliente, nutricionista o administración) y
+        que el recurso sea tuyo.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="security-abuse">
+    <h2 id="security-abuse">Protección frente a abusos</h2>
+    <ul>
+      <li>
+        Un firewall perimetral limita las peticiones por IP antes de que lleguen al servidor, y la
+        plataforma de alojamiento mitiga los ataques de denegación de servicio.
+      </li>
+      <li>
+        La API limita además los intentos de inicio de sesión, los registros, las recuperaciones de
+        contraseña y los mensajes de contacto, que llevan también un campo trampa contra bots.
+      </li>
+      <li>
+        Las consultas a la base de datos son siempre parametrizadas y la ordenación solo admite
+        campos de una lista cerrada: el texto que envías nunca se convierte en SQL.
+      </li>
+      <li>
+        Todo lo que llega a la API se valida, y los errores responden con un código estable, sin
+        detalles internos.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="security-browser">
+    <h2 id="security-browser">En el navegador</h2>
+    <ul>
+      <li>
+        Una política de seguridad de contenidos (CSP) estricta: la aplicación solo ejecuta su propio
+        código y solo se conecta con su API.
+      </li>
+      <li>
+        Cabeceras contra el <em>clickjacking</em> y el rastreo de tipos, y una política de permisos
+        que desactiva la cámara, el micrófono y la ubicación.
+      </li>
+      <li>
+        Las imágenes subidas están en almacenamiento privado y se leen con enlaces firmados que
+        caducan en minutos.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="security-dev">
+    <h2 id="security-dev">En el desarrollo</h2>
+    <ul>
+      <li>Los secretos viven fuera del código, en las variables del alojamiento.</li>
+      <li>Dependabot avisa de las dependencias con vulnerabilidades conocidas.</li>
+      <li>
+        Cada cambio pasa pruebas automáticas: unitarias, de integración con una base de datos real y
+        de extremo a extremo con comprobaciones de accesibilidad.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="security-report">
+    <h2 id="security-report">Si encuentras un fallo de seguridad</h2>
+    <p>
+      Escribe a <a href="mailto:projects@vfernandezg.dev">projects&#64;vfernandezg.dev</a> con los
+      pasos para reproducirlo. Te pido que:
+    </p>
+    <ul>
+      <li>no accedas a datos de otras personas ni los modifiques;</li>
+      <li>no hagas pruebas de denegación de servicio ni ataques automatizados masivos;</li>
+      <li>des un tiempo razonable para corregirlo antes de publicarlo.</li>
+    </ul>
+    <p>
+      Es un proyecto personal sin programa de recompensas, pero cualquier aviso responsable se
+      agradece y, si quieres, se reconoce públicamente. Los datos de contacto también están en
+      <a href="/.well-known/security.txt">security.txt</a>. Qué datos se guardan se explica en la
+      <a routerLink="/privacidad">política de privacidad</a>.
+    </p>
+  </section>
+</article>

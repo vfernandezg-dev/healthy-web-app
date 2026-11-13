@@ -1,0 +1,35 @@
+<a
+  href="#main"
+  class="sr-only z-50 rounded-control bg-brand-700 px-4 py-2 font-semibold text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+>
+  Saltar al contenido
+</a>
+
+<div class="mx-auto flex min-h-dvh max-w-3xl flex-col px-6 py-8 sm:px-10">
+  <header class="flex flex-wrap items-center justify-between gap-4">
+    <a [routerLink]="home()" class="w-fit rounded-md"><app-brand-logo /></a>
+    <a [href]="landingUrl" class="text-sm font-semibold text-brand-700 hover:underline">
+      Volver a la web
+    </a>
+  </header>
+
+  <main id="main" tabindex="-1" class="flex-1 py-12">
+    <router-outlet />
+  </main>
+
+  <footer class="border-t border-line pt-6 text-sm text-muted">
+    <nav aria-label="Políticas" class="flex flex-wrap gap-x-5 gap-y-2">
+      @for (page of pages; track page.link) {
+        <a
+          [routerLink]="page.link"
+          routerLinkActive=""
+          ariaCurrentWhenActive="page"
+          class="font-semibold text-brand-700 hover:underline aria-[current=page]:text-ink aria-[current=page]:no-underline"
+        >
+          {{ page.label }}
+        </a>
+      }
+    </nav>
+    <p class="mt-3">© {{ year }} Healthy Bites · Proyecto académico y de portafolio.</p>
+  </footer>
+</div>

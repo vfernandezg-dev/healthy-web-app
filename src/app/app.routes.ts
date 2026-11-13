@@ -117,6 +117,23 @@ export const routes: Routes = [
       },
     ],
   },
+  // Políticas: públicas, con o sin sesión.
+  {
+    path: '',
+    loadComponent: () => import('@layout/legal-layout/legal-layout').then((m) => m.LegalLayout),
+    children: [
+      {
+        path: 'privacidad',
+        title: 'Política de privacidad',
+        loadComponent: () => import('@features/legal/privacy-page').then((m) => m.PrivacyPage),
+      },
+      {
+        path: 'seguridad',
+        title: 'Política de seguridad',
+        loadComponent: () => import('@features/legal/security-page').then((m) => m.SecurityPage),
+      },
+    ],
+  },
   {
     path: '**',
     title: 'Página no encontrada',
