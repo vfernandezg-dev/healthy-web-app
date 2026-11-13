@@ -65,6 +65,9 @@ test.describe('suscripción', () => {
     );
 
     await page.goto('/client/subscription');
+    const sandbox = page.getByRole('note');
+    await expect(sandbox).toContainText('Modo de pruebas');
+    await expect(sandbox).toContainText('nunca se cobra dinero real');
     await expect(page.getByRole('heading', { level: 2, name: 'Tu plan' })).toBeVisible();
     await expect(page.getByText('El plan gratuito')).toBeVisible();
     await expect(page.getByText('5,99 US$')).toBeVisible();
