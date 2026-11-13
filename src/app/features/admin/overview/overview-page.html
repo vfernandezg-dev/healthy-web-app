@@ -1,30 +1,32 @@
-<app-page-header title="Resumen" description="El estado de la plataforma de un vistazo." />
+<app-page-header title="Resumen" [eyebrow]="today" />
 
 <section aria-labelledby="kpis-title">
   <h2 id="kpis-title" class="sr-only">Cifras</h2>
   @if (kpis(); as kpis) {
-    <ul class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" role="list">
+    <ul class="stat-ledger motion-safe:animate-rise sm:grid-cols-2 xl:grid-cols-4" role="list">
       <li>
         <app-stat-card
           label="Cuentas"
           [value]="kpis.accounts"
           [detail]="kpis.accountsDetail"
-          [icon]="icons.users"
+          link="users"
+          linkLabel="Ver las cuentas"
         />
       </li>
       <li>
-        <app-stat-card label="Altas (30 días)" [value]="kpis.newAccounts" [icon]="icons.newUsers" />
+        <app-stat-card label="Altas (30 días)" [value]="kpis.newAccounts" />
       </li>
       <li>
         <app-stat-card
           label="Suscripciones vigentes"
           [value]="kpis.subscriptions"
           [detail]="kpis.subscriptionsDetail"
-          [icon]="icons.subscriptions"
+          link="billing"
+          linkLabel="Ver la facturación"
         />
       </li>
       <li>
-        <app-stat-card label="Ingreso mensual recurrente" [value]="kpis.mrr" [icon]="icons.mrr" />
+        <app-stat-card label="Ingreso mensual recurrente" [value]="kpis.mrr" />
       </li>
     </ul>
   } @else if (users.error() || billing.error()) {
@@ -34,34 +36,37 @@
       (retry)="users.reload(); billing.reload()"
     />
   } @else {
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-busy="true">
+    <div class="stat-ledger sm:grid-cols-2 xl:grid-cols-4" aria-busy="true">
       @for (placeholder of [1, 2, 3, 4]; track placeholder) {
-        <p-skeleton height="7rem" borderRadius="0.75rem" />
+        <div class="space-y-3 bg-card p-5 sm:p-6">
+          <p-skeleton height="1rem" width="50%" />
+          <p-skeleton height="2.25rem" width="35%" />
+        </div>
       }
     </div>
   }
 </section>
 
-<div class="mt-10 grid items-start gap-6 lg:grid-cols-2">
+<div class="hb-stagger mt-10 grid items-start gap-5 lg:grid-cols-2">
   <section class="card p-6" aria-labelledby="moderation-title">
-    <h2 id="moderation-title" class="text-lg font-bold">Moderación</h2>
+    <app-section-header headingId="moderation-title" heading="Moderación" />
     @if (reports.hasValue()) {
       @let open = reports.value().page.totalElements;
       @if (open === 0) {
-        <p class="mt-3 text-muted">No hay denuncias pendientes. Todo en orden.</p>
+        <p class="mt-3 text-muted">No hay denuncias pendientes.</p>
       } @else {
-        <p class="mt-1 font-semibold text-red-800">{{ open | i18nPlural: reportsPlural }}</p>
-        <ul class="mt-4 space-y-3" role="list">
+        <p class="mt-1 font-semibold text-accent-700">{{ open | i18nPlural: reportsPlural }}</p>
+        <ul class="mt-3 divide-y divide-line" role="list">
           @for (report of oldestReports(); track report.id) {
-            <li class="rounded-2xl bg-brand-50/70 px-4 py-3">
-              <p class="text-xs font-semibold text-brand-800">
+            <li class="py-3">
+              <p class="text-xs font-semibold tracking-[0.04em] text-muted uppercase">
                 {{ targets[report.targetType] }} · {{ report.reason }}
               </p>
               <p class="mt-1 line-clamp-2">{{ report.excerpt }}</p>
             </li>
           }
         </ul>
-        <a pButton routerLink="moderation" size="small" class="mt-5"> Revisar las denuncias </a>
+        <a pButton routerLink="moderation" size="small" class="mt-4">Revisar las denuncias</a>
       }
     } @else if (reports.error()) {
       <app-load-error
@@ -79,7 +84,7 @@
   </section>
 
   <section class="card p-6" aria-labelledby="roles-title">
-    <h2 id="roles-title" class="text-lg font-bold">Cuentas por rol</h2>
+    <app-section-header headingId="roles-title" heading="Cuentas por rol" />
     @if (users.hasValue()) {
       <ul class="mt-4 space-y-4" role="list">
         @for (row of byRole(); track row.role) {
@@ -88,18 +93,15 @@
               <span class="font-semibold">{{ row.label }}</span>
               <span class="text-muted tabular-nums">{{ row.count }} ({{ row.percent }} %)</span>
             </div>
-            <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-brand-50" aria-hidden="true">
-              <div class="h-full rounded-full bg-brand-600" [style.width.%]="row.percent"></div>
+            <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-brand-100" aria-hidden="true">
+              <div
+                class="h-full origin-left rounded-full bg-brand-700 motion-safe:animate-grow-x"
+                [style.width.%]="row.percent"
+              ></div>
             </div>
           </li>
         }
       </ul>
-      <a
-        routerLink="users"
-        class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline"
-      >
-        Ver las cuentas <svg lucideArrowRight class="size-4"></svg>
-      </a>
     } @else if (!users.error()) {
       <div class="mt-4 space-y-3" aria-busy="true">
         <p-skeleton height="2.25rem" />
@@ -109,8 +111,3 @@
     }
   </section>
 </div>
-
-<section class="mt-10" aria-labelledby="shortcuts-title">
-  <h2 id="shortcuts-title" class="mb-4 text-xl font-bold">Accesos directos</h2>
-  <app-shortcuts [items]="shortcuts" />
-</section>

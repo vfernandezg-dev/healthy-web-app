@@ -77,6 +77,14 @@
     @apply rounded-card border border-line bg-card;
   }
 
+  /*
+   * Libro de cuentas: las cifras (app-stat-card) en una sola pieza, separadas por filetes. El fondo es el color del
+   * filete y asoma por el hueco de 1 px entre las celdas, que son blancas.
+   */
+  .stat-ledger {
+    @apply grid gap-px overflow-hidden rounded-card border border-line bg-line;
+  }
+
   /* Cifra destacada (pesos, medias, KPI): grande, en negrita y con el espaciado ajustado. */
   .figure {
     @apply font-bold tracking-tight;

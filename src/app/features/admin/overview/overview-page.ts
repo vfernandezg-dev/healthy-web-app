@@ -1,22 +1,15 @@
 import { I18nPluralPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  LucideArrowRight,
-  LucideBadgeCheck,
-  LucideTrendingUp,
-  LucideUserPlus,
-  LucideUsers,
-} from '@lucide/angular';
 import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
-import { NAVIGATION } from '@core/routing/navigation';
 import type { Role } from '@core/auth/roles';
 import { REPORT_TARGET_LABELS, ROLE_PLURAL_LABELS } from '@shared/i18n/labels';
 import { MoneyPipe } from '@shared/pipes/money.pipe';
 import { PageHeader } from '@shared/ui/page-header';
+import { SectionHeader } from '@shared/ui/section-header';
 import { StatCard } from '@shared/ui/stat-card';
-import { Shortcuts } from '@shared/ui/shortcuts';
+import { longDateLabel } from '@shared/utils/date';
 import { activeSubscriptions, formatAmounts } from '../data/billing-summary';
 import { AdminApi } from '../data/admin-api';
 import { LoadError } from '@shared/ui/load-error';
@@ -36,10 +29,9 @@ const OLDEST_REPORTS = 3;
     I18nPluralPipe,
     ButtonDirective,
     Skeleton,
-    LucideArrowRight,
     PageHeader,
+    SectionHeader,
     StatCard,
-    Shortcuts,
   ],
   providers: [MoneyPipe],
   templateUrl: './overview-page.html',
@@ -48,14 +40,8 @@ export class OverviewPage {
   private readonly api = inject(AdminApi);
   private readonly money = inject(MoneyPipe);
 
-  protected readonly shortcuts = NAVIGATION.ADMIN.filter((item) => item.description);
+  protected readonly today = longDateLabel();
   protected readonly targets = REPORT_TARGET_LABELS;
-  protected readonly icons = {
-    users: LucideUsers,
-    newUsers: LucideUserPlus,
-    subscriptions: LucideBadgeCheck,
-    mrr: LucideTrendingUp,
-  };
   protected readonly reportsPlural = {
     '=1': '1 denuncia pendiente',
     other: '# denuncias pendientes',
