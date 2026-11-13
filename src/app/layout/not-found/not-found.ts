@@ -10,7 +10,7 @@ import { BrandLogo } from '@shared/ui/brand-logo';
   template: `
     <main class="grid min-h-dvh place-items-center px-6 py-16">
       <div class="card w-full max-w-lg px-8 py-12 text-center sm:px-12">
-        <app-brand-logo [priority]="true" class="mb-10" />
+        <app-brand-logo class="mb-10" />
         <p class="text-sm font-semibold tracking-wide text-brand-700 uppercase">Error 404</p>
         <h1 class="mt-2 text-3xl sm:text-4xl">Esta página no existe</h1>
         <p class="mt-3 text-muted">
