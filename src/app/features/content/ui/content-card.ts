@@ -17,7 +17,7 @@ const TYPE_ICONS = { ARTICLE: LucideBookOpen, VIDEO: LucidePlay, GUIDE: LucideFi
   template: `
     <a
       [routerLink]="link()"
-      class="card group flex h-full flex-col overflow-hidden transition-shadow hover:shadow-card-hover"
+      class="card group flex h-full flex-col overflow-hidden transition-colors hover:border-line-strong"
     >
       <div class="relative aspect-video bg-brand-50">
         @if (item().coverPath) {

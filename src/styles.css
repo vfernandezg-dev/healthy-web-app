@@ -21,7 +21,7 @@
   }
 
   body {
-    @apply min-h-dvh bg-surface font-sans text-ink antialiased;
+    @apply min-h-dvh bg-canvas font-sans text-ink antialiased;
   }
 
   :focus-visible {
@@ -34,7 +34,7 @@
   }
 
   ::selection {
-    @apply bg-mint text-brand-950;
+    @apply bg-brand-100 text-brand-950;
   }
 
   /*
@@ -62,9 +62,12 @@
 }
 
 @layer components {
-  /* Tarjeta de la marca (como en la landing): esquinas grandes y sombra suave. */
+  /*
+   * Tarjeta: blanca sobre el papel, con borde fino y sin sombra. Las que son un enlace añaden
+   * `transition-colors hover:border-line-strong`.
+   */
   .card {
-    @apply rounded-3xl border border-brand-100 bg-white shadow-card;
+    @apply rounded-card border border-line bg-card;
   }
 }
 

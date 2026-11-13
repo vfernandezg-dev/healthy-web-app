@@ -138,6 +138,8 @@ export const HealthyBitesPreset = definePreset(AuraLean, {
         },
       },
       outlined: {
+        // Aura usa surface.500, que sobre el papel se queda en 4,2:1.
+        secondary: { color: '{surface.700}', borderColor: '{surface.300}' },
         danger: { color: '{red.700}', borderColor: '{red.300}' },
       },
       text: {

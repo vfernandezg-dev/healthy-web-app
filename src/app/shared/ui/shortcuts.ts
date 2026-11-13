@@ -14,7 +14,7 @@ import type { NavItem } from '@core/routing/navigation';
         <li>
           <a
             [routerLink]="item.link"
-            class="card group flex h-full items-start gap-4 p-5 transition-shadow hover:shadow-card-hover"
+            class="card group flex h-full items-start gap-4 p-5 transition-colors hover:border-line-strong"
           >
             <span
               class="grid size-10 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-700"

@@ -14,7 +14,7 @@ import { VisibilityBadge } from './visibility-badge';
   template: `
     <a
       [routerLink]="['groups', group().id]"
-      class="card group flex h-full flex-col p-6 transition-shadow hover:shadow-card-hover"
+      class="card group flex h-full flex-col p-6 transition-colors hover:border-line-strong"
     >
       <div class="flex flex-wrap items-center gap-2">
         <app-visibility-badge [visibility]="group().visibility" />
