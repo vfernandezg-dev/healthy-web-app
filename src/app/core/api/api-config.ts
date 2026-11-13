@@ -21,10 +21,17 @@ export function normalizeBaseUrl(value: string | undefined, fallback: string): s
   return candidate.replace(/\/+$/, '');
 }
 
-/** @ngx-env/builder sustituye import.meta.env al compilar; en los tests (builder oficial) no existe. */
+/**
+ * Las variables NG_APP_ del build. @ngx-env/builder solo sustituye la expresión completa `import.meta.env?.NG_APP_*`
+ * (el objeto `import.meta.env` no existe en el navegador), así que cada variable se nombra aquí, sin alias.
+ * Comprobado tras el build de release por scripts/check-build-env.mjs.
+ */
 function environment(): Partial<Env> {
-  const meta: { readonly env?: Partial<Env> } = import.meta;
-  return meta.env ?? {};
+  return {
+    NG_APP_API_URL: import.meta.env?.NG_APP_API_URL,
+    NG_APP_PRIMENG_LICENSE_KEY: import.meta.env?.NG_APP_PRIMENG_LICENSE_KEY,
+    NG_APP_LANDING_URL: import.meta.env?.NG_APP_LANDING_URL,
+  };
 }
 
 export function readAppConfig(env: Partial<Env> = environment()): AppConfig {
