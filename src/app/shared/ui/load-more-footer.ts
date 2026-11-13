@@ -12,7 +12,7 @@ import type { LoadMore } from '../utils/load-more';
   host: { class: 'block' },
   template: `
     @if (list().resource.error()) {
-      <p class="text-sm text-red-700" role="alert">
+      <p class="text-sm text-danger-700" role="alert">
         {{ errorText() }}
         <button type="button" class="font-semibold underline" (click)="list().resource.reload()">
           Reintentar

@@ -11,7 +11,7 @@ import { Badge } from '@shared/ui/badge';
   host: { class: 'card block p-6', role: 'region', 'aria-labelledby': 'past-title' },
   template: `
     <h2 id="past-title" class="text-lg font-bold">Metas anteriores</h2>
-    <ul class="mt-3 divide-y divide-brand-50" role="list">
+    <ul class="mt-3 divide-y divide-line" role="list">
       @for (past of goals(); track past.id) {
         <li class="flex items-center justify-between gap-3 py-2.5">
           <span class="min-w-0">

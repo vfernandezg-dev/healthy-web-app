@@ -13,7 +13,7 @@
   <tbody>
     @for (entry of entries(); track entry.id) {
       @let day = entry.measuredOn | date: 'longDate';
-      <tr class="border-b border-brand-50 last:border-0">
+      <tr class="border-b border-line last:border-0">
         <td class="py-2.5 pr-4">{{ entry.measuredOn | date: 'mediumDate' }}</td>
         <td class="py-2.5 pr-4 font-semibold">{{ entry.weightKg | number: '1.0-1' }} kg</td>
         <td class="py-2.5 pr-4 text-muted">{{ entry.notes }}</td>

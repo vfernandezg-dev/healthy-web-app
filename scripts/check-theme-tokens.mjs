@@ -171,6 +171,8 @@ const PAIRS = [
   ['card', 'accent-600', TEXT, 'texto blanco sobre relleno caqui'],
   ['accent-800', 'accent-50', TEXT, 'etiqueta caqui'],
   ['saffron-800', 'saffron-50', TEXT, 'etiqueta y mensaje de aviso'],
+  ['saffron-800', 'card', TEXT, 'texto de aviso en tarjetas'],
+  ['accent-600', 'card', UI, 'icono de racha'],
   ['danger-700', 'card', TEXT, 'texto de error'],
   ['danger-700', 'canvas', TEXT, 'texto de error sobre el papel'],
   ['danger-800', 'danger-50', TEXT, 'mensaje de error'],

@@ -131,7 +131,7 @@
           </thead>
           <tbody>
             @for (payment of list; track payment.id) {
-              <tr class="border-b border-brand-50 last:border-0">
+              <tr class="border-b border-line last:border-0">
                 <td class="px-6 py-4">
                   {{ payment.capturedAt ?? payment.createdAt | date: 'mediumDate' }}
                 </td>

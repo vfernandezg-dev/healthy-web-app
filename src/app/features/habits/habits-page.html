@@ -35,7 +35,9 @@
                 [formField]="habitForm.loggedOn"
               />
               @if (model().loggedOn === today && todayLog()) {
-                <p class="mt-1.5 text-sm text-amber-800">Hoy ya está registrado: edítalo abajo.</p>
+                <p class="mt-1.5 text-sm text-saffron-800">
+                  Hoy ya está registrado: edítalo abajo.
+                </p>
               }
             </div>
           }
@@ -125,7 +127,7 @@
       <app-habit-calendar class="mt-5" [logs]="history()" [until]="today" />
 
       @if (history().length > 0) {
-        <ul class="mt-6 divide-y divide-brand-50" role="list">
+        <ul class="mt-6 divide-y divide-line" role="list">
           @for (log of history(); track log.id) {
             <li class="flex items-center gap-4 py-3">
               <div class="min-w-0 flex-1">

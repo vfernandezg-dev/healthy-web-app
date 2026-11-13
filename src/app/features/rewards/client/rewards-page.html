@@ -23,7 +23,7 @@
               Premio: {{ reward.target.title }}
             </p>
             <p class="mt-4 flex items-baseline gap-2" [id]="`streak-${reward.id}`">
-              <svg lucideFlame class="size-5 self-center text-amber-700"></svg>
+              <svg lucideFlame class="size-5 self-center text-accent-600"></svg>
               <span class="text-3xl font-bold">{{ streak.currentDays }}</span>
               <span class="text-muted">de {{ reward.requiredStreakDays }} días</span>
             </p>
@@ -72,7 +72,7 @@
         @if (reward.streak; as streak) {
           <!-- Ya tiene una racha hacia ella: se sigue en «Tus rachas». -->
           <p
-            class="mt-5 flex items-center justify-center gap-1.5 rounded-full bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-800"
+            class="mt-5 flex items-center justify-center gap-1.5 rounded-control bg-sunken px-3 py-2 text-sm font-semibold text-brand-800"
           >
             @if (streak.completed) {
               <svg lucideCircleCheck class="size-4"></svg> Ya la has completado
