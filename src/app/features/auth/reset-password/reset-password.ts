@@ -13,6 +13,7 @@ import { PasswordField, PasswordInput } from '@shared/forms/password-field';
 import { MESSAGES, PASSWORD_MAX, PASSWORD_MIN } from '@shared/forms/validation';
 import { takeFragmentToken } from '../fragment-token';
 import { formSubmitter } from '@shared/forms/form-submitter';
+import { StatusPanel } from '@shared/ui/status-panel';
 
 /** Nueva contraseña desde el enlace del correo (/auth/reset-password#token=…). */
 @Component({
@@ -23,7 +24,7 @@ import { formSubmitter } from '@shared/forms/form-submitter';
     InputText,
     ButtonDirective,
     Message,
-    LucideLink2Off,
+    StatusPanel,
     LabeledField,
     PasswordField,
     PasswordInput,
@@ -47,6 +48,7 @@ export class ResetPassword {
   });
   protected readonly failure = signal<string | null>(null);
   protected readonly describe = fieldDescription;
+  protected readonly brokenLinkIcon = LucideLink2Off;
 
   protected save(event: Event): Promise<void> {
     const token = this.token;

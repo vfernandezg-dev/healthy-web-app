@@ -6,6 +6,7 @@ import { ButtonDirective } from 'primeng/button';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { toProblem } from '@core/api/problem';
 import { TIER_LABELS } from '@shared/i18n/labels';
+import { StatusPanel } from '@shared/ui/status-panel';
 import { BillingApi } from './data/billing-api';
 
 /**
@@ -14,14 +15,7 @@ import { BillingApi } from './data/billing-api';
  */
 @Component({
   selector: 'app-checkout-return',
-  imports: [
-    DatePipe,
-    RouterLink,
-    ButtonDirective,
-    ProgressSpinner,
-    LucideCircleCheck,
-    LucideCircleX,
-  ],
+  imports: [DatePipe, RouterLink, ButtonDirective, ProgressSpinner, StatusPanel],
   templateUrl: './checkout-return.html',
 })
 export class CheckoutReturn {
@@ -31,6 +25,8 @@ export class CheckoutReturn {
   readonly token = input<string>();
 
   protected readonly tierLabels = TIER_LABELS;
+  protected readonly confirmedIcon = LucideCircleCheck;
+  protected readonly failedIcon = LucideCircleX;
   protected readonly capture = resource({
     params: () => this.token() || undefined,
     loader: ({ params: orderId }) => this.billing.capture(orderId),
