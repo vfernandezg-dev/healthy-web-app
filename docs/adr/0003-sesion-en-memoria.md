@@ -9,7 +9,7 @@ La versión 1 guardaba un JWT de 30 días en `localStorage`: cualquier XSS podí
 guard con un bucle de redirecciones dejaba a los administradores en una pantalla en blanco.
 
 La API emite ahora un access token de 15 minutos y un refresh token rotatorio en una cookie `HttpOnly`
-([ADR 0002 de la API](https://github.com/vfernandezg-dev/healthy-bites-api/blob/main/docs/adr/0002-sesion-con-tokens.md)).
+([ADR 0002 de la API](https://github.com/vfernandezg-dev/healthybites-backend/blob/main/docs/adr/0002-sesion-con-tokens.md)).
 
 ## Decisión
 

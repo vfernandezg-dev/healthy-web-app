@@ -10,7 +10,7 @@ cruzados, fechas como texto libre) y los errores aparecían en tiempo de ejecuci
 
 La API publica su contrato en `docs/openapi.yaml`, con los campos obligatorios y los que pueden ser `null`
 marcados, y CI comprueba que no cambia sin commitearlo
-([ADR 0007 de la API](https://github.com/vfernandezg-dev/healthy-bites-api/blob/main/docs/adr/0007-contrato-openapi.md)).
+([ADR 0007 de la API](https://github.com/vfernandezg-dev/healthybites-backend/blob/main/docs/adr/0007-contrato-openapi.md)).
 
 ## Decisión
 
