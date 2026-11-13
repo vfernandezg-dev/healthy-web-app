@@ -18,6 +18,8 @@ const ROUTES: Readonly<Record<Role | 'PUBLIC', readonly RouteCase[]>> = {
     { path: '/auth/reset-password#token=abc', title: 'Elige una contraseña nueva' },
     { path: '/auth/accept-invitation#token=abc', title: 'Únete como nutricionista' },
     { path: '/esta-ruta-no-existe', title: 'Página no encontrada' },
+    { path: '/privacidad', title: 'Política de privacidad' },
+    { path: '/seguridad', title: 'Política de seguridad' },
   ],
   CLIENT: [
     { path: '/client', title: 'Inicio' },

@@ -16,7 +16,19 @@
     <link rel="manifest" href="manifest.webmanifest" />
   </head>
   <body>
-    <app-root></app-root>
+    <!--
+      Pantalla de carga: se ve en cuanto llega el HTML, antes que el JavaScript, y Angular la sustituye al arrancar.
+      Las clases las genera Tailwind (también lee este archivo).
+    -->
+    <app-root>
+      <div class="grid min-h-dvh place-items-center bg-canvas" role="status">
+        <div class="flex flex-col items-center gap-4 motion-safe:animate-pulse">
+          <!-- eslint-disable-next-line @angular-eslint/template/prefer-ngsrc -- Angular aún no ha arrancado. -->
+          <img src="favicon.svg" width="56" height="56" alt="" />
+          <p class="text-sm font-semibold text-muted">Cargando Healthy Bites…</p>
+        </div>
+      </div>
+    </app-root>
     <noscript>Healthy Bites necesita JavaScript para funcionar.</noscript>
   </body>
 </html>

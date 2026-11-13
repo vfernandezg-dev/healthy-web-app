@@ -50,14 +50,14 @@
     ariaCloseLabel="Cerrar el menú"
     styleClass="hb-on-pine w-80! max-w-[85vw]"
   >
-    <nav aria-label="Principal" class="flex h-full flex-col">
-      <div class="flex-1">
+    <div class="flex h-full flex-col">
+      <nav aria-label="Principal" class="flex-1">
         <ng-container [ngTemplateOutlet]="navList" />
-      </div>
+      </nav>
       <div class="mt-6 border-t border-pine-line pt-4">
         <ng-container [ngTemplateOutlet]="account" />
       </div>
-    </nav>
+    </div>
   </p-drawer>
 
   <main #main id="main" tabindex="-1" class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-10">
@@ -89,7 +89,10 @@
   </ul>
 </ng-template>
 
-<!-- Cuenta, en una fila: avatar, nombre (recortado si no cabe) y rol, y el botón de salir a la derecha. -->
+<!--
+  Cuenta, en una fila: avatar, nombre (recortado si no cabe) y rol, y el botón de salir a la derecha. Debajo, el aviso
+  de proyecto académico con las políticas.
+-->
 <ng-template #account>
   @if (user()) {
     <div class="flex items-center gap-3">
@@ -113,5 +116,15 @@
         <svg lucideLogOut></svg>
       </button>
     </div>
+    <p class="mt-3 text-xs text-on-pine-muted">
+      Proyecto académico ·
+      <a routerLink="/privacidad" class="underline underline-offset-2 hover:text-on-pine">
+        Privacidad
+      </a>
+      ·
+      <a routerLink="/seguridad" class="underline underline-offset-2 hover:text-on-pine">
+        Seguridad
+      </a>
+    </p>
   }
 </ng-template>

@@ -11,6 +11,13 @@ const LEGACY_STORAGE_KEYS = ['healthybites_auth', 'resetToken'];
 const CHANNEL = 'healthybites-session';
 /** Tope de espera al recuperar la sesión al arrancar: sin red, la app arranca igualmente (sin sesión). */
 const RESTORE_TIMEOUT_MS = 8000;
+/**
+ * Indicio, sin datos personales, de que este navegador tiene una sesión abierta (la cookie es httpOnly: la página no
+ * puede verla). Sin él, el arranque solo espera {@link RESTORE_TIMEOUT_WITHOUT_HINT_MS} a la API: quien llega por
+ * primera vez ve el login enseguida, y esa petición sirve además para despertar la API mientras escribe.
+ */
+const SESSION_HINT_KEY = 'hb_session';
+const RESTORE_TIMEOUT_WITHOUT_HINT_MS = 1500;
 
 /** Avisos entre pestañas del mismo navegador. */
 type SessionMessage =
@@ -66,7 +73,7 @@ export class AuthStore {
 
   async login(email: string, password: string): Promise<SessionUser> {
     const session = await this.api.login({ email, password });
-    this.session.set(session);
+    this.setSession(session);
     this.broadcast({ type: 'login', userId: session.user.id });
     return session.user;
   }
@@ -89,7 +96,7 @@ export class AuthStore {
 
   /** Aplica una sesión nueva que devuelve la API (por ejemplo, tras cambiar la contraseña). */
   applySession(session: SessionResponse): void {
-    this.session.set(session);
+    this.setSession(session);
   }
 
   /** Refleja en la sesión los datos editados en el perfil. */
@@ -99,8 +106,13 @@ export class AuthStore {
     );
   }
 
-  /** Al arrancar: recupera la sesión con la cookie antes de la primera navegación, con un tope de espera. */
-  async restore(timeoutMs = RESTORE_TIMEOUT_MS): Promise<void> {
+  /**
+   * Al arrancar: recupera la sesión con la cookie antes de la primera navegación, con un tope de espera (más corto si
+   * este navegador no tenía sesión).
+   */
+  async restore(
+    timeoutMs = readSessionHint() ? RESTORE_TIMEOUT_MS : RESTORE_TIMEOUT_WITHOUT_HINT_MS,
+  ): Promise<void> {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const timeout = new Promise<void>((resolve) => {
       timer = setTimeout(resolve, timeoutMs);
@@ -125,7 +137,7 @@ export class AuthStore {
 
   /** Cierra la sesión en el servidor, en esta pestaña y en las demás. */
   async logout(): Promise<void> {
-    this.session.set(null);
+    this.setSession(null);
     this.broadcast({ type: 'logout' });
     try {
       await this.api.logout();
@@ -137,7 +149,7 @@ export class AuthStore {
 
   /** La sesión caducó y no se pudo renovar: al login, recordando dónde estaba. */
   expire(): void {
-    this.session.set(null);
+    this.setSession(null);
     const returnUrl = this.router.url;
     if (returnUrl.startsWith('/auth')) {
       return;
@@ -149,15 +161,21 @@ export class AuthStore {
 
   private async requestRefresh(): Promise<RefreshOutcome> {
     try {
-      this.session.set(await this.api.refresh());
+      this.setSession(await this.api.refresh());
       return 'renewed';
     } catch (error) {
       if (isRejection(error)) {
-        this.session.set(null);
+        this.setSession(null);
         return 'expired';
       }
       return 'unavailable';
     }
+  }
+
+  /** Cambia la sesión y su indicio. Un fallo de red no pasa por aquí: la sesión que hubiera (y su indicio) sigue. */
+  private setSession(session: SessionResponse | null): void {
+    this.session.set(session);
+    writeSessionHint(session !== null);
   }
 
   private broadcast(message: SessionMessage): void {
@@ -170,7 +188,7 @@ export class AuthStore {
     }
     if (data.type === 'logout') {
       if (this.session()) {
-        this.session.set(null);
+        this.setSession(null);
         await this.router.navigateByUrl('/auth/login');
       }
       return;
@@ -179,6 +197,27 @@ export class AuthStore {
     if (this.user()?.id !== data.userId && (await this.refresh()) === 'renewed') {
       await this.router.navigateByUrl(this.homeUrl());
     }
+  }
+}
+
+/** ¿Tenía este navegador una sesión abierta? Si no se puede leer el almacenamiento, se supone que sí (espera larga). */
+function readSessionHint(): boolean {
+  try {
+    return typeof localStorage === 'undefined' || localStorage.getItem(SESSION_HINT_KEY) !== null;
+  } catch {
+    return true;
+  }
+}
+
+function writeSessionHint(present: boolean): void {
+  try {
+    if (present) {
+      localStorage.setItem(SESSION_HINT_KEY, '1');
+    } else {
+      localStorage.removeItem(SESSION_HINT_KEY);
+    }
+  } catch {
+    // Sin almacenamiento (modo privado estricto): el arranque esperará siempre el tope largo.
   }
 }
 

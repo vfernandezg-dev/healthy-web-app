@@ -4,7 +4,7 @@
     <a [href]="landingUrl" class="w-fit rounded-md"><app-brand-logo [inverse]="true" /></a>
     <div class="relative mt-10 min-h-48 flex-1 overflow-hidden rounded-lg">
       <img
-        ngSrc="images/auth-bowl.webp"
+        ngSrc="images/auth-acai-bowls.webp"
         fill
         alt=""
         class="object-cover motion-safe:animate-settle"
@@ -39,5 +39,19 @@
         <router-outlet />
       </div>
     </main>
+    <footer class="px-6 pb-6 text-sm text-muted sm:px-10">
+      <p class="mx-auto max-w-md">
+        Healthy Bites es un proyecto académico y de portafolio: usa datos de prueba.
+        <a
+          routerLink="/privacidad"
+          class="font-semibold text-brand-700 underline underline-offset-2"
+          >Privacidad</a
+        >
+        ·
+        <a routerLink="/seguridad" class="font-semibold text-brand-700 underline underline-offset-2"
+          >Seguridad</a
+        >
+      </p>
+    </footer>
   </div>
 </div>
