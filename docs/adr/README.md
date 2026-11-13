@@ -6,16 +6,17 @@ descartadas. Una decisión aceptada no se edita; si cambia, se escribe un ADR nu
 Las decisiones que comparte con la API (sesión, errores, contrato) están también en los
 [ADR de healthy-bites-api](https://github.com/vfernandezg-dev/healthy-bites-api/tree/main/docs/adr).
 
-| ADR                                                      | Decisión                                                               | Estado   |
-| -------------------------------------------------------- | ---------------------------------------------------------------------- | -------- |
-| [0001](0001-angular-sin-zone-y-signals.md)               | Angular sin zone.js, con signals y Signal Forms                        | Aceptada |
-| [0002](0002-primeng-tailwind-y-tema.md)                  | PrimeNG + Tailwind CSS con el tema de la landing                       | Aceptada |
-| [0003](0003-sesion-en-memoria.md)                        | Sesión con el access token en memoria                                  | Aceptada |
-| [0004](0004-tipos-desde-openapi.md)                      | Tipos de la API generados desde el contrato OpenAPI                    | Aceptada |
-| [0005](0005-pruebas-e2e-con-api-simulada.md)             | Pruebas E2E y de accesibilidad con la API simulada                     | Aceptada |
-| [0006](0006-graficos-con-echarts.md)                     | Gráficos con Apache ECharts cargado bajo demanda                       | Aceptada |
-| [0007](0007-capas-alias-y-fronteras.md)                  | Capas, alias y fronteras comprobadas por ESLint                        | Aceptada |
-| [0008](0008-dialogos-declarativos-y-stores-de-pagina.md) | Diálogos declarativos, stores de página y piezas comunes de estado     | Aceptada |
-| [0009](0009-csp-y-cabeceras-de-seguridad.md)             | CSP y cabeceras de seguridad en `vercel.json`, comprobadas por los E2E | Aceptada |
+| ADR                                                      | Decisión                                                               | Estado                                  |
+| -------------------------------------------------------- | ---------------------------------------------------------------------- | --------------------------------------- |
+| [0001](0001-angular-sin-zone-y-signals.md)               | Angular sin zone.js, con signals y Signal Forms                        | Aceptada                                |
+| [0002](0002-primeng-tailwind-y-tema.md)                  | PrimeNG + Tailwind CSS con el tema de la landing                       | Aceptada (en parte sustituida por 0010) |
+| [0003](0003-sesion-en-memoria.md)                        | Sesión con el access token en memoria                                  | Aceptada                                |
+| [0004](0004-tipos-desde-openapi.md)                      | Tipos de la API generados desde el contrato OpenAPI                    | Aceptada                                |
+| [0005](0005-pruebas-e2e-con-api-simulada.md)             | Pruebas E2E y de accesibilidad con la API simulada                     | Aceptada                                |
+| [0006](0006-graficos-con-echarts.md)                     | Gráficos con Apache ECharts cargado bajo demanda                       | Aceptada                                |
+| [0007](0007-capas-alias-y-fronteras.md)                  | Capas, alias y fronteras comprobadas por ESLint                        | Aceptada                                |
+| [0008](0008-dialogos-declarativos-y-stores-de-pagina.md) | Diálogos declarativos, stores de página y piezas comunes de estado     | Aceptada                                |
+| [0009](0009-csp-y-cabeceras-de-seguridad.md)             | CSP y cabeceras de seguridad en `vercel.json`, comprobadas por los E2E | Aceptada                                |
+| [0010](0010-identidad-despensa.md)                       | Identidad visual «Despensa»: tokens por rol, pino, papel y caqui       | Aceptada                                |
 
 La versión práctica (dónde va cada cosa y qué pieza usar) está en la [guía del frontend](../frontend-guidelines.md).

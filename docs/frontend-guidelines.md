@@ -43,6 +43,52 @@ src/app/
   - Si un componente presentacional necesita pedir algo a la API, no es presentacional: es un contenedor (como
     `CommentThread`).
 
+## Estilo visual
+
+La identidad «Despensa» está en el [ADR 0010](adr/0010-identidad-despensa.md) y sus valores en
+`src/styles/tokens.css`. `pnpm theme:check` rechaza lo que se salga de aquí.
+
+- **Colores: primero el rol, después la escala.** Nunca hexadecimales ni la paleta por defecto de Tailwind, que no
+  existe (`--color-*: initial`).
+
+  | Para                                    | Usa                                                      |
+  | --------------------------------------- | -------------------------------------------------------- |
+  | Fondo de la página                      | `bg-canvas` (ya lo pone `body`)                          |
+  | Tarjeta                                 | `.card` (blanca, filete, `rounded-card`)                 |
+  | Zona hundida dentro de una tarjeta      | `bg-sunken` con `border-line`                            |
+  | Filetes, separadores de listas y tablas | `border-line`, `divide-line`; más marcado, `line-strong` |
+  | Texto y texto secundario                | `text-ink` (por defecto) y `text-muted`                  |
+  | Enlaces y acción principal              | `text-brand-700`; botones de PrimeNG                     |
+  | Menú y paneles de marca                 | `bg-pine` con `text-on-pine` y la clase `.hb-on-pine`    |
+  | Atención sin error (rachas, premios)    | `accent`: relleno 600, texto 700                         |
+  | Avisos y VIP                            | `saffron`                                                |
+  | Errores                                 | `text-danger-700`                                        |
+
+- **Un color nuevo** se da de alta en `tokens.css`. Si es para texto o un elemento gráfico, su par va en `PAIRS`
+  de `scripts/check-theme-tokens.mjs`, que comprueba el contraste.
+- **Tipografía:** Plus Jakarta Sans.
+  - Los `h1` ya llevan peso y espaciado por la regla base; cada página solo pone el tamaño.
+  - Las cifras destacadas usan `.figure`.
+  - Los `h2` de tarjeta van en `text-base font-semibold`, mejor con `app-section-header`.
+- **Radios:** `rounded-control` (8 px) en controles, `rounded-card` (12 px) en tarjetas y zonas, `rounded-badge`
+  (6 px) en etiquetas. Nada de píldoras; `rounded-full` solo para avatares, barras e indicadores.
+- **Sombras** solo en lo que flota (diálogos, menús, tooltips: `shadow-overlay`). Las tarjetas no llevan.
+- **Piezas comunes:**
+  - `app-page-header`: antetítulo, `h1` y acciones;
+  - `app-section-header`: el `h2` de una tarjeta con su enlace «Ver…»;
+  - `app-stat-card` dentro de `.stat-ledger`: cifras;
+  - `app-badge`: etiquetas, con los mapas `*_TONE` de `labels.ts`;
+  - `app-status-panel`: pantallas de estado;
+  - `app-empty-state` y `app-load-error`: vacío y error;
+  - `app-progress-bar`: avance, con `tone="accent"` en las rachas.
+- **Movimiento** (`src/styles/motion.css`):
+  - `.card` ya entra subiendo; las rejillas y listas llevan `.hb-stagger`;
+  - para otras piezas hay utilidades `motion-safe:animate-rise`, `-fade`, `-grow-x`, `-draw`, `-pop` y `-settle`;
+  - todo desaparece con el movimiento reducido, que es lo que emulan los e2e;
+  - nada de animaciones que hagan esperar.
+- **Textos:** sin exclamaciones ni subtítulos de relleno. Los nombres de regiones y encabezados los usan los e2e:
+  si cambian, cambian las pruebas.
+
 ## Estado
 
 | Necesitas                                                                  | Usa                                                                   |

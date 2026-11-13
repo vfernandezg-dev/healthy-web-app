@@ -150,10 +150,15 @@ falla si no está; en CI va en el secreto `PRIMENG_LICENSE_KEY`.
 
 ## Diseño y accesibilidad
 
-- Los colores, la tipografía y las sombras son los de la landing (`src/styles/tokens.css`). El preset de PrimeNG
-  (`core/theme`) parte de Aura con los colores de marca y solo los tokens de los componentes que se usan.
-- Contraste AA en todo: el color de acción es brand-700 (6:1 con blanco) y los tonos de avisos y etiquetas se han
-  ajustado donde Aura no llegaba.
+- Identidad «Despensa» ([ADR 0010](docs/adr/0010-identidad-despensa.md)):
+  - el verde de la marca como estructura (menú y acceso en verde pino) sobre papel cálido;
+  - tarjetas blancas con filete y un caqui para lo que pide atención.
+- `src/styles/tokens.css` es la única fuente de colores, radios y sombras. El preset de PrimeNG (`core/theme`) lee
+  esas variables y solo incluye los tokens de los componentes que se usan.
+- `pnpm theme:check` comprueba, antes de los e2e:
+  - el contraste AA de cada par de colores;
+  - que ninguna plantilla use colores fuera de los tokens.
+- Animaciones discretas de entrada (`src/styles/motion.css`), desactivadas con `prefers-reduced-motion`.
 - Formularios con etiqueta visible, errores enlazados con `aria-describedby` y foco en el primer campo con error.
 - Enlace para saltar al contenido, foco al contenido nuevo al navegar, título de pestaña por página, `lang="es"` y
   respeto a `prefers-reduced-motion`.
@@ -193,7 +198,8 @@ falla si no está; en CI va en el secreto `PRIMENG_LICENSE_KEY`.
 
 Las decisiones de arquitectura están en [`docs/adr`](docs/adr/README.md): Angular sin zone.js, PrimeNG con Tailwind y
 tema propio, la sesión en memoria, los tipos generados del contrato, las pruebas con la API simulada, los gráficos
-con ECharts, las capas con sus fronteras, los diálogos declarativos con los stores de página y la CSP. La
+con ECharts, las capas con sus fronteras, los diálogos declarativos con los stores de página, la CSP y la identidad
+visual. La
 [guía del frontend](docs/frontend-guidelines.md) es su versión práctica.
 
 ## Equipo
