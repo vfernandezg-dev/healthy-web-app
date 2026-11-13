@@ -4,7 +4,7 @@ Cada ADR recoge una decisión importante: el contexto, lo que se decidió, sus c
 descartadas. Una decisión aceptada no se edita; si cambia, se escribe un ADR nuevo que la sustituye.
 
 Las decisiones que comparte con la API (sesión, errores, contrato) están también en los
-[ADR de healthy-bites-api](https://github.com/vfernandezg-dev/healthy-bites-api/tree/main/docs/adr).
+[ADR de healthybites-backend](https://github.com/vfernandezg-dev/healthybites-backend/tree/main/docs/adr).
 
 | ADR                                                      | Decisión                                                               | Estado                                  |
 | -------------------------------------------------------- | ---------------------------------------------------------------------- | --------------------------------------- |

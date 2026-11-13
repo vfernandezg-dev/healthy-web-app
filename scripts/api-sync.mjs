@@ -19,11 +19,11 @@ const modified = git('status', '--porcelain', '--', 'docs/openapi.yaml') !== '';
 copyFileSync(source, 'src/app/core/api/openapi.yaml');
 writeFileSync(
   'src/app/core/api/openapi.source.json',
-  `${JSON.stringify({ repository: 'healthy-bites-api', commit, modified }, null, 2)}\n`,
+  `${JSON.stringify({ repository: 'healthybites-backend', commit, modified }, null, 2)}\n`,
 );
 
 console.warn(
-  `Contrato copiado de healthy-bites-api@${commit.slice(0, 7)}` +
+  `Contrato copiado de healthybites-backend@${commit.slice(0, 7)}` +
     (modified ? ' (con cambios sin commitear en la API)' : '') +
     '.',
 );

@@ -26,9 +26,9 @@ PrimeNG con un tema propio y pruebas de accesibilidad automáticas. Forma parte 
 
 | Repositorio                                                                       | Descripción                                           |
 | --------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| [healthy-bites-api](https://github.com/vfernandezg-dev/healthy-bites-api)         | API REST en Spring Boot + PostgreSQL                  |
-| [healthy-web-app](https://github.com/vfernandezg-dev/healthy-web-app)             | Aplicación web en Angular (este repo)                 |
-| [healthy-bites-landing](https://github.com/vfernandezg-dev/healthy-bites-landing) | Landing page en Astro (enlaza al registro y al login) |
+| [healthybites-backend](https://github.com/vfernandezg-dev/healthybites-backend)   | API REST en Spring Boot + PostgreSQL                  |
+| [healthybites-frontend](https://github.com/vfernandezg-dev/healthybites-frontend) | Aplicación web en Angular (este repo)                 |
+| [healthybites-landing](https://github.com/vfernandezg-dev/healthybites-landing)   | Landing page en Astro (enlaza al registro y al login) |
 
 ## Funcionalidad
 
@@ -67,7 +67,7 @@ flowchart LR
     features --> data["data/*-api.ts<br/>httpResource y HttpClient"]
     features --> shared["shared/*"]
     data --> core["core/api · core/auth<br/>interceptores, tipos del contrato"]
-    core --> api[("healthy-bites-api<br/>/api/v1")]
+    core --> api[("healthybites-backend<br/>/api/v1")]
 ```
 
 - **Angular 22 sin zone.js.** Detección de cambios `OnPush` (la de serie) y estado con signals: `input()`,
@@ -109,7 +109,7 @@ flowchart LR
 - **pnpm 12**. La versión se fija en `packageManager` (`package.json`). El proyecto no se instala con npm ni con
   yarn: `preinstall` lo impide.
 - La API en `http://127.0.0.1:8090` (ver el README de
-  [healthy-bites-api](https://github.com/vfernandezg-dev/healthy-bites-api)).
+  [healthybites-backend](https://github.com/vfernandezg-dev/healthybites-backend)).
 
 ### Pasos
 

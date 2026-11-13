@@ -25,7 +25,7 @@ usa una base de datos nueva.
    docker run -d --name hb-e2e-mail -p 127.0.0.1:1026:1025 -p 127.0.0.1:8026:8025 axllent/mailpit:v1.33
    ```
 
-2. La API (desde `healthy-bites-api`, con su `.env` y el jar de `./mvnw package`), con el perfil dev y apuntando a
+2. La API (desde `healthybites-backend`, con su `.env` y el jar de `./mvnw package`), con el perfil dev y apuntando a
    esos contenedores y al origen de las pruebas:
 
    ```bash
