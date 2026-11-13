@@ -12,7 +12,7 @@ import { ButtonDirective } from 'primeng/button';
       <span class="mx-auto grid size-14 place-items-center rounded-full bg-brand-50 text-brand-700">
         <svg lucideCircleSlash class="size-8"></svg>
       </span>
-      <h1 class="mt-6 text-2xl font-bold">Has cancelado el pago</h1>
+      <h1 class="mt-6 text-2xl">Has cancelado el pago</h1>
       <p class="mt-2 text-muted">
         No se te ha cobrado nada y sigues con tu plan actual. Puedes suscribirte cuando quieras.
       </p>

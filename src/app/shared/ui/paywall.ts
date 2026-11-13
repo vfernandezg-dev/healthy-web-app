@@ -32,7 +32,7 @@ export function requiredTierOf(error: unknown): Tier | undefined {
       <span class="mx-auto grid size-14 place-items-center rounded-full bg-mint text-brand-900">
         <svg lucideLock class="size-7"></svg>
       </span>
-      <h1 class="mt-6 text-2xl font-bold">{{ subject() }} es {{ tierLabel() }}</h1>
+      <h1 class="mt-6 text-2xl">{{ subject() }} es {{ tierLabel() }}</h1>
       <p class="mt-2 text-muted">
         Suscríbete a {{ tierLabel() }} para {{ benefit() }}. También puedes conseguirlo completando
         una racha de hábitos que lo tenga como premio.

@@ -19,6 +19,8 @@
  */
 @theme {
   --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  /* Serif editorial para titulares y cifras (h1, .figure, el nombre de la marca). */
+  --font-display: 'Newsreader Variable', Georgia, Cambria, 'Times New Roman', serif;
 
   /* Curvas de movimiento: salida suave (desaceleración larga) y rebote leve. */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);

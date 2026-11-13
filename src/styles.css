@@ -8,6 +8,7 @@
 @import 'tailwindcss';
 @import 'tailwindcss-primeui';
 @import '@fontsource-variable/plus-jakarta-sans';
+@import '@fontsource-variable/newsreader';
 @import './styles/tokens.css';
 
 @layer base {
@@ -31,6 +32,14 @@
   /* Destinos de foco por programa (<main> al navegar): reciben el foco sin mostrar contorno. */
   [tabindex='-1']:focus {
     outline: none;
+  }
+
+  /*
+   * Titulares de página en la serif editorial (Newsreader). Solo los h1 y las cifras destacadas (.figure) la usan;
+   * el resto de la interfaz va en Plus Jakarta Sans.
+   */
+  h1 {
+    @apply font-display font-medium tracking-[-0.015em] text-balance;
   }
 
   ::selection {
@@ -68,6 +77,11 @@
    */
   .card {
     @apply rounded-card border border-line bg-card;
+  }
+
+  /* Cifra destacada (pesos, medias, KPI): serif con números de ancho fijo para que no bailen al cambiar. */
+  .figure {
+    @apply font-display font-medium tracking-[-0.015em] lining-nums tabular-nums;
   }
 
   /* Cabeceras de tabla en versalitas: PrimeNG no tiene token para la transformación ni el espaciado. */

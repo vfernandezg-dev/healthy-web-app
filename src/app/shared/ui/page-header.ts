@@ -9,7 +9,7 @@ import { Component, input } from '@angular/core';
       @if (eyebrow()) {
         <p class="text-sm font-semibold tracking-wide text-brand-700 uppercase">{{ eyebrow() }}</p>
       }
-      <h1 class="text-2xl font-bold tracking-tight text-balance sm:text-3xl">{{ title() }}</h1>
+      <h1 class="text-3xl sm:text-4xl">{{ title() }}</h1>
       @if (description()) {
         <p class="mt-2 max-w-2xl text-muted">{{ description() }}</p>
       }

@@ -2,7 +2,7 @@
   @if (capture.isLoading()) {
     <div role="status" aria-live="polite">
       <p-progressspinner styleClass="size-12!" strokeWidth="4" ariaLabel="Confirmando el pago" />
-      <h1 class="mt-6 text-2xl font-bold">Confirmando tu pago…</h1>
+      <h1 class="mt-6 text-2xl">Confirmando tu pago…</h1>
       <p class="mt-2 text-muted">No cierres esta página, solo tarda unos segundos.</p>
     </div>
   } @else if (capture.hasValue()) {
@@ -10,7 +10,7 @@
     <span class="mx-auto grid size-14 place-items-center rounded-full bg-brand-50 text-brand-700">
       <svg lucideCircleCheck class="size-8"></svg>
     </span>
-    <h1 class="mt-6 text-2xl font-bold">¡Ya tienes {{ tierLabels[subscription.tier] }}!</h1>
+    <h1 class="mt-6 text-2xl">¡Ya tienes {{ tierLabels[subscription.tier] }}!</h1>
     <p class="mt-2 text-muted">
       Hemos recibido tu pago. Tienes acceso hasta el
       {{ subscription.currentPeriodEnd | date: 'longDate' }}. Te hemos enviado el justificante por
@@ -26,7 +26,7 @@
     <span class="mx-auto grid size-14 place-items-center rounded-full bg-red-50 text-red-700">
       <svg lucideCircleX class="size-8"></svg>
     </span>
-    <h1 class="mt-6 text-2xl font-bold">No se ha podido completar el pago</h1>
+    <h1 class="mt-6 text-2xl">No se ha podido completar el pago</h1>
     <p class="mt-2 text-muted">{{ failure() }}</p>
     <a pButton routerLink="/client/subscription" severity="secondary" class="mt-8">
       Volver a la suscripción
