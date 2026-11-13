@@ -24,3 +24,16 @@ allowBuilds:
 hoistPattern:
   - '*'
   - '!zone.js'
+
+# Dependencias transitivas de las herramientas (no llegan al bundle de producción) con avisos de seguridad:
+# - karma: peer opcional de @angular/build que pnpm instalaba aunque los tests usan Vitest (angular.json). Arrastraba
+#   socket.io, engine.io, ws, qs, lodash, tmp, follow-redirects... con 16 avisos. Se quita del árbol.
+# - El resto se fuerza a la primera versión corregida de cada rama.
+overrides:
+  karma: '-'
+  fast-uri@>=3.0.0 <3.1.9: ^3.1.9
+  source-map-js@>=1.0.0 <1.2.2: ^1.2.2
+  brace-expansion@<1.1.21: ^1.1.21
+  minimatch@<3.1.3: ^3.1.3
+  minimatch@>=7.0.0 <11.0.1: ^11.0.1
+  glob@>=9.0.0 <14.0.2: ^14.0.2
