@@ -1,6 +1,6 @@
 <app-page-header [title]="greeting()" [eyebrow]="today" />
 
-<div class="grid gap-5 lg:grid-cols-3">
+<div class="hb-stagger grid gap-5 lg:grid-cols-3">
   <!-- Meta: la tarjeta principal, con el último pesaje, su tendencia y el avance. -->
   <section
     class="card flex flex-col p-6 sm:p-8 lg:col-span-2 lg:row-span-2"
@@ -38,7 +38,7 @@
             <div>
               <p class="figure text-5xl sm:text-6xl">
                 {{ progress.currentKg | number: '1.0-1' }}
-                <span class="font-sans text-lg font-medium text-muted">kg</span>
+                <span class="text-lg font-semibold text-muted">kg</span>
               </p>
               <p class="mt-2 text-sm text-muted">
                 Último pesaje · objetivo {{ goal.targetWeightKg | number: '1.0-1' }} kg
@@ -169,7 +169,7 @@
       description="Elige una recompensa y registra tus hábitos cada día para conseguirla."
     />
   } @else if (streaks.hasValue()) {
-    <ul class="card divide-y divide-line" role="list">
+    <ul class="hb-stagger card divide-y divide-line" role="list">
       @for (reward of inProgress(); track reward.id) {
         @let days = reward.streak?.currentDays ?? 0;
         <li

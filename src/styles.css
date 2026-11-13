@@ -8,8 +8,8 @@
 @import 'tailwindcss';
 @import 'tailwindcss-primeui';
 @import '@fontsource-variable/plus-jakarta-sans';
-@import '@fontsource-variable/newsreader';
 @import './styles/tokens.css';
+@import './styles/motion.css';
 
 @layer base {
   :root {
@@ -34,12 +34,9 @@
     outline: none;
   }
 
-  /*
-   * Titulares de página en la serif editorial (Newsreader). Solo los h1 y las cifras destacadas (.figure) la usan;
-   * el resto de la interfaz va en Plus Jakarta Sans.
-   */
+  /* Titulares de página: el tamaño lo pone cada h1; el peso, el espaciado y el reparto de líneas son comunes. */
   h1 {
-    @apply font-display font-medium tracking-[-0.015em] text-balance;
+    @apply font-bold tracking-tight text-balance;
   }
 
   ::selection {
@@ -63,6 +60,7 @@
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
@@ -79,9 +77,9 @@
     @apply rounded-card border border-line bg-card;
   }
 
-  /* Cifra destacada (pesos, medias, KPI): serif con números de ancho fijo para que no bailen al cambiar. */
+  /* Cifra destacada (pesos, medias, KPI): grande, en negrita y con el espaciado ajustado. */
   .figure {
-    @apply font-display font-medium tracking-[-0.015em] lining-nums tabular-nums;
+    @apply font-bold tracking-tight;
   }
 
   /*

@@ -22,10 +22,10 @@ import { LucideArrowRight } from '@lucide/angular';
     @if (link(); as link) {
       <a
         [routerLink]="link"
-        class="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:underline"
+        class="group inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:underline"
       >
         {{ linkLabel() }}
-        <svg lucideArrowRight class="size-4"></svg>
+        <svg lucideArrowRight class="size-4 transition-transform group-hover:translate-x-0.5"></svg>
       </a>
     }
   `,

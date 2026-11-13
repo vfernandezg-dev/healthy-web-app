@@ -32,7 +32,7 @@ import { RowTemplate } from './row-template';
         <ng-content select="[empty]" />
       } @else {
         <ul
-          class="transition-opacity"
+          class="hb-stagger transition-opacity"
           [class]="layoutClass()"
           [class.opacity-60]="query().loading()"
           role="list"

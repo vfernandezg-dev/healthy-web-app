@@ -1,11 +1,16 @@
 <div class="grid min-h-dvh lg:grid-cols-[5fr_6fr]">
   <!-- Escritorio: panel de marca en verde pino, con una foto real y el lema (un párrafo: el h1 es el de la página). -->
-  <section class="hb-on-pine hidden flex-col bg-pine p-10 text-on-pine lg:flex xl:p-14">
+  <section class="hb-on-pine hb-stagger hidden flex-col bg-pine p-10 text-on-pine lg:flex xl:p-14">
     <a [href]="landingUrl" class="w-fit rounded-md"><app-brand-logo [inverse]="true" /></a>
     <div class="relative mt-10 min-h-48 flex-1 overflow-hidden rounded-lg">
-      <img ngSrc="images/auth-bowl.webp" fill alt="" class="object-cover" />
+      <img
+        ngSrc="images/auth-bowl.webp"
+        fill
+        alt=""
+        class="object-cover motion-safe:animate-settle"
+      />
     </div>
-    <p class="mt-10 max-w-md font-display text-3xl leading-tight text-balance xl:text-4xl">
+    <p class="mt-10 max-w-md text-3xl leading-tight font-bold tracking-tight text-balance">
       Come mejor, un hábito cada día.
     </p>
     <p class="mt-3 max-w-md text-on-pine-muted">

@@ -8,7 +8,7 @@ import { LucideDynamicIcon, type LucideIcon, LucideInbox } from '@lucide/angular
 @Component({
   selector: 'app-empty-state',
   imports: [LucideDynamicIcon],
-  host: { class: 'block' },
+  host: { class: 'block motion-safe:animate-rise' },
   template: `
     <div
       class="flex items-start gap-4 rounded-card border border-dashed border-line-strong px-5 py-6"

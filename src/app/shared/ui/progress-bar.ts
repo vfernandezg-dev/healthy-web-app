@@ -2,7 +2,7 @@ import { Component, computed, input } from '@angular/core';
 
 /**
  * Barra de progreso accesible (role="progressbar" con su valor y su nombre). Sustituye a p-progressbar, que en
- * PrimeNG 22 pone en su host atributos ARIA que axe marca como no válidos. `tone="accent"` (caqui) para las rachas.
+ * PrimeNG 22 pone en su host atributos ARIA que axe marca como no válidos. `tone="accent"` (caqui) para las rachas. Al aparecer, se llena desde la izquierda.
  */
 @Component({
   selector: 'app-progress-bar',
@@ -19,7 +19,7 @@ import { Component, computed, input } from '@angular/core';
   },
   template: `
     <div
-      class="h-full rounded-full transition-[width] duration-300 ease-out"
+      class="h-full origin-left rounded-full transition-[width] duration-300 ease-out motion-safe:animate-grow-x"
       [class.bg-brand-700]="tone() === 'brand'"
       [class.bg-accent-600]="tone() === 'accent'"
       [style.width.%]="clamped()"

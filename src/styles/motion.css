@@ -1,0 +1,136 @@
+/*
+ * Movimiento de la interfaz: entradas cortas y discretas que acompañan, sin hacer esperar.
+ *
+ * - Cada página nueva se funde al entrar (el componente que pinta el router va justo después de su router-outlet).
+ * - Las tarjetas suben 8 px mientras aparecen, y lo que se pinta dentro aparece al cambiar (por ejemplo, cuando los
+ *   datos sustituyen al esqueleto). En rejillas y listas con .hb-stagger entran escalonadas.
+ * - Las barras de progreso se llenan, la línea de tendencia se dibuja y los botones se hunden un poco al pulsarlos.
+ *
+ * Todo está dentro de prefers-reduced-motion: no-preference: con el movimiento reducido no hay ninguna animación (los
+ * e2e lo emulan, así axe nunca analiza algo a medio aparecer). Las animaciones de entrada usan fill-mode
+ * «backwards»: el estado inicial se aplica durante el retraso y, al terminar, la animación deja de influir, así las
+ * transiciones de :hover siguen funcionando.
+ */
+
+/* «static»: estas variables se usan desde CSS (no solo desde utilidades), así que Tailwind las escribe siempre. */
+@theme static {
+  /* Curvas: salida suave (desaceleración larga) y rebote leve. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Utilidades animate-*: en las plantillas, siempre con el prefijo motion-safe:. */
+  --animate-rise: hb-rise 450ms var(--ease-out-expo) backwards;
+  --animate-fade: hb-fade 300ms ease-out backwards;
+  --animate-grow-x: hb-grow-x 900ms var(--ease-out-expo) 150ms backwards;
+  --animate-draw: hb-draw 1100ms var(--ease-out-expo) 150ms backwards;
+  --animate-pop: hb-pop 400ms var(--ease-spring) 900ms backwards;
+  --animate-settle: hb-settle 1800ms var(--ease-out-expo) backwards;
+}
+
+@keyframes hb-rise {
+  from {
+    opacity: 0;
+    translate: 0 0.5rem;
+  }
+}
+
+@keyframes hb-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Barra que se llena desde la izquierda (con transform-origin a la izquierda). */
+@keyframes hb-grow-x {
+  from {
+    scale: 0 1;
+  }
+}
+
+/* Trazo que se dibuja: pathLength="1" y stroke-dasharray="1 2" en el elemento. */
+@keyframes hb-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes hb-pop {
+  from {
+    opacity: 0;
+    scale: 0;
+  }
+}
+
+/* Foto que se asienta: empieza un poco ampliada (dentro de un contenedor con overflow hidden). */
+@keyframes hb-settle {
+  from {
+    scale: 1.06;
+  }
+}
+
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    router-outlet + * {
+      animation: var(--animate-fade);
+    }
+
+    .card {
+      animation: var(--animate-rise);
+    }
+
+    .card > *,
+    .p-datatable-tbody > tr {
+      animation: var(--animate-fade);
+    }
+
+    /*
+     * Escalonado: cada hijo entra 50 ms después del anterior (hasta el octavo). Si el hijo envuelve una tarjeta (los
+     * <li> de un listado), entra el hijo y la tarjeta ya no repite la animación.
+     */
+    .hb-stagger > * {
+      animation: var(--animate-rise);
+      animation-delay: var(--hb-stagger-delay, 0ms);
+    }
+
+    .hb-stagger > * .card {
+      animation: none;
+    }
+
+    .hb-stagger > :nth-child(2) {
+      --hb-stagger-delay: 50ms;
+    }
+    .hb-stagger > :nth-child(3) {
+      --hb-stagger-delay: 100ms;
+    }
+    .hb-stagger > :nth-child(4) {
+      --hb-stagger-delay: 150ms;
+    }
+    .hb-stagger > :nth-child(5) {
+      --hb-stagger-delay: 200ms;
+    }
+    .hb-stagger > :nth-child(6) {
+      --hb-stagger-delay: 250ms;
+    }
+    .hb-stagger > :nth-child(7) {
+      --hb-stagger-delay: 300ms;
+    }
+    .hb-stagger > :nth-child(n + 8) {
+      --hb-stagger-delay: 350ms;
+    }
+
+    /* Botones: las transiciones de PrimeNG más la escala, que los hunde un poco al pulsarlos. */
+    .p-button {
+      transition:
+        background var(--p-button-transition-duration),
+        color var(--p-button-transition-duration),
+        border-color var(--p-button-transition-duration),
+        outline-color var(--p-button-transition-duration),
+        box-shadow var(--p-button-transition-duration),
+        scale 150ms var(--ease-out-expo);
+    }
+
+    .p-button:not(:disabled):active {
+      scale: 0.97;
+    }
+  }
+}

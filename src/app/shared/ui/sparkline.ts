@@ -61,24 +61,27 @@ export function sparklineGeometry(
             [attr.x2]="width"
             [attr.y1]="g.targetY"
             [attr.y2]="g.targetY"
-            class="stroke-accent-500"
+            class="stroke-accent-500 motion-safe:animate-fade"
             stroke-width="1.5"
             stroke-dasharray="3 3"
           />
         }
+        <!-- pathLength y el guion de 1 (con hueco de 2) permiten dibujar la línea animando stroke-dashoffset. -->
         <polyline
           [attr.points]="g.points"
           fill="none"
-          class="stroke-brand-700"
+          class="stroke-brand-700 motion-safe:animate-draw"
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
+          pathLength="1"
+          stroke-dasharray="1 2"
         />
         <circle
           [attr.cx]="g.end.x"
           [attr.cy]="g.end.y"
           r="3.5"
-          class="fill-brand-700 stroke-card"
+          class="origin-center fill-brand-700 stroke-card [transform-box:fill-box] motion-safe:animate-pop"
           stroke-width="2"
         />
       </svg>

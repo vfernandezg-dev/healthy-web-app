@@ -31,7 +31,7 @@ const EYEBROW_TONES: Record<StatusTone, string> = {
       }
       {{ eyebrow() }}
     </p>
-    <h1 class="mt-3 text-3xl sm:text-4xl">{{ heading() }}</h1>
+    <h1 class="mt-3 text-2xl sm:text-3xl">{{ heading() }}</h1>
     <div class="mt-3 max-w-prose text-muted"><ng-content /></div>
     <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 empty:hidden">
       <ng-content select="[actions]" />
@@ -47,6 +47,6 @@ export class StatusPanel {
 
   protected readonly eyebrowClass = computed(() => EYEBROW_TONES[this.tone()]);
   protected readonly hostClass = computed(() =>
-    this.framed() ? 'card block max-w-xl px-6 py-10 sm:px-10' : 'block',
+    this.framed() ? 'card block max-w-xl px-6 py-10 sm:px-10' : 'block motion-safe:animate-rise',
   );
 }
