@@ -1,29 +1,33 @@
 <a
   href="#main"
-  class="sr-only z-50 rounded-full bg-brand-700 px-4 py-2 font-semibold text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+  class="sr-only z-50 rounded-control bg-brand-700 px-4 py-2 font-semibold text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
 >
   Saltar al contenido
 </a>
 
-<div class="min-h-dvh lg:pl-72">
+<div class="min-h-dvh lg:pl-64">
   <aside
-    class="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r border-brand-100 bg-white lg:flex"
+    class="hb-on-pine fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-pine text-on-pine lg:flex"
   >
-    <div class="px-6 py-6">
-      <a [routerLink]="home()" class="inline-flex rounded-lg"><app-brand-logo /></a>
+    <div class="px-5 pt-6 pb-8">
+      <a [routerLink]="home()" class="inline-flex rounded-md">
+        <app-brand-logo [inverse]="true" />
+      </a>
     </div>
-    <nav aria-label="Principal" class="flex-1 overflow-y-auto px-4 pb-4">
+    <nav aria-label="Principal" class="flex-1 overflow-y-auto px-3 pb-4">
       <ng-container [ngTemplateOutlet]="navList" />
     </nav>
-    <div class="border-t border-brand-100 p-4">
+    <div class="border-t border-pine-line p-4">
       <ng-container [ngTemplateOutlet]="account" />
     </div>
   </aside>
 
   <header
-    class="sticky top-0 z-20 flex items-center justify-between border-b border-brand-100 bg-white/90 px-4 py-3 backdrop-blur lg:hidden"
+    class="hb-on-pine sticky top-0 z-20 flex items-center justify-between bg-pine px-4 py-3 text-on-pine lg:hidden"
   >
-    <a [routerLink]="home()" class="inline-flex rounded-lg"><app-brand-logo /></a>
+    <a [routerLink]="home()" class="inline-flex rounded-md">
+      <app-brand-logo [inverse]="true" />
+    </a>
     <button
       pButton
       type="button"
@@ -44,13 +48,13 @@
     position="left"
     header="Menú"
     ariaCloseLabel="Cerrar el menú"
-    styleClass="w-80! max-w-[85vw]"
+    styleClass="hb-on-pine w-80! max-w-[85vw]"
   >
     <nav aria-label="Principal" class="flex h-full flex-col">
       <div class="flex-1">
         <ng-container [ngTemplateOutlet]="navList" />
       </div>
-      <div class="mt-6 border-t border-brand-100 pt-4">
+      <div class="mt-6 border-t border-pine-line pt-4">
         <ng-container [ngTemplateOutlet]="account" />
       </div>
     </nav>
@@ -61,16 +65,20 @@
   </main>
 </div>
 
+<!--
+  Enlaces del menú. El activo lleva aria-current="page" (RouterLinkActive) y se pinta a partir de ese atributo: fondo
+  más claro, texto en crema y una barra caqui a la izquierda (subrayado en modo de alto contraste).
+-->
 <ng-template #navList>
-  <ul class="space-y-1" role="list">
+  <ul class="space-y-0.5" role="list">
     @for (item of navigation(); track item.link) {
       <li>
         <a
           [routerLink]="item.link"
-          routerLinkActive="bg-brand-50 font-semibold text-brand-800"
+          routerLinkActive=""
           [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
           ariaCurrentWhenActive="page"
-          class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted transition-colors hover:bg-brand-50 hover:text-ink"
+          class="relative flex items-center gap-3 rounded-md px-3 py-2 font-medium text-on-pine-muted transition-colors before:absolute before:inset-y-2 before:left-0 before:w-0.75 before:rounded-full hover:bg-pine-raised hover:text-on-pine aria-[current=page]:bg-pine-raised aria-[current=page]:font-semibold aria-[current=page]:text-on-pine aria-[current=page]:before:bg-accent-400 forced-colors:aria-[current=page]:underline"
         >
           <svg [lucideIcon]="item.icon"></svg>
           {{ item.label }}
@@ -83,10 +91,12 @@
 <ng-template #account>
   @if (user(); as user) {
     <div class="flex items-center gap-3">
-      <p-avatar [label]="initials()" shape="circle" class="bg-mint! font-bold text-brand-900!" />
+      <app-person-avatar [name]="fullName()" />
       <div class="min-w-0 flex-1">
-        <p class="truncate font-semibold">{{ user.firstName }} {{ user.lastName }}</p>
-        <p class="text-sm text-muted">{{ roleLabel() }}</p>
+        <p class="truncate text-sm font-semibold text-on-pine">
+          {{ user.firstName }} {{ user.lastName }}
+        </p>
+        <p class="text-sm text-on-pine-muted">{{ roleLabel() }}</p>
       </div>
     </div>
     <button

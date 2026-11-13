@@ -269,6 +269,15 @@ export const HealthyBitesPreset = definePreset(AuraLean, {
     dialog: {
       title: { fontSize: '1.25rem', fontWeight: '600' },
     },
+    // El único cajón es el menú en móvil: verde pino, como el menú lateral (ver .hb-on-pine en styles.css).
+    drawer: {
+      root: {
+        background: v('color-pine'),
+        borderColor: v('color-pine-line'),
+        color: v('color-on-pine'),
+      },
+      title: { fontSize: '1rem', fontWeight: '600' },
+    },
     skeleton: {
       root: { borderRadius: '0.375rem', background: '{surface.200}' },
     },

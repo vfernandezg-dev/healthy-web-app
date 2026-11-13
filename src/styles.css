@@ -84,6 +84,22 @@
     @apply font-display font-medium tracking-[-0.015em] lining-nums tabular-nums;
   }
 
+  /*
+   * Superficies en verde pino (menú lateral, cabecera móvil, cajón del menú): los botones de texto secundarios de
+   * PrimeNG pasan a crema y el contorno de foco a brand-300 (9:1 sobre pino). Se redefinen las variables que lee
+   * el CSS de cada botón, así llegan a los que hay dentro.
+   */
+  .hb-on-pine {
+    --p-button-text-secondary-color: var(--color-on-pine);
+    --p-button-text-secondary-hover-background: var(--color-pine-raised);
+    --p-button-text-secondary-active-background: var(--color-pine-line);
+    --p-button-secondary-focus-ring-color: var(--color-brand-300);
+  }
+
+  .hb-on-pine :focus-visible {
+    outline-color: var(--color-brand-300);
+  }
+
   /* Cabeceras de tabla en versalitas: PrimeNG no tiene token para la transformación ni el espaciado. */
   .p-datatable-thead > tr > th {
     @apply text-xs font-semibold tracking-[0.06em] uppercase;

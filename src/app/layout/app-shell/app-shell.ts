@@ -3,18 +3,18 @@ import { Component, type ElementRef, computed, inject, signal, viewChild } from 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LucideDynamicIcon, LucideLogOut, LucideMenu } from '@lucide/angular';
-import { Avatar } from 'primeng/avatar';
 import { ButtonDirective } from 'primeng/button';
 import { Drawer } from 'primeng/drawer';
 import { filter, skip } from 'rxjs';
 import { AuthStore } from '@core/auth/auth-store';
 import { SIGNAL_FORMS_PROVIDERS } from '@shared/forms/forms.config';
 import { BrandLogo } from '@shared/ui/brand-logo';
+import { PersonAvatar } from '@shared/ui/person-avatar';
 import { ROLE_LABELS } from '@shared/i18n/labels';
 import { NAVIGATION } from '@core/routing/navigation';
 
 /**
- * Marco de la aplicación con sesión: menú lateral en escritorio y cajón en móvil, según el rol. Tras cada
+ * Marco de la aplicación con sesión: menú lateral en verde pino en escritorio y cajón en móvil, según el rol. Tras cada
  * navegación interna, el foco pasa al contenido (los lectores de pantalla anuncian la página nueva).
  */
 @Component({
@@ -27,10 +27,10 @@ import { NAVIGATION } from '@core/routing/navigation';
     LucideDynamicIcon,
     LucideMenu,
     LucideLogOut,
-    Avatar,
     ButtonDirective,
     Drawer,
     BrandLogo,
+    PersonAvatar,
   ],
   providers: [SIGNAL_FORMS_PROVIDERS],
   templateUrl: './app-shell.html',
@@ -49,9 +49,9 @@ export class AppShell {
     const role = this.auth.role();
     return role ? ROLE_LABELS[role] : '';
   });
-  protected readonly initials = computed(() => {
+  protected readonly fullName = computed(() => {
     const user = this.user();
-    return user ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase() : '';
+    return user ? `${user.firstName} ${user.lastName}` : '';
   });
   protected readonly menuOpen = signal(false);
 
